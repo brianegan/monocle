@@ -1,0 +1,59 @@
+/* dmBridge Image VIewer .5 styles */
+
+body,html {
+	margin: 0;
+	padding: 10px 0 0 0;	
+}
+div#viewer {
+	width: 730px;
+	height: 500px;
+	background-color: #EEE;
+	background-repeat:no-repeat;
+	background-position:center center;
+	margin-top: 20px;
+	position:relative;
+	overflow:hidden;
+	margin: 0 auto;
+	text-align: center;
+}
+.zoomout {
+	float: left;
+	display: block;
+	width: 300px;
+}
+.zoomin {
+	float: right;
+}
+#zoomcontrols {
+	margin: 0 60px 0 20px;
+}
+#thumbnail {
+	position:absolute;
+	top:0%;
+	left:0%;
+	border-right: 5px solid #FFF;
+	border-bottom: 5px solid #FFF;
+	z-index: 15;
+}
+#mainimage {	
+	z-index: 1;
+	cursor: move;
+}
+#mainimagedragger {
+	cursor: move;
+}
+.navigator {	
+	background-color: #900;
+	border: 1px solid #300;
+	position: absolute;
+	z-index: 50;
+	top: 0;
+	left: 0;
+	cursor: move;
+	opacity: .4;
+	}
+#feedback {
+	position:absolute;
+	left: 5px;
+	top: 0;	
+}
