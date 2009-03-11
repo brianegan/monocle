@@ -20,7 +20,7 @@ $(document).ready(function() {
 	*
 	******************************************/			
 	var zoomLevel = .15;
-	var rotationLevel = 90;
+	var rotationLevel = 180;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
 	var bigWidth = 10360;
@@ -74,9 +74,9 @@ $(document).ready(function() {
 		dmWidth = bigWidth * lvlZoom;
 		dmHeight = bigHeight * lvlZoom;
 		
-		// Actual Image Dimensions
+		// Actual Image Dimensions relative to rotation
 		imageWidth = bigImageWidth * lvlZoom;
-		imageHeight = bigImageHeight * lvlZoom;
+		imageHeight = bigImageHeight * lvlZoom;		
 		
 		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {
 			
@@ -254,147 +254,395 @@ $(document).ready(function() {
 			var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=1&DMWIDTH=160&DMHEIGHT=160&DMROTATE=" + lvlRotation;
 			
 			$(thumbImage)
-				.load(function () { 
-					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations					
-					
+				.load(function () { // As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations					
+								
 					// Adds the image to the thumbnail div
 					$('#thumbnail').append(this);
-							
+								
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
 							
 					// Calculate the exact number of tiles
-					var preciseWidth = (imageWidth) / tileWidth;
-					var preciseHeight = (imageHeight) / tileHeight;
+					var preciseWidth = imageWidth / tileWidth;
+					var preciseHeight = imageHeight / tileHeight;
 					
 					// Round that number up to the nearest integer -- this is how many tiles we'll actually create
 					var tileNumWidth = Math.ceil(preciseWidth);
 					var tileNumHeight = Math.ceil(preciseHeight);
-								
+									
 					// Ratio from Thumbnail:Main Image size
-					var convertWidth = thumbWidth / (imageWidth);
-					var convertHeight = thumbHeight / (imageHeight);
-							
+					var convertWidth = thumbWidth / imageWidth;
+					var convertHeight = thumbHeight / imageHeight;
+								
 					// Ladies and Gents, start your tile number counter! Well, hold your horses.
-					// var tileNum = 0;				
-		
-					// Performs the loops based on rotation
+					// var tileNum = 0;									
 					
-					// 0 Degrees Rotation
-					//for (y=0;y<tileNumHeight;y++) {
-						//for (x=0;x<tileNumWidth;x++) {
+					// Execute the build based on rotation															
 					
-					// 90 Degrees Rotation
-					for (x=0;x<tileNumWidth;x++) {
-						for (y=tileNumHeight-1;y>=0;y--) {
-											
-					// 180 Degrees rotation
-					//for (y=tileNumHeight-1;y>=0;y--) {
-						// for (x=tileNumWidth-1;x>=0;x--) {
-					
-					// 270 Degrees rotation
-					//for (x=tileNumWidth-1;x>=0;x--) {
-						//for (y=0;y<tileNumHeight;y++) {
-					
+					// 0 Degrees
+					if (lvlRotation == 0) {																				
 								
-							// Calculate the X, Y Positioning for the Main Image Tiles
-							var bigDivCoordsX = tileWidth * x;
-							var bigDivCoordsY = tileHeight * y;
-							
-							var bigImageCoordsY = (tileHeight * y);
-							
-							//alert(bigDivCoordsX);
-							//alert(bigDivCoordsY);
-							
-							// Convert the X, Y for the Navigator
-							var smallDivCoordsX = bigDivCoordsX * convertWidth;
-							var smallDivCoordsY = bigDivCoordsY * convertHeight;
+						for (y=0;y<tileNumHeight;y++) {
+							for (x=0;x<tileNumWidth;x++) {																							
+									
+								// Calculate the X, Y Positioning for the Main Image Tiles
+								var bigDivCoordsX = tileWidth * x;
+								var bigDivCoordsY = tileHeight * y;
 								
-							// Grabs the remainder of the precise width to calculate the boxes on the horizontal edge
-							var bigWidthDecimal = preciseWidth.toString().split(".");
-							var bigWidthAfterDec = "." + bigWidthDecimal[1];
-							var smallWidthAfterDec = bigWidthAfterDec * convertWidth;
+								// Convert the X, Y for the Navigator
+								var smallDivCoordsX = bigDivCoordsX * convertWidth;
+								var smallDivCoordsY = bigDivCoordsY * convertHeight;
 									
-							// Grabs the remainder of the prcise height to calculate the boxes on the vertical edge
-							var bigHeightDecimal = preciseHeight.toString().split(".");
-							var bigHeightAfterDec = "." + bigHeightDecimal[1];
-							var smallHeightAfterDec = bigHeightAfterDec * convertHeight;
+								// Grabs the remainder of the precise width to calculate the boxes on the horizontal edge
+								var bigWidthDecimal = preciseWidth.toString().split(".");
+								var bigWidthAfterDec = "." + bigWidthDecimal[1];
+								var smallWidthAfterDec = bigWidthAfterDec * convertWidth;
+										
+								// Grabs the remainder of the prcise height to calculate the boxes on the vertical edge
+								var bigHeightDecimal = preciseHeight.toString().split(".");
+								var bigHeightAfterDec = "." + bigHeightDecimal[1];
+								var smallHeightAfterDec = bigHeightAfterDec * convertHeight;
+										
+								/* EDGE CHECKING */													
+								if ((tileNumWidth - 1) - x == 0) { // If so, make it the correct width
+									bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+								} else { // Otherwise, it should be the normal tile width
+									bigTileOutputWidth = tileWidth;	
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+								}
+										
+								// Checks to see if it is a vertical edge box
+								if ((tileNumHeight - 1) - y == 0) { // If so, make it the correct height
+									bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+								} else { // Or, make it the normal height
+									bigTileOutputHeight = tileHeight;	
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+								}
+										
+								// X2, Y2 for Content DM GetImage
+								x2 = bigDivCoordsX + bigTileOutputWidth;
+								y2 = bigDivCoordsY + bigTileOutputHeight;
+										
+								// Adjust the zoom level to CDM Size
+								var dmScale = lvlZoom * 100;
 									
-							/* EDGE CHECKING - REWRITTEN FOR 180 DEGREES */							
-							
-							/* Checks to see if it is a horizontal edge box @ 90 Degrees
-							if ((tileNumWidth - 1) - x == 0) { // If so, make it the correct width
-								bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
-								smallTileOutputWidth = bigTileOutputWidth * convertWidth;
-							} else { // Otherwise, it should be the normal tile width
-								bigTileOutputWidth = tileWidth;	
-								smallTileOutputWidth = bigTileOutputWidth * convertWidth;
-							}
-									
-							// Checks to see if it is a vertical edge box @ 90 Degrees
-							if ((tileNumHeight - 1) - y == 0) { // If so, make it the correct height
-								bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
-								smallTileOutputHeight = bigTileOutputHeight * convertHeight;
-							} else { // Or, make it the normal height
-								bigTileOutputHeight = tileHeight;	
-								smallTileOutputHeight = bigTileOutputHeight * convertHeight;
-							} */
-							
-							// Checks to see if it is a horizontal edge box.
-							if ((tileNumWidth - 1) - x == 0) { // If so, make it the correct width
-								bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
-								smallTileOutputWidth = bigTileOutputWidth * convertWidth;
-							} else { // Otherwise, it should be the normal tile width
-								bigTileOutputWidth = tileWidth;	
-								smallTileOutputWidth = bigTileOutputWidth * convertWidth;
-							}
-									
-							// Checks to see if it is a vertical edge box 
-							if ((tileNumHeight - 1) - y == 0) { // If so, make it the correct height
-								bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
-								smallTileOutputHeight = bigTileOutputHeight * convertHeight;
-							} else { // Or, make it the normal height
-								bigTileOutputHeight = tileHeight;	
-								smallTileOutputHeight = bigTileOutputHeight * convertHeight;
-							}
-									
-							// X2, Y2 for Content DM GetImage
-							x2 = bigDivCoordsX + bigTileOutputWidth;
-							y2 = bigDivCoordsY + bigTileOutputHeight;
-									
-							// Adjust the zoom level to CDM Size
-							var dmScale = lvlZoom * 100;
+								// Create the divs in which to place the images
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";																
+										
+								$(bigDiv).appendTo('#mainimage');
+										
+								// Create the nav divs for collision detection
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
 								
-							// Create the divs in which to place the images
-							// var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								// Line used for Testing... adds the div # to the output
+								//var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+										
+								// Builds the Array of images to load, and an array for the width and height of those																					
+								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;																
+								tileImageWidth[tileNum] = bigTileOutputWidth;										
+								tileImageHeight[tileNum] = bigTileOutputHeight;
+										
+								// Progress tileNum
+								tileNum++
 							
-							// Line used for Testing... adds the div # to the output
-							var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
-									
-							$(bigDiv).appendTo('#mainimage');
-									
-							// Create the nav divs for collision detection
-							var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
-									
-							$(littleDiv).appendTo('#thumbnail').addClass('collision');
-									
-							// Builds the Array of images to load, and an array for the width and height of those														
-							
-							tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;
-							
-							//alert(tileImageSrc[tileNum]);
-									
-							tileImageWidth[tileNum] = bigTileOutputWidth;
-									
-							tileImageHeight[tileNum] = bigTileOutputHeight;
-									
-							// Progress tileNum
-							tileNum++
+							}
+						}																										
 						
-						}
-					}
+					// 90 Degrees
+					} else if (lvlRotation == 90) {		
+						
+						for (x=0;x<tileNumWidth;x++) {
+							for (y=tileNumHeight-1;y>=0;y--) {																																	
 									
+								// Grabs the remainder of the precise width to calculate the boxes on the horizontal edge
+								var bigWidthDecimal = preciseWidth.toString().split(".");
+								var bigWidthAfterDec = "." + bigWidthDecimal[1];
+								var smallWidthAfterDec = bigWidthAfterDec * convertWidth;
+										
+								// Grabs the remainder of the prcise height to calculate the boxes on the vertical edge
+								var bigHeightDecimal = preciseHeight.toString().split(".");
+								var bigHeightAfterDec = "." + bigHeightDecimal[1];
+								var smallHeightAfterDec = bigHeightAfterDec * convertHeight;										
+								
+								// Checks to see if it is a horizontal edge box.
+								if ((tileNumWidth - 1) - x == 0) { // If so, make it the correct width
+									bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
+									bigImageOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);									
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+								} else { // Otherwise, it should be the normal tile width
+									bigTileOutputWidth = tileWidth;	
+									bigImageOutputWidth = tileWidth;	
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+								}
+										
+								// Checks to see if it is a vertical edge box
+								if ((tileNumHeight - 1) - y == (tileNumHeight-1)) { // If so, make it the correct height
+									bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);									
+									bigImageOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+									
+									// Calculates Y Positioning
+									var bigDivCoordsY = tileHeight * y;
+									
+								} else { // Or, make it the normal height
+									bigTileOutputHeight = tileHeight;	
+									bigImageOutputHeight = tileHeight;
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+									
+									// Calculates Y Positioning. 
+									// @ 90 Degrees we have to remove the gap left from the edge pieces being smaller than the regular tiles
+									var edgeGap = Math.floor(tileHeight * bigHeightAfterDec);
+									var bigDivCoordsY = (tileHeight * y) - (tileHeight-edgeGap);
+								}
+								
+								// Calculate the X, Y Positioning for the Main Image Tiles
+								var bigDivCoordsX = tileWidth * x;
+								
+								
+								// Calculates the X, Y Positioning for the Images in those Tiles
+								var bigImageCoordsX = tileWidth * -(y - (tileNumHeight-1));
+								var bigImageCoordsY = tileHeight * x;
+								
+								//var coordsaasd = bigImageCoordsX + "," + bigImageCoordsY;
+								//alert(coordsaasd);
+								
+								// Convert the X, Y for the Navigator
+								var smallDivCoordsX = bigDivCoordsX * convertWidth;
+								var smallDivCoordsY = bigDivCoordsY * convertHeight;
+										
+								// X2, Y2 for Content DM GetImage
+								x2 = bigImageCoordsX + bigImageOutputHeight;
+								y2 = bigImageCoordsY + bigImageOutputWidth;
+										
+								// Adjust the zoom level to CDM Size
+								var dmScale = lvlZoom * 100;
+									
+								// Create the divs in which to place the images
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(bigDiv).appendTo('#mainimage');
+										
+								// Create the nav divs for collision detection
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+										
+								// Builds the Array of images to load, and an array for the width and height of those																					
+								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageWidth[tileNum] = bigTileOutputWidth;										
+								tileImageHeight[tileNum] = bigTileOutputHeight;
+										
+								// Progress tileNum
+								tileNum++
+							
+							} // End Y Loop
+						} // End X Loop																										
+					
+					// 180 Degrees
+					} else if (lvlRotation == 180) {									
+												
+						for (y=tileNumHeight-1;y>=0;y--) {																																	
+							for (x=tileNumWidth-1;x>=0;x--) {
+								
+								// Grabs the remainder of the precise width to calculate the boxes on the horizontal edge
+								var bigWidthDecimal = preciseWidth.toString().split(".");
+								var bigWidthAfterDec = "." + bigWidthDecimal[1];
+								var smallWidthAfterDec = bigWidthAfterDec * convertWidth;
+										
+								// Grabs the remainder of the prcise height to calculate the boxes on the vertical edge
+								var bigHeightDecimal = preciseHeight.toString().split(".");
+								var bigHeightAfterDec = "." + bigHeightDecimal[1];
+								var smallHeightAfterDec = bigHeightAfterDec * convertHeight;										
+								
+								// Checks to see if it is a horizontal edge box.
+								if ((tileNumWidth - 1) - x == (tileNumWidth - 1)) { // If so, make it the correct width
+									bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
+									bigImageOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);									
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+									
+									// Calculates Y Positioning
+									var bigDivCoordsX = tileWidth * x;
+									
+								} else { // Otherwise, it should be the normal tile width
+									bigTileOutputWidth = tileWidth;	
+									bigImageOutputWidth = tileWidth;	
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+									
+									var edgeGapX = Math.floor(tileWidth * bigWidthAfterDec);
+									var bigDivCoordsX = (tileWidth * x) - (tileWidth-edgeGapX);
+								}
+										
+								// Checks to see if it is a vertical edge box
+								if ((tileNumHeight - 1) - y == (tileNumHeight-1)) { // If so, make it the correct height
+									bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);									
+									bigImageOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+									
+									// Calculates Y Positioning
+									var bigDivCoordsY = tileHeight * y;
+									
+								} else { // Or, make it the normal height
+									bigTileOutputHeight = tileHeight;	
+									bigImageOutputHeight = tileHeight;
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+									
+									// Calculates Y Positioning. 
+									// @ 90 Degrees we have to remove the gap left from the edge pieces being smaller than the regular tiles
+									var edgeGapY = Math.floor(tileHeight * bigHeightAfterDec);
+									var bigDivCoordsY = (tileHeight * y) - (tileHeight-edgeGapY);
+								}																
+								
+								// Calculates the X, Y Positioning for the Images in those Tiles
+								var bigImageCoordsX = tileWidth * -(x - (tileNumWidth-1));
+								var bigImageCoordsY = tileHeight * -(y - (tileNumHeight-1));
+								
+								//var coordsaasd = bigImageCoordsX + "," + bigImageCoordsY;
+								//alert(coordsaasd);
+								
+								// Convert the X, Y for the Navigator
+								var smallDivCoordsX = bigDivCoordsX * convertWidth;
+								var smallDivCoordsY = bigDivCoordsY * convertHeight;
+								
+								// X2, Y2 for Content DM GetImage
+								x2 = bigImageCoordsX + bigImageOutputWidth;
+								y2 = bigImageCoordsY + bigImageOutputHeight;
+										
+								// Adjust the zoom level to CDM Size
+								var dmScale = lvlZoom * 100;
+									
+								// Create the divs in which to place the images
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(bigDiv).appendTo('#mainimage');
+										
+								// Create the nav divs for collision detection
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+										
+								// Builds the Array of images to load, and an array for the width and height of those																					
+								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageWidth[tileNum] = bigTileOutputWidth;										
+								tileImageHeight[tileNum] = bigTileOutputHeight;
+										
+								// Progress tileNum
+								tileNum++
+							
+							} // end Y loop
+						} // end X Loop																					
+					
+					// 270 Degrees
+					} else if (lvlRotation == 270) {												
+						
+						for (x=tileNumWidth-1;x>=0;x--) {
+							for (y=0;y<tileNumHeight;y++) {																																	
+									
+								// Grabs the remainder of the precise width to calculate the boxes on the horizontal edge
+								var bigWidthDecimal = preciseWidth.toString().split(".");
+								var bigWidthAfterDec = "." + bigWidthDecimal[1];
+								var smallWidthAfterDec = bigWidthAfterDec * convertWidth;
+										
+								// Grabs the remainder of the prcise height to calculate the boxes on the vertical edge
+								var bigHeightDecimal = preciseHeight.toString().split(".");
+								var bigHeightAfterDec = "." + bigHeightDecimal[1];
+								var smallHeightAfterDec = bigHeightAfterDec * convertHeight;										
+								
+								// Checks to see if it is a horizontal edge box.
+								if ((tileNumWidth - 1) - x == (tileNumWidth - 1)) { // If so, make it the correct width
+									bigTileOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);
+									bigImageOutputWidth = Math.floor(tileWidth * bigWidthAfterDec);									
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+									
+									// Calculates Y Positioning
+									var bigDivCoordsX = tileWidth * x;
+									
+								} else { // Otherwise, it should be the normal tile width
+									bigTileOutputWidth = tileWidth;	
+									bigImageOutputWidth = tileWidth;	
+									smallTileOutputWidth = bigTileOutputWidth * convertWidth;
+									
+									var edgeGapX = Math.floor(tileWidth * bigWidthAfterDec);
+									var bigDivCoordsX = (tileWidth * x) - (tileWidth-edgeGapX);
+								}
+										
+								// Checks to see if it is a vertical edge box
+								if ((tileNumHeight - 1) - y == 0) { // If so, make it the correct height
+									bigTileOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
+									bigImageOutputHeight = Math.floor(tileHeight * bigHeightAfterDec);
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+								} else { // Or, make it the normal height
+									bigTileOutputHeight = tileHeight;	
+									bigImageOutputHeight = tileHeight;
+									smallTileOutputHeight = bigTileOutputHeight * convertHeight;
+								}
+								
+								// Calculate the X, Y Positioning for the Main Image Tiles
+								var bigDivCoordsY = tileHeight * y;								
+								
+								// Calculates the X, Y Positioning for the Images in those Tiles
+								var bigImageCoordsX = tileWidth * y;
+								var bigImageCoordsY = tileHeight * -(x - (tileNumWidth-1));								
+								
+								//var coordsaasd = bigImageCoordsX + "," + bigImageCoordsY;
+								//alert(coordsaasd);
+								
+								// Convert the X, Y for the Navigator
+								var smallDivCoordsX = bigDivCoordsX * convertWidth;
+								var smallDivCoordsY = bigDivCoordsY * convertHeight;
+										
+								// X2, Y2 for Content DM GetImage
+								x2 = bigImageCoordsX + bigImageOutputHeight;
+								y2 = bigImageCoordsY + bigImageOutputWidth;
+										
+								// Adjust the zoom level to CDM Size
+								var dmScale = lvlZoom * 100;
+									
+								// Create the divs in which to place the images
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(bigDiv).appendTo('#mainimage');
+										
+								// Create the nav divs for collision detection
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								
+								// Line used for Testing... adds the div # to the output
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+										
+								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+										
+								// Builds the Array of images to load, and an array for the width and height of those																					
+								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageWidth[tileNum] = bigTileOutputWidth;										
+								tileImageHeight[tileNum] = bigTileOutputHeight;
+										
+								// Progress tileNum
+								tileNum++
+							
+							} // End Y Loop
+						} // End X Loop	
+						
+					} // End Rotation IF													
+					
 					var containerWidth = parseInt(((imageWidth) + (imageWidth) - viewerWidth)) + "px";
 					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
@@ -412,10 +660,8 @@ $(document).ready(function() {
 					$('#mainimage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
-						.css('top', imagePositionY);
-										
-					// $('#mainimage')
-					
+						.css('top', imagePositionY);											
+						
 					// A Draggable div for IE
 					$('<div id="mainimagedragger"></div>')
 						.appendTo('#mainimagecontainer')
@@ -427,19 +673,17 @@ $(document).ready(function() {
 						.css('z-index', '10')
 						.css('background-image', 'url(images/bg_ie.gif)')
 						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); }); 
-					
-					//.draggable( { containment: '#mainimagecontainer', drag: function() { moveImage(); }, stop: function() { loadImages(); } } );
-					
-					buildNav();						
-					
+						.bind('dragend', function() { loadImages(); }); 						
+						
+					buildNav();
+						
 				})
 				.attr('class', 'thumbImage')
 				.attr('src', thumbSrc);
 		}
 	}
 	
-	// Builds the Navigator after the imagei s loaded
+	// Builds the Navigator after the image is loaded
 	function buildNav() {
 		
 		// Calculates the width and Height of the navigator
@@ -509,6 +753,8 @@ $(document).ready(function() {
 									
 				var newImageTile = new Image();
 				
+				// alert (tileImageSrc[newImageNum]); // Shows which Image is loading
+				
 				$(newImageTile)
 					.load(function () {
 						$(newImageDiv).append(this);
@@ -517,7 +763,7 @@ $(document).ready(function() {
 					.width(tileImageWidth[newImageNum])
 					.height(tileImageHeight[newImageNum])
 					.attr('class', 'tileimage')
-					.attr('src', tileImageSrc[newImageNum]); 
+					.attr('src', tileImageSrc[newImageNum]);
 					
 			}
 			
