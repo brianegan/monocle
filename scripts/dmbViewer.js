@@ -19,8 +19,8 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/			
-	var zoomLevel = .15;
-	var rotationLevel = 180;
+	var zoomLevel = .25;
+	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
 	var bigWidth = 10360;
@@ -32,6 +32,8 @@ $(document).ready(function() {
 	var CISOROOT = "LV_Maps";
 	var thumbWidth;
 	var thumbHeight;
+	var thumbWidthMax = 120;
+	var thumbHeightMax = 120;
 	var tileWidth;
 	var tileHeight;
 	var sliderVal;
@@ -76,12 +78,28 @@ $(document).ready(function() {
 		
 		// Actual Image Dimensions relative to rotation
 		imageWidth = bigImageWidth * lvlZoom;
-		imageHeight = bigImageHeight * lvlZoom;		
+		imageHeight = bigImageHeight * lvlZoom;
 		
-		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {
-			
-			var thumbImage = new Image();
-			var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=1&DMWIDTH=160&DMHEIGHT=160&DMROTATE=" + lvlRotation;
+		// Size the Thumbnail and build the URL for the thumbnail
+		if (imageHeight > imageWidth) {
+			var thumbRatio = thumbHeightMax / (imageHeight/lvlZoom);
+			thumbHeight = thumbRatio * (imageHeight/lvlZoom);
+			thumbWidth = thumbRatio * (imageWidth/lvlZoom);
+		} else if (imageHeight < imageWidth) {
+			var thumbRatio = thumbWidthMax / (imageWidth/lvlZoom);
+			thumbHeight = thumbRatio *(imageHeight/lvlZoom);
+			thumbWidth = thumbRatio * (imageWidth/lvlZoom);
+		} else if (imageHeight == imageWidth) {
+			var thumbRatio = thumbHeightMax / (imageHeight/lvlZoom);
+			thumbHeight = thumbRatio * (imageHeight/lvlZoom);
+			thumbWidth = thumbRatio * (imageWidth/lvlZoom);
+		}
+		
+		var dmThumbScale = thumbRatio * 100;
+		var thumbImage = new Image();
+		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidth + "&DMHEIGHT=" + thumbHeight + "&DMROTATE=" + lvlRotation;
+		
+		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {						
 			
 			$(thumbImage)
 				.load(function () { 
@@ -114,9 +132,6 @@ $(document).ready(function() {
 				.attr('src', thumbSrc);
 		
 		} else if (imageWidth < viewerWidth && imageHeight > viewerHeight) {
-			
-			var thumbImage = new Image();
-			var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=1&DMWIDTH=160&DMHEIGHT=160&DMROTATE=" + lvlRotation;
 			
 			$(thumbImage)
 				.load(function () { 
@@ -164,9 +179,6 @@ $(document).ready(function() {
 				.attr('src', thumbSrc);
 			
 		} else if (imageWidth > viewerWidth && imageHeight < viewerHeight) {
-			
-			var thumbImage = new Image();
-			var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=1&DMWIDTH=160&DMHEIGHT=160&DMROTATE=" + lvlRotation;
 			
 			$(thumbImage)
 				.load(function () { 
@@ -249,10 +261,6 @@ $(document).ready(function() {
 				.css('position', 'absolute')
 				.css('background-image', 'none');
 			
-			// Loads in the new thumbnail based on rotation
-			var thumbImage = new Image();
-			var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=1&DMWIDTH=160&DMHEIGHT=160&DMROTATE=" + lvlRotation;
-			
 			$(thumbImage)
 				.load(function () { // As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations					
 								
@@ -260,8 +268,8 @@ $(document).ready(function() {
 					$('#thumbnail').append(this);
 								
 					// Gets those measurements I was talking about!
-					thumbWidth = $(this).width();
-					thumbHeight = $(this).height();
+					//thumbWidth = $(this).width();
+					//thumbHeight = $(this).height();
 							
 					// Calculate the exact number of tiles
 					var preciseWidth = imageWidth / tileWidth;
@@ -402,8 +410,7 @@ $(document).ready(function() {
 								
 								// Calculate the X, Y Positioning for the Main Image Tiles
 								var bigDivCoordsX = tileWidth * x;
-								
-								
+																
 								// Calculates the X, Y Positioning for the Images in those Tiles
 								var bigImageCoordsX = tileWidth * -(y - (tileNumHeight-1));
 								var bigImageCoordsY = tileHeight * x;
@@ -758,7 +765,7 @@ $(document).ready(function() {
 				$(newImageTile)
 					.load(function () {
 						$(newImageDiv).append(this);
-						$(newImageDiv).css('background-image', 'none');
+						$(newImageDiv).css('background-image', 'none');						
 						})
 					.width(tileImageWidth[newImageNum])
 					.height(tileImageHeight[newImageNum])
