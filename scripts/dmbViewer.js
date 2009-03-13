@@ -18,7 +18,7 @@ $(document).ready(function() {
 	*
 	*	DEFAULT VARIABLES!
 	*
-	******************************************/			
+	******************************************/
 	var zoomLevel = .25;
 	var rotationLevel = 0;
 	var viewerWidth = 730;
