@@ -97,12 +97,13 @@ $(document).ready(function() {
 		
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
-		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidth + "&DMHEIGHT=" + thumbHeight + "&DMROTATE=" + lvlRotation;
+		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
 		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {						
 			
 			$(thumbImage)
 				.load(function () { 
+													
 					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations
 											
 					// Adds the image to the thumbnail div
@@ -170,7 +171,7 @@ $(document).ready(function() {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
 						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); }); 
+						.bind('dragend', function() { loadImages(); });						
 						
 					buildNav();	
 					
@@ -268,9 +269,13 @@ $(document).ready(function() {
 					$('#thumbnail').append(this);
 								
 					// Gets those measurements I was talking about!
-					//thumbWidth = $(this).width();
-					//thumbHeight = $(this).height();
-							
+					thumbWidth = $(this).width();
+					thumbHeight = $(this).height();
+					
+					// Adds the invisible clickable Nav
+					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#thumbnail");
+					
 					// Calculate the exact number of tiles
 					var preciseWidth = imageWidth / tileWidth;
 					var preciseHeight = imageHeight / tileHeight;
@@ -338,15 +343,15 @@ $(document).ready(function() {
 								var dmScale = lvlZoom * 100;
 									
 								// Create the divs in which to place the images
-								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";																
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";																
 										
 								$(bigDiv).appendTo('#mainimage');
 										
 								// Create the nav divs for collision detection
-								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								//var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								//var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
@@ -430,18 +435,18 @@ $(document).ready(function() {
 								var dmScale = lvlZoom * 100;
 									
 								// Create the divs in which to place the images
-								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(bigDiv).appendTo('#mainimage');
 										
 								// Create the nav divs for collision detection
-								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
@@ -529,18 +534,18 @@ $(document).ready(function() {
 								var dmScale = lvlZoom * 100;
 									
 								// Create the divs in which to place the images
-								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(bigDiv).appendTo('#mainimage');
 										
 								// Create the nav divs for collision detection
-								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
@@ -622,18 +627,18 @@ $(document).ready(function() {
 								var dmScale = lvlZoom * 100;
 									
 								// Create the divs in which to place the images
-								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
+								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								//var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(bigDiv).appendTo('#mainimage');
 										
 								// Create the nav divs for collision detection
-								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
+								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";
 								
 								// Line used for Testing... adds the div # to the output
-								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; z-index: 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; z-index: 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
+								// var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; border: 1px solid #CCC; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"><span style=\"display: block; background-color: #00FF00; position: absolute; : 1000; left: 0; top: 0;\">" + tileNum + "</span></div>";
 										
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
@@ -677,16 +682,23 @@ $(document).ready(function() {
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
-						.css('z-index', '10')
+						.css('z-index', '14')
 						.css('background-image', 'url(images/bg_ie.gif)')
 						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); }); 						
+						.bind('dragend', function() { loadImages(); })
+						.bind("dblclick", function(e){ 
+							var posX = e.pageX;
+							var posY = e.pageY;
+							dblClickImage(posX, posY);
+						});
+						 						
 						
 					buildNav();
 						
 				})
 				.attr('class', 'thumbImage')
 				.attr('src', thumbSrc);
+				
 		}
 	}
 	
@@ -703,15 +715,25 @@ $(document).ready(function() {
 		if (navigatorHeight > $('#thumbnail img').height()) {
 			navigatorHeight = $('#thumbnail img').height();
 		}
+		
+		// Binds a click to the nav
+		$('#thumbnail .clicknav')
+			.bind("dblclick", function(e){ 
+				var posX = e.pageX;
+				var posY = e.pageY;
+				dblClickNav(posX, posY);
+			})
+			.bind('drag', function(){ }) 
+			.bind('dragend', function() { }); // The two empty drag lines added here are meant to prevent Firefox from selecting images when double clicking on the nav. This is not the coolest workaround, and I will look for something better down the road.
 
 		// Adds the navigator to the thumbnail
 		$('<div class="navigator"></div>')
 			.appendTo('#thumbnail')
 			.width(navigatorWidth)
 			.height(navigatorHeight)
-			.css('z-index', '15')
+			.css('z-index', '20')
 			.bind('drag', function(event){ moveNav(event); })
-			.bind('dragend', function() { loadImages(); }); 
+			.bind('dragend', function() { loadImages(); });			
 		
 		// After building the nav load the images touching it
 		loadImages();
@@ -848,6 +870,71 @@ $(document).ready(function() {
 		 
 	}
 	
+	// When the main image is clicked, move it and the nav as well
+	function moveImage(event) {
+		
+		// Get the container dimensions
+		var container = $('div#mainimagecontainer');
+		var containerX = $(container).offset().left;
+		var containerY = $(container).offset().top;
+		var containerWidth = $(container).width();
+		var containerHeight = $(container).height();
+		
+		// Get the nav dimensions
+		var mainImage = $('div#mainimage');
+		var mainImageWidth = $(mainImage).width();
+		var mainImageHeight = $(mainImage).height();
+		
+		// Get the proper nav positioning
+		tempX = (event.offsetX + document.body.scrollLeft) - containerX;
+		tempY = (event.offsetY + document.body.scrollTop) - containerY;
+		
+		// Create Proper containment
+		var mainImageX = tempX + mainImageWidth;
+		var mainImageY = tempY + mainImageHeight;
+		
+		// Max width the container can go
+		var containerMaxX = containerWidth - mainImageWidth;
+		var containerMaxY = containerHeight - mainImageHeight;
+		
+		// If the box is in the proper container, move the Nav
+		if (tempX < 0){ 
+			tempX = 0; 
+		} else if (mainImageX > containerWidth) { 
+			tempX = containerMaxX;
+		}
+  		if (tempY < 0){ 
+			tempY = 0;
+		} else if (mainImageY > containerHeight) { 
+			tempY = containerMaxY;
+		}
+		
+		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
+  		$(mainImage).css({ left:tempX, top:tempY });
+		$('#mainimagedragger').css({ left:tempX, top:tempY });
+		
+		//if (mainImageY > containerHeight) { $(mainImage).css({ left: (containerHeight - mainImageHeight) });
+		
+		//if (tempX >= 0 && mainImageX <= containerWidth){ $(mainImage).css({ left:tempX }); $('#mainimagedragger').css({ left:tempX }); };
+  		//if (tempY >= 0 && mainImageY <= containerHeight){ $(mainImage).css({ top:tempY }); $('#mainimagedragger').css({ top:tempY }); };
+		
+		// Get MainImage Position Information
+		var mainLeft = parseFloat($('#mainimage').css('left'));
+		var mainTop = parseFloat($('#mainimage').css('top'));
+		
+		// Grabs the current boundaries of the container
+		var imagePositionX = ($('#mainimage').width() - viewerWidth);
+		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		
+		// Convert the inverted difference into the Thumbnail / MainImage ratios
+		var navLeft = -1 * ((mainLeft - imagePositionX) * ($('#thumbnail img').width() / $('#mainimage').width()));
+		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / $('#mainimage').height()));
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').css('left', navLeft).css('top', navTop);
+		 
+	}
+	
 	// When the nav is dragged, move it and the main image window as well
 	function moveNav(event) {
 		
@@ -906,6 +993,50 @@ $(document).ready(function() {
 		// Converts the Position to the Thumnail Ratio
 		$('#mainimage').css('left', mainLeft).css('top', mainTop);
 		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
+		 
+	}
+	
+	
+	// When the thumbnail is double clicked, move the navigator & main image
+	function dblClickNav(xPos, yPos) {		
+	
+		var navigatorTempWidth = $('div.navigator').width();
+		var navigatorTempHeight = $('div.navigator').height();
+		var navTop = (yPos - $('#thumbnail').offset().top) - (navigatorTempHeight / 2);
+		var navLeft = (xPos - $('#thumbnail').offset().left) - (navigatorTempWidth / 2);
+		
+		$("#feedback").html("Nav Dimentions: " + navigatorTempWidth + " x " + navigatorTempHeight);
+		
+		if ((navTop + navigatorTempHeight) > $('#thumbnail img').height()) {
+			navTop = $('#thumbnail img').height() - navigatorTempHeight;
+		}
+		else if (navTop < 0) {
+			navTop = 0;
+		}
+		if ((navLeft + navigatorTempWidth) > $('#thumbnail img').width()) {
+			navLeft = $('#thumbnail img').width() - navigatorTempWidth;
+		}
+		else if (navLeft < 0) {
+			navLeft = 0;
+		}
+		
+		// Grabs the current boundaries of the container
+		var imagePositionX = ($('#mainimage').width() - viewerWidth);
+		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		
+		// Convert the inverted difference into the Thumbnail / MainImage ratios
+		var mainLeft = imagePositionX + -1 * (($('#mainimage').width() / $('#thumbnail img').width()) * navLeft);
+		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
+		
+		// Converts the Position to the Thumnail Ratio
+		$('#mainimage').css('left', mainLeft).css('top', mainTop);
+		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').css('left', navLeft).css('top', navTop);
+		
+		// After moving the nav, load the corresponding images
+		loadImages();
 		 
 	}
 	
