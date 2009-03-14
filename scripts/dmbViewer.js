@@ -3,12 +3,12 @@
 	version .56
 	by Brian Egan
 
-ChangeLog version .55 - version .56:
+ChangeLog version .56 - version .6:
 	
-	* Goal of version: Fix code for small main Images, Get functions ready for the zoom menu options
-	* Fixed the code for small images, images that run vertically over, and images that run horizontally over
-	* Changed the way the nav & main image dragging containing works. This fixes a previous buggy system which wouldn't always allow the viewer to reach the edge
-	* Tested as working in Mozilla Firefox 3.0.4, Internet Explorer 6 & 7, Safari 3.2.1, Google Chrome 4.154.25, and Opera 9.62
+	* Goal of version: Add rotation, more options for navigation, and size the thumbnail
+	* Rotation Added. This includes 0, 90, 180, and 270 degrees. The script will now take the rotation and compile the tiles properly.
+	* Double-click navigation. By double-clicking on the thumbnail & main image, the viewer centers on that part of the image.
+	* Fixed the sizing of the thumbnail. Used to rely on the fact that the thumbnail at 1.5 percent would be smaller than 160px. This isn't always true, however, and caused cropped thumbnails. Now calculate the thumbnail based on preferred max thumbnail size (defined by thumbWidthMax & thumbHeightMax) in relation to the max image size.
 	
 *****************************************************************/
 
@@ -23,12 +23,12 @@ $(document).ready(function() {
 	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
-	var bigWidth = 10360;
+	/*var bigWidth = 10360;
 	var bigHeight = 9590;
-	var CISOPTR = 426; 
-	/* var bigWidth = 11320;
+	var CISOPTR = 426;*/ 
+	var bigWidth = 11320;
 	var bigHeight = 6590;
-	var CISOPTR = 423;*/
+	var CISOPTR = 423;
 	var CISOROOT = "LV_Maps";
 	var thumbWidth;
 	var thumbHeight;
@@ -111,7 +111,7 @@ $(document).ready(function() {
 							
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
-					thumbHeight = $(this).height();
+					thumbHeight = $(this).height();					
 					
 					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
@@ -126,7 +126,15 @@ $(document).ready(function() {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat');
 			
-					buildNav();	
+					// Adds the navigator to the thumbnail
+					$('<div class="navigator"></div>')
+						.appendTo('#thumbnail')
+						.width(thumbWidth)
+						.height(thumbHeight)
+						.css('z-index', '20');	
+					
+					// After building the nav load the images touching it
+					loadImages();
 					
 					})
 				.attr('class', 'thumbImage')
@@ -144,6 +152,10 @@ $(document).ready(function() {
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
+					
+					// Adds the invisible clickable Nav
+					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#thumbnail");
 					
 					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
@@ -171,7 +183,12 @@ $(document).ready(function() {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
 						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); });						
+						.bind('dragend', function() { loadImages(); })
+						.bind("dblclick", function(e){ 
+							var posX = e.pageX;
+							var posY = e.pageY;
+							dblClickImage(posX, posY);
+						});
 						
 					buildNav();	
 					
@@ -191,6 +208,10 @@ $(document).ready(function() {
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
+					
+					// Adds the invisible clickable Nav
+					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#thumbnail");
 					
 					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
@@ -218,7 +239,12 @@ $(document).ready(function() {
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
 						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); }); 
+						.bind('dragend', function() { loadImages(); })
+						.bind("dblclick", function(e){ 
+							var posX = e.pageX;
+							var posY = e.pageY;
+							dblClickImage(posX, posY);
+						});
 					
 					buildNav();	
 					
@@ -830,7 +856,7 @@ $(document).ready(function() {
 		
 		// Max width the container can go
 		var containerMaxX = containerWidth - mainImageWidth;
-		var containerMaxY = containerHeight - mainImageHeight;
+		var containerMaxY = containerHeight - mainImageHeight;		
 		
 		// If the box is in the proper container, move the Nav
 		if (tempX < 0){ 
@@ -870,58 +896,68 @@ $(document).ready(function() {
 		 
 	}
 	
-	// When the main image is clicked, move it and the nav as well
-	function moveImage(event) {
+	// When the thumbnail is double clicked, move the navigator & main image
+	function dblClickImage(xPos, yPos) {				
 		
-		// Get the container dimensions
-		var container = $('div#mainimagecontainer');
-		var containerX = $(container).offset().left;
-		var containerY = $(container).offset().top;
-		var containerWidth = $(container).width();
-		var containerHeight = $(container).height();
+		// Grabs viewer dimensions
+		var viewerWidth = $('#viewer').width();
+		var viewerHeight = $('#viewer').height();
 		
-		// Get the nav dimensions
-		var mainImage = $('div#mainimage');
-		var mainImageWidth = $(mainImage).width();
-		var mainImageHeight = $(mainImage).height();
+		// Grabs 
+		var mainTempLeft = parseFloat($('#mainimage').css('left'));
+		var mainTempTop = parseFloat($('#mainimage').css('top'));
+				
 		
-		// Get the proper nav positioning
-		tempX = (event.offsetX + document.body.scrollLeft) - containerX;
-		tempY = (event.offsetY + document.body.scrollTop) - containerY;
-		
-		// Create Proper containment
-		var mainImageX = tempX + mainImageWidth;
-		var mainImageY = tempY + mainImageHeight;
-		
-		// Max width the container can go
-		var containerMaxX = containerWidth - mainImageWidth;
-		var containerMaxY = containerHeight - mainImageHeight;
-		
-		// If the box is in the proper container, move the Nav
-		if (tempX < 0){ 
-			tempX = 0; 
-		} else if (mainImageX > containerWidth) { 
-			tempX = containerMaxX;
+		// Checks to see which side of the viewer is clicked (left/right), then horizontally moves the image
+		if ((xPos - $('#viewer').offset().left) > (viewerWidth / 2)) {
+			var mainLeft = (mainTempLeft + viewerWidth / 2) - (xPos - $('#viewer').offset().left);		
+			
+			//$("#feedback").html("Image Left/Top: " + ((xPos - $('#viewer').offset().left) - viewerWidth / 2) + " x " + (xPos - $('#viewer').offset().left));
+			$("#feedback").html("Image Left/Top: " + mainLeft + " x " + viewerWidth / 2);
+			
+			
+			// Bounds Checking
+			if (mainLeft < 0) {
+				mainLeft = 0;	
+			} 
+			
+		} else if ((xPos - $('#viewer').offset().left) < (viewerWidth / 2)) {
+			var mainLeft = mainTempLeft + (viewerWidth / 2 - (xPos - $('#viewer').offset().left));
+			
+			$("#feedback").html("Image Left/Top: " + mainLeft + " x " + mainTempTop);
+			
+			// Bounds Checking
+			if (mainLeft > $('#mainimage').width() - viewerWidth) {
+				mainLeft = $('#mainimage').width() - viewerWidth;
+			}
+			
+		} else if ((xPos - $('#viewer').offset().left) == (viewerWidth / 2)) {
+			var mainLeft = mainTempLeft;
+			
+			
 		}
-  		if (tempY < 0){ 
-			tempY = 0;
-		} else if (mainImageY > containerHeight) { 
-			tempY = containerMaxY;
-		}
 		
-		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
-  		$(mainImage).css({ left:tempX, top:tempY });
-		$('#mainimagedragger').css({ left:tempX, top:tempY });
-		
-		//if (mainImageY > containerHeight) { $(mainImage).css({ left: (containerHeight - mainImageHeight) });
-		
-		//if (tempX >= 0 && mainImageX <= containerWidth){ $(mainImage).css({ left:tempX }); $('#mainimagedragger').css({ left:tempX }); };
-  		//if (tempY >= 0 && mainImageY <= containerHeight){ $(mainImage).css({ top:tempY }); $('#mainimagedragger').css({ top:tempY }); };
-		
-		// Get MainImage Position Information
-		var mainLeft = parseFloat($('#mainimage').css('left'));
-		var mainTop = parseFloat($('#mainimage').css('top'));
-		
+		// Checks to see which half of the viewer is clicked (top/bottom), then vertically moves the image
+		if ((yPos - $('#viewer').offset().top) > (viewerHeight / 2)) {
+			var mainTop = (mainTempTop + viewerHeight / 2) - (yPos - $('#viewer').offset().top);
+			
+			// Bounds Checking
+			if (mainTop < 0) {
+				mainTop = 0;	
+			} 
+			
+		} else if ((yPos - $('#viewer').offset().top) < (viewerHeight / 2)) {
+			var mainTop = mainTempTop + (viewerHeight / 2 - (yPos - $('#viewer').offset().top));
+			
+			// Bounds Checking
+			if (mainTop > $('#mainimage').height() - viewerHeight) {
+				mainTop = $('#mainimage').height() - viewerHeight;
+			}
+			
+		} else if ((yPos - $('#viewer').offset().top) == (viewerHeight / 2)) {
+			var mainTop = mainTempTop;
+		}					
+							
 		// Grabs the current boundaries of the container
 		var imagePositionX = ($('#mainimage').width() - viewerWidth);
 		var imagePositionY = ($('#mainimage').height() - viewerHeight);
@@ -931,7 +967,24 @@ $(document).ready(function() {
 		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / $('#mainimage').height()));
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').css('left', navLeft).css('top', navTop);
+		$('#mainimage').animate(
+			{ 
+				top: mainTop,
+				left: mainLeft
+				//css('left', mainLeft).css('top', mainTop);			
+			}, "normal", "swing");
+		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);		
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').animate(
+			{ 
+				top: navTop,
+				left: navLeft
+							
+			}, "normal", "swing",
+			function() {
+				loadImages();
+			})
 		 
 	}
 	
@@ -1005,8 +1058,6 @@ $(document).ready(function() {
 		var navTop = (yPos - $('#thumbnail').offset().top) - (navigatorTempHeight / 2);
 		var navLeft = (xPos - $('#thumbnail').offset().left) - (navigatorTempWidth / 2);
 		
-		$("#feedback").html("Nav Dimentions: " + navigatorTempWidth + " x " + navigatorTempHeight);
-		
 		if ((navTop + navigatorTempHeight) > $('#thumbnail img').height()) {
 			navTop = $('#thumbnail img').height() - navigatorTempHeight;
 		}
@@ -1029,14 +1080,28 @@ $(document).ready(function() {
 		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('#mainimage').css('left', mainLeft).css('top', mainTop);
+		$('#mainimage').animate(
+			{ 
+				top: mainTop,
+				left: mainLeft
+				//css('left', mainLeft).css('top', mainTop);			
+			}, "normal", "swing");
 		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').css('left', navLeft).css('top', navTop);
+		$('div.navigator').animate(
+			{ 
+				top: navTop,
+				left: navLeft
+							
+			}, "normal", "swing",
+			function() {
+				loadImages();
+			})
 		
-		// After moving the nav, load the corresponding images
-		loadImages();
+		// .css('left', navLeft).css('top', navTop);
+		
+		// After moving the nav, load the corresponding images		
 		 
 	}
 	

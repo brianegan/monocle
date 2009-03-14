@@ -58,6 +58,7 @@ div#viewer {
 	left: 0;
 	cursor: move;
 	opacity: .4;
+	filter: alpha(opacity = 40); /* IE does not recognize CSS's native opacity property */
 	}
 #feedback {
 	position:absolute;
