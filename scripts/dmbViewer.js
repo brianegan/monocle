@@ -19,8 +19,8 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/
-	var zoomLevel = .25;
-	var rotationLevel = 90;
+	var zoomLevel = .12;
+	var rotationLevel = 270;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
 	/*var bigWidth = 10360;
@@ -99,8 +99,6 @@ $(document).ready(function() {
 		
 		imageOffsetX  = imageWidth * offsetRatioX - (viewerWidth / 2);
 		imageOffsetY = imageHeight * offsetRatioY - (viewerHeight / 2);
-		
-		// alert(imageOffsetX + ", " + imageOffsetY);
 		
 		// Offset Containment
 		if (imageOffsetX < 0) {
@@ -201,8 +199,8 @@ $(document).ready(function() {
 					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
+					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
+					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -226,7 +224,7 @@ $(document).ready(function() {
 							dblClickImage(posX, posY);
 						});
 						
-					buildNav();	
+					buildNav(offsetRatioX, offsetRatioY);
 					
 					})
 				.attr('class', 'thumbImage')
@@ -257,8 +255,8 @@ $(document).ready(function() {
 					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
+					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
+					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -282,7 +280,7 @@ $(document).ready(function() {
 							dblClickImage(posX, posY);
 						});
 					
-					buildNav();	
+					buildNav(offsetRatioX, offsetRatioY);
 					
 					})
 				.attr('class', 'thumbImage')
@@ -1219,18 +1217,21 @@ $(document).ready(function() {
 		// Grabs current position of the main image
 		var mainTempLeft = parseFloat($('#mainimage').css('left'));
 		var mainTempTop = parseFloat($('#mainimage').css('top'));
+		
+		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
+		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
 				
 		// Get the Ratio of the zoomed spot to the top, left corner of the image
 		//var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
 		//var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
 		
-		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
-		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
+		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (tempImageWidth * scrollZoomLvl);
+		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (tempImageHeight * scrollZoomLvl);
 		
 		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
 		
-		$("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; ASDAS: " +zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		$("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
@@ -1253,6 +1254,9 @@ $(document).ready(function() {
 		var viewerWidth = $('#viewer').width();
 		var viewerHeight = $('#viewer').height();
 		
+		//
+		// alert($('#mainimage').width());
+		
 		// Grabs default position of the main image
 		var defaultMainLeft = $('#mainimage').width() - viewerWidth;
 		var defaultMainTop = $('#mainimage').height() - viewerHeight;
@@ -1260,16 +1264,21 @@ $(document).ready(function() {
 		// Grabs current position of the main image
 		var mainTempLeft = parseFloat($('#mainimage').css('left'));
 		var mainTempTop = parseFloat($('#mainimage').css('top'));
+		
+		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
+		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
 				
 		// Get the Ratio of the zoomed spot to the top, left corner of the image
 		//var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
 		//var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
 		
-		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
-		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
+		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (tempImageWidth * scrollZoomLvl);
+		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (tempImageHeight * scrollZoomLvl);
 		
-		// var checkMathX = (bigWidth * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
-		// var checkMathY = (bigHeight * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
+		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
+		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
+		
+		$("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
