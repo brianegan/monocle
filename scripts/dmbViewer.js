@@ -1,14 +1,14 @@
 /**************************************
 	dmBridge Image Viewer
-	version .56
+	version .7
 	by Brian Egan
 
-ChangeLog version .56 - version .6:
+ChangeLog version .6 - version .7:
 	
-	* Goal of version: Add rotation, more options for navigation, and size the thumbnail
-	* Rotation Added. This includes 0, 90, 180, and 270 degrees. The script will now take the rotation and compile the tiles properly.
-	* Double-click navigation. By double-clicking on the thumbnail & main image, the viewer centers on that part of the image.
-	* Fixed the sizing of the thumbnail. Used to rely on the fact that the thumbnail at 1.5 percent would be smaller than 160px. This isn't always true, however, and caused cropped thumbnails. Now calculate the thumbnail based on preferred max thumbnail size (defined by thumbWidthMax & thumbHeightMax) in relation to the max image size.
+	* Goal of version: Fine tune the zooming functionality so it retains it's location when zooming in instead of resetting & allow for scrolling.
+	* Zoom retainment functionality built. The buildImage and buildNav functions now accept offset ratios (the distance from the middle of the zoom to the top left of the image divided by the width of the image). This allows the building functions to calculate where the initial nav should be placed when zoomed.
+	* Scroll zooming added to the image. When a user scrolls up or down over the main image, the program will calculate the ratio from the mouse point to the beginning of the image and pass that on to the build function.
+	* Scroll zooming added to the thumbnail as well.
 	
 *****************************************************************/
 
@@ -19,8 +19,8 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/
-	var zoomLevel = .12;
-	var rotationLevel = 270;
+	var zoomLevel = .25;
+	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
 	/*var bigWidth = 10360;
@@ -42,6 +42,20 @@ $(document).ready(function() {
 	var tileImageHeight = new Array();
 	var tileNum = 0;
 	
+	// Cursor defaults
+	
+	/* Unfortunately, IE is completely dumb when it comes to cursors. According to CSS2 documentation:
+	"For CSS style sheets, the base URI is that of the style sheet, not that of the source document."
+	Well, that doesn't stop IE from making the base URI that of the source document, not the style sheet, and
+	only for the cursor element. This means we have 3 definitions. The first is the URI for IE, the second
+	is for all non-dumb (CSS Compliant) browsers, the 3rd is if loading the cursor should fail. */
+																							 
+	var closedHandCursor = "url(images/cursors/closedhand.cur), url(../images/cursors/closedhand.cur), move";
+	var openHandCursor = "url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move";
+	
+	$('<div class="openhand">&nbsp;</div>').appendTo('body');
+	$('<div class="closedhand">&nbsp;</div>').appendTo('body');
+	
 	/*****************************************
 	*
 	*	BUILDING FUNCTIONALITY!
@@ -50,11 +64,20 @@ $(document).ready(function() {
 	function buildImage(lvlZoom, lvlRotation, offsetRatioX, offsetRatioY) {
 		
 		// Cleans out the previous images & nav should there be any
+
 		$('#thumbnail img').remove();
 		$('#thumbnail div').remove();
 		$('#mainimage div').remove();
 		$('#mainimagedragger').remove();
+		$('#thumbnail').remove();
+		$('#mainimagecontainer').remove();
+		$('#mainimage').remove();		
 		
+		// Adds back in the necessary building blocks
+		$('<div id="thumbnail"></div>').appendTo('#viewer');
+		$('<div id="mainimagecontainer"></div>').appendTo('#viewer');
+		$('<div id="mainimage"></div>').appendTo('#mainimagecontainer');
+
 		// Adjust the measurements for the rotation
 		if (lvlRotation == 0) {
 			bigImageWidth = bigWidth;
@@ -136,12 +159,19 @@ $(document).ready(function() {
 		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {						
 			
 			$(thumbImage)
-				.load(function () { 
+				.load(function () {
 													
 					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations
 											
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#thumbnail')
+						.append(this)
+						.bind('wheel',function(event,delta){ // Binds the scrolling functionality to the thumbnail						
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);						
+						});
+						
 					
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
@@ -165,7 +195,9 @@ $(document).ready(function() {
 						.appendTo('#thumbnail')
 						.width(thumbWidth)
 						.height(thumbHeight)
-						.css('z-index', '20');	
+						.css('z-index', '20');
+						
+					
 					
 					// After building the nav load the images touching it
 					loadImages();
@@ -223,7 +255,7 @@ $(document).ready(function() {
 							var posY = e.pageY;
 							dblClickImage(posX, posY);
 						});
-						
+						 
 					buildNav(offsetRatioX, offsetRatioY);
 					
 					})
@@ -326,7 +358,13 @@ $(document).ready(function() {
 				.load(function () { // As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations					
 								
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#thumbnail')
+						.append(this)
+						.bind('wheel',function(event,delta){ // Binds the scrolling functionality to the thumbnail						
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);						
+						});
 								
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
@@ -746,25 +784,19 @@ $(document).ready(function() {
 						.css('top', imagePositionY)
 						.css('z-index', '14')
 						.css('background-image', 'url(images/bg_ie.gif)')
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); })
+						.css('cursor', openHandCursor)
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
 							dblClickImage(posX, posY);
 						})
-						.bind('wheel',function(event,delta){ 
-						//alert( delta>0 ? "up" : "down" );
-						if (delta > 0) {
-							var scrollPosX = event.pageX;
-							var scrollPosY = event.pageY;
-							imageScrollUp(scrollPosX, scrollPosY, lvlZoom);
-						} else if (delta < 0){
-							var scrollPosX = event.pageX;
-							var scrollPosY = event.pageY;
-							imageScrollDown(scrollPosX, scrollPosY, lvlZoom);
-						}
-							
+						.bind('wheel',function(event,delta){
+							$('#feedback').html(delta);
+							// var scrollPosX = event.pageX;
+							// var scrollPosY = event.pageY;
+							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
@@ -808,13 +840,14 @@ $(document).ready(function() {
 		
 		// Binds a click to the nav
 		$('#thumbnail .clicknav')
-			.bind("dblclick", function(e){ 
+			.bind("click", function(e){ 
 				var posX = e.pageX;
 				var posY = e.pageY;
 				dblClickNav(posX, posY);
 			})
 			.bind('drag', function(){ }) 
 			.bind('dragend', function() { }); // The two empty drag lines added here are meant to prevent Firefox from selecting images when double clicking on the nav. This is not the coolest workaround, and I will look for something better down the road.
+					
 
 		// Adds the navigator to the thumbnail
 		$('<div class="navigator"></div>')
@@ -824,8 +857,9 @@ $(document).ready(function() {
 			.css('z-index', '20')
 			.css('left', navOffsetX + "px")
 			.css('top', navOffsetY + "px")
-			.bind('drag', function(event){ moveNav(event); })
-			.bind('dragend', function() { loadImages(); });
+			.css('cursor', openHandCursor)
+			.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
+			.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
 		
 		// After building the nav load the images touching it
 		loadImages();
@@ -898,7 +932,7 @@ $(document).ready(function() {
 	*
 	******************************************/
 	// When the main image window is dragged, move it and the navigator as well
-	function moveImage(event) {
+	function moveImage(event) {				
 		
 		// Get the container dimensions
 		var container = $('div#mainimagecontainer');
@@ -1176,39 +1210,28 @@ $(document).ready(function() {
 	*
 	*	SCROLLING FUNCTIONALITY!
 	*
-	******************************************/
-	$('#thumbnail').bind('wheel',function(event,delta){ 
-		//alert( delta>0 ? "up" : "down" );
-		if (delta > 0) {
-			var scrollPosX = event.pageX;
-			var scrollPosY = event.pageY;
-			thumbScrollUp(scrollPosX, scrollPosY);
-		} else if (delta < 0){
-			var scrollPosX = event.pageX;
-			var scrollPosY = event.pageY;
-			thumbScrollDown(scrollPosX, scrollPosY);
-		}
-			
-	}); 
-	
-	function imageScrollUp(xScrollPos, yScrollPos, scrollZoomLvl) {
+	******************************************/		
+	function imageScroll(xScrollPos, yScrollPos, scrollZoomLvl, imageScrollDelta) {
 		
-		// $("#feedback").html("Scroll x, y: " + xScrollPos + " x " + yScrollPos);
-		
-		// alert(scrollZoomLvl);
-		
-		if (scrollZoomLvl + .05 > 1) {
-			var newScrollZoomLvl = 1;
-		} else {
-			var newScrollZoomLvl = scrollZoomLvl + .05;
+		if (imageScrollDelta == 1) {
+			if (scrollZoomLvl + .1 > 1) {
+				var newScrollZoomLvl = 1;
+			} else {
+				var newScrollZoomLvl = Math.round((scrollZoomLvl + .1)*100) / 100; // Math.ceil(scrollZoomLvl + .1);
+				zoomLevel = newScrollZoomLvl;
+			}
+		} else if (imageScrollDelta == -1) {
+			if (scrollZoomLvl - .1 < .01) {
+				var newScrollZoomLvl = .01;
+			} else {
+				var newScrollZoomLvl = Math.round((scrollZoomLvl - .1)*100) / 100;
+				zoomLevel = newScrollZoomLvl;
+			}
 		}
 		
 		// Grabs viewer dimensions
 		var viewerWidth = $('#viewer').width();
 		var viewerHeight = $('#viewer').height();
-		
-		//
-		// alert($('#mainimage').width());
 		
 		// Grabs default position of the main image
 		var defaultMainLeft = $('#mainimage').width() - viewerWidth;
@@ -1231,66 +1254,92 @@ $(document).ready(function() {
 		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
 		
-		$("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		$("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
 		buildImage(newScrollZoomLvl, rotationLevel, zoomOffsetRatioX, zoomOffsetRatioY);
 
-	}
+	}	
+	
+	function thumbScroll(xNavScrollPos, yNavScrollPos, scrollZoomLvl, scrollDelta) {
 		
-	function imageScrollDown(xScrollPos, yScrollPos, scrollZoomLvl) {
-		// $("#feedback").html("Scroll x, y: " + xScrollPos + " x " + yScrollPos);
-		
-		// alert(scrollZoomLvl);
-		
-		if (scrollZoomLvl - .05 < .01) {
-			var newScrollZoomLvl = .01;
-		} else {
-			var newScrollZoomLvl = scrollZoomLvl - .05;
+		if (scrollDelta == 1) {
+			if (scrollZoomLvl + .1 > 1) {
+				var newScrollZoomLvl = 1;
+			} else {
+				var newScrollZoomLvl = Math.round((scrollZoomLvl + .1)*100) / 100;
+				zoomLevel = newScrollZoomLvl;
+			}
+		} else if (scrollDelta == -1) {
+			if (scrollZoomLvl - .1 < .01) {
+				var newScrollZoomLvl = .01;
+			} else {
+				var newScrollZoomLvl = Math.round((scrollZoomLvl - .1)*100) / 100;
+				zoomLevel = newScrollZoomLvl;
+			}
 		}
 		
-		// Grabs viewer dimensions
-		var viewerWidth = $('#viewer').width();
-		var viewerHeight = $('#viewer').height();
+		var navOffsetX = (xNavScrollPos - $('#thumbnail').offset().left);
+		var navOffsetY = (yNavScrollPos - $('#thumbnail').offset().top);
 		
-		//
-		// alert($('#mainimage').width());
+		var navOffsetRatioX = navOffsetX / $('#thumbnail').width();
+		var navOffsetRatioY = navOffsetY / $('#thumbnail').height();
 		
-		// Grabs default position of the main image
-		var defaultMainLeft = $('#mainimage').width() - viewerWidth;
-		var defaultMainTop = $('#mainimage').height() - viewerHeight;
+		buildImage(newScrollZoomLvl, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
-		// Grabs current position of the main image
-		var mainTempLeft = parseFloat($('#mainimage').css('left'));
-		var mainTempTop = parseFloat($('#mainimage').css('top'));
+		// $("#feedback").html("Default ratio: " + offsetRatioX + "  / " + offsetRatioY);
 		
-		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
-		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
-				
-		// Get the Ratio of the zoomed spot to the top, left corner of the image
-		//var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
-		//var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
+		// alert(newScrollZoomLvl);
 		
-		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (tempImageWidth * scrollZoomLvl);
-		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (tempImageHeight * scrollZoomLvl);
+		/* 
+		var navTop = (yPos - $('#thumbnail').offset().top) - (navigatorTempHeight / 2);
+		var navLeft = (xPos - $('#thumbnail').offset().left) - (navigatorTempWidth / 2);
 		
-		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
-		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
+		if ((navTop + navigatorTempHeight) > $('#thumbnail img').height()) {
+			navTop = $('#thumbnail img').height() - navigatorTempHeight;
+		}
+		else if (navTop < 0) {
+			navTop = 0;
+		}
+		if ((navLeft + navigatorTempWidth) > $('#thumbnail img').width()) {
+			navLeft = $('#thumbnail img').width() - navigatorTempWidth;
+		}
+		else if (navLeft < 0) {
+			navLeft = 0;
+		}
 		
-		$("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		// Grabs the current boundaries of the container
+		var imagePositionX = ($('#mainimage').width() - viewerWidth);
+		var imagePositionY = ($('#mainimage').height() - viewerHeight);
 		
-		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
+		// Convert the inverted difference into the Thumbnail / MainImage ratios
+		var mainLeft = imagePositionX + -1 * (($('#mainimage').width() / $('#thumbnail img').width()) * navLeft);
+		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
 		
-		buildImage(newScrollZoomLvl, rotationLevel, zoomOffsetRatioX, zoomOffsetRatioY);
+		// Converts the Position to the Thumnail Ratio
+		$('#mainimage').animate(
+			{ 
+				top: mainTop,
+				left: mainLeft
+				//css('left', mainLeft).css('top', mainTop);			
+			}, "normal", "swing");
+		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').animate(
+			{ 
+				top: navTop,
+				left: navLeft
+							
+			}, "normal", "swing",
+			function() {
+				loadImages();
+			}) */
 	}
-	
-	function thumbScrollUp(xScrollPos, yScrollPos, scrollZoomLvl) {
-		$("#feedback").html("Scroll x, y: " + xScrollPos + " x " + yScrollPos);
-	}
 		
-	function thumbScrollDown(xScrollPos, yScrollPos, scrollZoomLvl) {
-		$("#feedback").html("Scroll Down x, y: " + xScrollPos + " x " + yScrollPos);
+	function thumbScrollDown(xNavScrollPos, yNavScrollPos, scrollZoomLvl) {
+		// $("#feedback").html("Scroll Down x, y: " + xNavScrollPos + " x " + yNavScrollPos);
 	}
 	
 	/*****************************************
@@ -1299,17 +1348,43 @@ $(document).ready(function() {
 	*
 	******************************************/
 	$('a.plus').bind('mousedown', function() {
-		if (zoomLevel < 1) {
-			zoomLevel = zoomLevel + .1;
-			buildImage(zoomLevel, rotationLevel, 0, 0);
-		} 		
+		if (zoomLevel + .1 < 1) {
+			zoomLevel = Math.round((zoomLevel + .1)*100) / 100;
+			
+		} else if (zoomLevel + .1 > 1) {
+			zoomLevel = 1;	
+		}
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);				
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+		
 	 });
 	
 	$('a.minus').bind('mousedown', function() {
-		if (zoomLevel > 0) {
-			zoomLevel = zoomLevel - .1;
-			buildImage(zoomLevel, rotationLevel, 0, 0);	
+		if (zoomLevel - .1 > 0.05) {
+			zoomLevel = Math.round((zoomLevel - .1)*100) / 100;
+			
+		} else if (zoomLevel - .1 < .01) {
+			zoomLevel = .05;	
 		}
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);				
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+		
 	});
 						   
 	/*****************************************

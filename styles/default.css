@@ -2,7 +2,7 @@
 
 body,html {
 	margin: 0;
-	padding: 10px 0 0 0;	
+	padding: 10px 0 0 0;
 }
 div#viewer {
 	width: 730px;
@@ -40,7 +40,7 @@ div#viewer {
 	cursor: move;
 }
 #mainimagedragger {
-	cursor: move;
+	
 }
 .clicknav {
 	z-index: 15;
@@ -56,7 +56,6 @@ div#viewer {
 	z-index: 50;
 	top: 0;
 	left: 0;
-	cursor: move;
 	opacity: .4;
 	filter: alpha(opacity = 40); /* IE does not recognize CSS's native opacity property */
 	}
@@ -64,4 +63,29 @@ div#viewer {
 	position:absolute;
 	left: 5px;
 	top: 0;	
+}
+
+.openhand {
+	background-color: #00FF00;
+	background-image: url(../images/cursors/openhand.cur);
+	display: none;
+	visibility: hidden;
+	position: absolute;
+	left: -10000px;
+	top: -1000px;
+	overflow: hidden;
+	width: 0;
+	height: 0;
+}
+.closedhand {
+	background-color: #00FF00;
+	background-image: url(../images/cursors/closedhand.cur);
+	display: none;
+	visibility: hidden;
+	position: absolute;
+	left: -10000px;
+	top: -1000px;
+	overflow: hidden;
+	width: 0;
+	height: 0;
 }
