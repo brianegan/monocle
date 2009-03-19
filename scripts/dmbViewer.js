@@ -30,7 +30,7 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/
-	var zoomLevel = .07;
+	var zoomLevel = .25;
 	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
@@ -81,6 +81,7 @@ $(document).ready(function() {
 		if (prevRotation != lvlRotation) {
 			// $('#thumbnail img').remove();
 		}
+		$('#viewer div').remove();
 		$('#thumbnail div').remove();
 		$('#mainimage div').remove();
 		$('#mainimagedragger').remove();
@@ -1280,40 +1281,8 @@ $(document).ready(function() {
 		
 		buildImage(newScrollZoomLvl, rotationLevel, zoomOffsetRatioX, zoomOffsetRatioY);
 
-	}	
-
-	
-	/*****************************************
-	*
-	*	SCROLLING FUNCTIONALITY!
-	*
-	******************************************/	
-	function buildScrollbars(scrollbarOffsetX, scrollbarOffsetY) {
-		
-		var viewerTempWidth = $('#viewer').width();
-		var viewerTempHeight = $('#viewer').height();
-		var mainImageTempHeight = $('#mainimage').height();
-		var mainImageTempWidth = $('#mainimage').width();
-		
-		var scrollbarWidth = viewerTempWidth * .7;
-		var scrollbarHeight = viewerTempHeight * .7;
-		
-		var scrollbarLeftHandle = viewerWidth * .15 - 20;
-		var scrollbarRightHandle = viewerWidth * .85;
-		
-		var scrollbarTopHandle = viewerHeight * .15 - 20;
-		var scrollbarBottomHandle = viewerHeight * .85;
-		
-		var scrollbarDragHandleXWidth = (viewerTempWidth / mainImageTempWidth) * scrollbarWidth;
-		var scrollbarDragHandleYHeight = (viewerTempHeight / mainImageTempHeight) * scrollbarHeight;
-		
-		var scrollbarDragHandleXOffset = (scrollbarOffsetX * scrollbarWidth) - (scrollbarDragHandleXWidth / 2);
-		var scrollbarDragHandleYOffset = (scrollbarOffsetX * scrollbarWidth) - (scrollbarDragHandleXWidth / 2);
-		
-		
-		//$('#feedback').html(scrollbarLeftHandleX + ", " + scrollbarRightHandleX);
-		
 	}
+	
 	function imageScroll(xScrollPos, yScrollPos, scrollZoomLvl, imageScrollDelta) {
 		
 		// Determines whether to zoom in or out. If the zoom level is > 1 or < 0 then do not zoom in or out respectively.		
@@ -1403,55 +1372,112 @@ $(document).ready(function() {
 		
 		buildImage(newScrollZoomLvl, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
-		// $("#feedback").html("Default ratio: " + offsetRatioX + "  / " + offsetRatioY);
-		
-		// alert(newScrollZoomLvl);
-		
-		/* 
-		var navTop = (yPos - $('#thumbnail').offset().top) - (navigatorTempHeight / 2);
-		var navLeft = (xPos - $('#thumbnail').offset().left) - (navigatorTempWidth / 2);
-		
-		if ((navTop + navigatorTempHeight) > $('#thumbnail img').height()) {
-			navTop = $('#thumbnail img').height() - navigatorTempHeight;
-		}
-		else if (navTop < 0) {
-			navTop = 0;
-		}
-		if ((navLeft + navigatorTempWidth) > $('#thumbnail img').width()) {
-			navLeft = $('#thumbnail img').width() - navigatorTempWidth;
-		}
-		else if (navLeft < 0) {
-			navLeft = 0;
-		}
-		
-		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
-		
-		// Convert the inverted difference into the Thumbnail / MainImage ratios
-		var mainLeft = imagePositionX + -1 * (($('#mainimage').width() / $('#thumbnail img').width()) * navLeft);
-		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
-		
-		// Converts the Position to the Thumnail Ratio
-		$('#mainimage').animate(
-			{ 
-				top: mainTop,
-				left: mainLeft
-				//css('left', mainLeft).css('top', mainTop);			
-			}, "normal", "swing");
-		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
-		
-		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').animate(
-			{ 
-				top: navTop,
-				left: navLeft
-							
-			}, "normal", "swing",
-			function() {
-				loadImages();
-			})  */
 	}
+
+	
+	/*****************************************
+	*
+	*	SCROLLING FUNCTIONALITY!
+	*
+	******************************************/	
+	/* function buildScrollbars(scrollbarOffsetX, scrollbarOffsetY) {
+		
+		var viewerTempWidth = $('#viewer').width();
+		var viewerTempHeight = $('#viewer').height();
+		var mainImageTempHeight = $('#mainimage').height();
+		var mainImageTempWidth = $('#mainimage').width();
+		
+		var scrollbarWidth = viewerTempWidth * .6;
+		var scrollbarHeight = viewerTempHeight * .6;
+		
+		var scrollbarLeftHandle = viewerWidth * .2 - 20;
+		var scrollbarRightHandle = viewerWidth * .8;
+		
+		var scrollbarTopHandle = viewerHeight * .2 - 20;
+		var scrollbarBottomHandle = viewerHeight * .8;
+		
+		var scrollbarDragHandleXWidth = (viewerTempWidth / mainImageTempWidth) * scrollbarWidth;
+		var scrollbarDragHandleYHeight = (viewerTempHeight / mainImageTempHeight) * scrollbarHeight;
+		
+		var scrollbarDragHandleXOffset = (scrollbarOffsetX * scrollbarWidth) - (scrollbarDragHandleXWidth / 2) + (viewerWidth * .2);	
+		var scrollbarDragHandleYOffset = (scrollbarOffsetY * scrollbarHeight) - (scrollbarDragHandleYHeight / 2) + (viewerHeight * .2);
+		
+		// Contain the Drag Handle
+		if (scrollbarDragHandleXOffset <= scrollbarLeftHandle) {
+			scrollbarDragHandleXOffset = (viewerWidth * .2);
+		} else if (scrollbarDragHandleXOffset + scrollbarDragHandleXWidth > scrollbarRightHandle) {
+			scrollbarDragHandleXOffset = scrollbarRightHandle - scrollbarDragHandleXWidth;
+		}
+		
+		if (scrollbarDragHandleYOffset <= scrollbarTopHandle) {
+			scrollbarDragHandleYOffset = (viewerHeight * .2);
+		} else if (scrollbarDragHandleYOffset + scrollbarDragHandleYHeight > scrollbarBottomHandle) {
+			scrollbarDragHandleYOffset = scrollbarBottomHandle - scrollbarDragHandleYHeight;
+		} 
+		
+		/* Add the Direction Handles to the Viewer
+		$('<div id="scrollbarLeftHandle"></div>')
+			.appendTo("#viewer")
+			.css('left', scrollbarLeftHandle);
+			
+		$('<div id="scrollbarRightHandle"></div>')
+			.appendTo("#viewer")
+			.css('left', scrollbarRightHandle);
+		
+		$('<div id="scrollbarTopHandle"></div>')
+			.appendTo("#viewer")
+			.css('top', scrollbarTopHandle);
+		
+		$('<div id="scrollbarBottomHandle"></div>')
+			.appendTo("#viewer")
+			.css('top', scrollbarBottomHandle);
+			
+		// Add the scroll bars to the viewer
+		$('<div id="scrollbarRight"></div>')
+			.appendTo("#viewer")
+			.css('height', scrollbarHeight);
+			
+		$('<div id="scrollbarBottom"></div>')
+			.appendTo("#viewer")
+			.css('width', scrollbarWidth);
+			
+		// Add the Draggable Handles
+		$('<div id="scrollbarDragHandleX"></div">')
+			.appendTo("#viewer")
+			.css('left', scrollbarDragHandleXOffset)
+			.css('width', scrollbarDragHandleXWidth)
+			.bind('mouseover', function() {
+				$(this).css('background-color', '#333');
+			})
+			.bind('mouseout', function() {
+				$(this).css('background-color', '#000000');
+			})
+			.bind('drag', function(event){ moveScrollbarDragHandleX(event); })
+			.bind('dragend', function() { loadImages(); });
+			
+		$('<div id="scrollbarDragHandleY"></div">')
+			.appendTo("#viewer")
+			.css('top', scrollbarDragHandleYOffset)
+			.css('height', scrollbarDragHandleYHeight)
+			.bind('mouseover', function() {
+				$(this).css('background-color', '#333');
+			})
+			.bind('mouseout', function() {
+				$(this).css('background-color', '#000000');
+			})
+			.bind('drag', function(event){ moveScrollbarDragHandleY(event); })
+			.bind('dragend', function() { loadImages(); }); 
+		
+					
+		//$('#feedback').html(scrollbarLeftHandleX + ", " + scrollbarRightHandleX);
+		
+	}*/
+	
+	/* function moveScrollbarDragHandleX(event) {
+		$('#feedback').html("Yo.");
+	} */
+	
+	
 	
 	/*****************************************
 	*
