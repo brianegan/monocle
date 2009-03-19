@@ -30,7 +30,7 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/
-	var zoomLevel = .25;
+	var zoomLevel = .07;
 	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
@@ -187,11 +187,11 @@ $(document).ready(function() {
 					
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
-					thumbHeight = $(this).height();					
+					thumbHeight = $(this).height();	
 					
 					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
-					$('#mainimage').width(viewerWidth).height(imageHeight);
+					$('#mainimage').width(viewerWidth).height(viewerHeight);
 					
 					$('#mainimagecontainer').width(viewerWidth).height(imageHeight);
 										
@@ -199,15 +199,25 @@ $(document).ready(function() {
 						.css('position', 'relative')
 						.css('margin', '0 auto')
 						.css('background-image', mainImageBG)
-						.css('background-position', 'center top')
-						.css('background-repeat', 'no-repeat');
+						.css('background-position', 'center center')
+						.css('background-repeat', 'no-repeat')
+						.bind('wheel',function(event,delta){
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+						});
 			
 					// Adds the navigator to the thumbnail
 					$('<div class="navigator"></div>')
 						.appendTo('#thumbnail')
 						.width(thumbWidth)
 						.height(thumbHeight)
-						.css('z-index', '20');											
+						.css('z-index', '20')
+						.bind('wheel',function(event,delta){
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+						});
 					
 					// After building the nav load the images touching it
 					loadImages();
@@ -241,7 +251,7 @@ $(document).ready(function() {
 					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
+					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
 					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
 					
 					$('#mainimagecontainer')
@@ -264,6 +274,11 @@ $(document).ready(function() {
 							var posX = e.pageX;
 							var posY = e.pageY;
 							dblClickMove(posX, posY);
+						})
+						.bind('wheel',function(event,delta){
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
@@ -299,7 +314,7 @@ $(document).ready(function() {
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
+					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -321,6 +336,11 @@ $(document).ready(function() {
 							var posX = e.pageX;
 							var posY = e.pageY;
 							dblClickMove(posX, posY);
+						})
+						.bind('wheel',function(event,delta){
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 					
 					buildNav(offsetRatioX, offsetRatioY);
@@ -1291,11 +1311,12 @@ $(document).ready(function() {
 		var scrollbarDragHandleYOffset = (scrollbarOffsetX * scrollbarWidth) - (scrollbarDragHandleXWidth / 2);
 		
 		
-		$('#feedback').html(scrollbarLeftHandleX + ", " + scrollbarRightHandleX);
+		//$('#feedback').html(scrollbarLeftHandleX + ", " + scrollbarRightHandleX);
 		
 	}
 	function imageScroll(xScrollPos, yScrollPos, scrollZoomLvl, imageScrollDelta) {
 		
+		// Determines whether to zoom in or out. If the zoom level is > 1 or < 0 then do not zoom in or out respectively.		
 		if (imageScrollDelta >= 1) {
 			if (scrollZoomLvl + imageScrollDelta * .05 > 1) {
 				var newScrollZoomLvl = 1;
@@ -1310,7 +1331,7 @@ $(document).ready(function() {
 				var newScrollZoomLvl = Math.round((scrollZoomLvl + imageScrollDelta * .05)*100) / 100;
 				zoomLevel = newScrollZoomLvl;
 			}
-		}
+		}				
 		
 		// Grabs viewer dimensions
 		var viewerWidth = $('#viewer').width();
@@ -1326,6 +1347,17 @@ $(document).ready(function() {
 		
 		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
 		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
+		
+		
+		/* if (viewerWidth == $('#mainimage').width() && viewerHeight == $('#mainimage').height()) { // Small Images (less than the viewer width and height 
+			alert("Small Image"); 
+		} else if (viewerWidth == $('#mainimage').width() && viewerHeight < $('#mainimage').height()) { // Vertical Images
+			alert("Vertical Image Image");
+		} else if (viewerWidth < $('#mainimage').width() && viewerHeight == $('#mainimage').height()) { // Horizontal Images
+			alert("Horizontal Image Image");
+		} else {
+			alert("Big Image");	
+		} */
 				
 		// Get the Ratio of the zoomed spot to the top, left corner of the image
 		//var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
