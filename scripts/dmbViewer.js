@@ -12,6 +12,16 @@ ChangeLog version .6 - version .7:
 	
 *****************************************************************/
 
+
+// Internet Explorer doesn't play 100% well with jquery.event.drag, in that when a user's
+// mouse leaves the page with a drag active, the drag doesn't function properly.
+// This piece of code cancels out the drag function should a user leave the page while dragging
+$( document ).bind("mouseleave",function( event ){
+	event.type = "mouseup";
+	$.event.handle.call( this, event );
+});
+
+
 $(document).ready(function() {
 
 	/*****************************************
@@ -37,6 +47,9 @@ $(document).ready(function() {
 	var tileWidth;
 	var tileHeight;
 	var sliderVal;
+	var initialImageX;
+	var initialImageY;
+	var dctimer;
 	var tileImageSrc = new Array();
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
@@ -152,7 +165,7 @@ $(document).ready(function() {
 		
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
-		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
+		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
 		//
 		
@@ -177,7 +190,7 @@ $(document).ready(function() {
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();					
 					
-					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(imageHeight);
 					
@@ -223,7 +236,7 @@ $(document).ready(function() {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(imageHeight);
 					
@@ -253,7 +266,11 @@ $(document).ready(function() {
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
-							dblClickImage(posX, posY);
+								if (lvlZoom == 1) {
+									dblClickMove(posX, posY);
+								} else if (lvlZoom < 1) {
+									dblClickZoom(posX, posY);	
+								}
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
@@ -279,7 +296,7 @@ $(document).ready(function() {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(imageWidth).height(viewerHeight);
 					
@@ -454,7 +471,7 @@ $(document).ready(function() {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;																
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -549,7 +566,7 @@ $(document).ready(function() {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -648,7 +665,7 @@ $(document).ready(function() {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -741,7 +758,7 @@ $(document).ready(function() {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://digital.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -787,10 +804,14 @@ $(document).ready(function() {
 						.css('cursor', openHandCursor)
 						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
 						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
-						.bind("dblclick", function(e){ 
+						.bind("dblclick", function(e){												   
 							var posX = e.pageX;
 							var posY = e.pageY;
-							dblClickImage(posX, posY);
+								if (lvlZoom == 1) {
+									dblClickMove(posX, posY);
+								} else if (lvlZoom < 1) {
+									dblClickZoom(posX, posY, lvlZoom);	
+								}
 						})
 						.bind('wheel',function(event,delta){
 							$('#feedback').html(delta);
@@ -843,7 +864,7 @@ $(document).ready(function() {
 			.bind("click", function(e){ 
 				var posX = e.pageX;
 				var posY = e.pageY;
-				dblClickNav(posX, posY);
+				clickNav(posX, posY);
 			})
 			.bind('drag', function(){ }) 
 			.bind('dragend', function() { }); // The two empty drag lines added here are meant to prevent Firefox from selecting images when double clicking on the nav. This is not the coolest workaround, and I will look for something better down the road.
@@ -908,8 +929,6 @@ $(document).ready(function() {
 									
 				var newImageTile = new Image();
 				
-				// alert (tileImageSrc[newImageNum]); // Shows which Image is loading
-				
 				$(newImageTile)
 					.load(function () {
 						$(newImageDiv).append(this);
@@ -919,7 +938,7 @@ $(document).ready(function() {
 					.height(tileImageHeight[newImageNum])
 					.attr('class', 'tileimage')
 					.attr('src', tileImageSrc[newImageNum]);
-					
+				
 			}
 			
 		});
@@ -997,7 +1016,7 @@ $(document).ready(function() {
 	}
 	
 	// When the thumbnail is double clicked, move the navigator & main image
-	function dblClickImage(xPos, yPos) {				
+	function dblClickMove(xPos, yPos) {
 		
 		// Grabs viewer dimensions
 		var viewerWidth = $('#viewer').width();
@@ -1005,8 +1024,7 @@ $(document).ready(function() {
 		
 		// Grabs 
 		var mainTempLeft = parseFloat($('#mainimage').css('left'));
-		var mainTempTop = parseFloat($('#mainimage').css('top'));
-				
+		var mainTempTop = parseFloat($('#mainimage').css('top'));				
 		
 		// Checks to see which side of the viewer is clicked (left/right), then horizontally moves the image
 		if ((xPos - $('#viewer').offset().left) > (viewerWidth / 2)) {
@@ -1032,9 +1050,7 @@ $(document).ready(function() {
 			}
 			
 		} else if ((xPos - $('#viewer').offset().left) == (viewerWidth / 2)) {
-			var mainLeft = mainTempLeft;
-			
-			
+			var mainLeft = mainTempLeft;						
 		}
 		
 		// Checks to see which half of the viewer is clicked (top/bottom), then vertically moves the image
@@ -1151,7 +1167,7 @@ $(document).ready(function() {
 	
 	
 	// When the thumbnail is double clicked, move the navigator & main image
-	function dblClickNav(xPos, yPos) {		
+	function clickNav(xPos, yPos) {		
 	
 		var navigatorTempWidth = $('div.navigator').width();
 		var navigatorTempHeight = $('div.navigator').height();
@@ -1204,6 +1220,53 @@ $(document).ready(function() {
 		// After moving the nav, load the corresponding images		
 		 
 	}
+	
+	/*****************************************
+	*
+	*	ZOOMING FUNCTIONALITY
+	*
+	******************************************/
+	function dblClickZoom(xScrollPos, yScrollPos, scrollZoomLvl) {
+		
+		if (scrollZoomLvl + .1 > 1) {
+				var newScrollZoomLvl = 1;
+		} else {
+			var newScrollZoomLvl = Math.round((scrollZoomLvl + .1)*100) / 100; // Math.ceil(scrollZoomLvl + .1);
+			zoomLevel = newScrollZoomLvl;
+		}
+		
+		// Grabs viewer dimensions
+		var viewerWidth = $('#viewer').width();
+		var viewerHeight = $('#viewer').height();
+		
+		// Grabs default position of the main image
+		var defaultMainLeft = $('#mainimage').width() - viewerWidth;
+		var defaultMainTop = $('#mainimage').height() - viewerHeight;
+		
+		// Grabs current position of the main image
+		var mainTempLeft = parseFloat($('#mainimage').css('left'));
+		var mainTempTop = parseFloat($('#mainimage').css('top'));
+		
+		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
+		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
+				
+		// Get the Ratio of the zoomed spot to the top, left corner of the image
+		//var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (bigWidth * scrollZoomLvl);
+		//var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (bigHeight * scrollZoomLvl);
+		
+		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (tempImageWidth * scrollZoomLvl);
+		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (tempImageHeight * scrollZoomLvl);
+		
+		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
+		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
+		
+		$("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		
+		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
+		
+		buildImage(newScrollZoomLvl, rotationLevel, zoomOffsetRatioX, zoomOffsetRatioY);
+
+	}	
 
 	
 	/*****************************************
@@ -1211,7 +1274,7 @@ $(document).ready(function() {
 	*	SCROLLING FUNCTIONALITY!
 	*
 	******************************************/		
-	function imageScroll(xScrollPos, yScrollPos, scrollZoomLvl, imageScrollDelta) {
+	/* function imageScroll(xScrollPos, yScrollPos, scrollZoomLvl, imageScrollDelta) {
 		
 		if (imageScrollDelta == 1) {
 			if (scrollZoomLvl + .1 > 1) {
@@ -1335,12 +1398,8 @@ $(document).ready(function() {
 			}, "normal", "swing",
 			function() {
 				loadImages();
-			}) */
-	}
-		
-	function thumbScrollDown(xNavScrollPos, yNavScrollPos, scrollZoomLvl) {
-		// $("#feedback").html("Scroll Down x, y: " + xNavScrollPos + " x " + yNavScrollPos);
-	}
+			}) 
+	} */
 	
 	/*****************************************
 	*
@@ -1368,10 +1427,10 @@ $(document).ready(function() {
 	 });
 	
 	$('a.minus').bind('mousedown', function() {
-		if (zoomLevel - .1 > 0.05) {
+		if (zoomLevel - .1 >= 0.05) {
 			zoomLevel = Math.round((zoomLevel - .1)*100) / 100;
 			
-		} else if (zoomLevel - .1 < .01) {
+		} else if (zoomLevel - .1 < .05) {
 			zoomLevel = .05;	
 		}
 		
@@ -1381,7 +1440,7 @@ $(document).ready(function() {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);				
+		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
