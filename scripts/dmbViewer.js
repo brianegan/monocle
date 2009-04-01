@@ -30,7 +30,7 @@ $(document).ready(function() {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/
-	var zoomLevel = .25;
+	var zoomLevel = .65;
 	var rotationLevel = 0;
 	var viewerWidth = 730;
 	var viewerHeight = 500;
@@ -72,10 +72,17 @@ $(document).ready(function() {
 	
 	/*****************************************
 	*
-	*	BUILDING FUNCTIONALITY!
+	*	BUILDING MAIN IMAGE
 	*
 	******************************************/
 	function buildImage(lvlZoom, lvlRotation, offsetRatioX, offsetRatioY) {
+		
+		// Builds the menu if one does not exist
+		if($('#dmViewerMenu').length > 0) { 
+			// alert("dmViewerMenu Exists"); 
+		} else {
+			buildMenu(lvlZoom, lvlRotation);	
+		}		
 		
 		// Cleans out the previous images, timeouts, & nav should there be any
 		if (prevRotation != lvlRotation) {
@@ -173,8 +180,6 @@ $(document).ready(function() {
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
 		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
-		
-		//
 		
 		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {						
 			
@@ -283,7 +288,7 @@ $(document).ready(function() {
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
-					buildScrollbars(offsetRatioX, offsetRatioY);
+					// buildScrollbars(offsetRatioX, offsetRatioY);
 					
 					})
 				.attr('class', 'thumbImage')
@@ -345,7 +350,7 @@ $(document).ready(function() {
 						});
 					
 					buildNav(offsetRatioX, offsetRatioY);
-					buildScrollbars(offsetRatioX, offsetRatioY);
+					// buildScrollbars(offsetRatioX, offsetRatioY);
 					
 					})
 				.attr('class', 'thumbImage')
@@ -355,29 +360,29 @@ $(document).ready(function() {
 		
 			// Build Tile Width & Height. For Larger Images make the Tiles Larger to increase performance and reduce server calls which take a long time to process
 			if (imageWidth < 2000 || imageHeight < 2000) {
-				tileWidth = 300;
-				tileHeight = 300; 
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 2000 && imageWidth < 3000 || imageHeight >= 2000 && imageHeight < 3000) {
-				tileWidth = 500;
-				tileHeight = 500;
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 3000 && imageWidth < 4000 || imageHeight >= 3000 && imageHeight < 4000) {
-				tileWidth = 500;
-				tileHeight = 500;
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 4000 && imageWidth < 5000 || imageHeight >= 4000 && imageHeight < 5000) {
-				tileWidth = 600;
-				tileHeight = 600;
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 5000 && imageWidth < 6000 || imageHeight >= 5000 && imageHeight < 6000) {
-				tileWidth = 700;
-				tileHeight = 700;
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 6000 && imageWidth < 7000 || imageHeight >= 6000 && imageHeight < 7000) {
 				tileWidth = 800;
 				tileHeight = 800;
 			} else if (imageWidth >= 7000 && imageWidth < 8000 || imageHeight >= 7000 && imageHeight < 8000) {
-				tileWidth = 900;
-				tileHeight = 900;
+				tileWidth = 800;
+				tileHeight = 800;
 			} else if (imageWidth >= 8000 || imageHeight >= 8000) {
-				tileWidth = 1000;
-				tileHeight = 1000;
+				tileWidth = 800;
+				tileHeight = 800; 
 			}
 			
 			// Adjusts the main image for the width and height of the current zoom level
@@ -832,7 +837,7 @@ $(document).ready(function() {
 						});
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
-					buildScrollbars(offsetRatioX, offsetRatioY);
+					// buildScrollbars(offsetRatioX, offsetRatioY);
 						
 				})
 				.attr('class', 'thumbImage')
@@ -842,7 +847,13 @@ $(document).ready(function() {
 		
 	}
 	
-	// Builds the Navigator after the image is loaded
+	
+	
+	/*****************************************
+	*
+	*	BUILDING NAV
+	*
+	******************************************/
 	function buildNav(navRatioPosX, navRatioPosY) {
 		
 		// Calculates the width and Height of the navigator
@@ -901,6 +912,60 @@ $(document).ready(function() {
 		},750);
 		
 	}
+	
+	/*****************************************
+	*
+	*	BUILDING MENU
+	*
+	******************************************/
+	function buildMenu(initZoomLevel, initRotationLevel) {
+		
+		/*************************
+		*  BUILD THE MENU
+		**************************/
+		
+		// Build the Menu Div
+		$('<div id="dmViewerMenu">&nbsp;</div>').insertBefore('#viewer');
+		
+		// Zoom Out
+		var zoomOutButton = "<a href='#' id='dmViewerZoomOut'>Zoom Out</a>";
+		$(zoomOutButton).appendTo("#dmViewerMenu");
+		
+		// Zoom In
+		var zoomInButton = "<a href='#' id='dmViewerZoomIn'>Zoom In</a>";
+		$(zoomInButton).appendTo("#dmViewerMenu");
+		
+		// Maximum Resolution
+		var maxResButton = "<a href='#' id='dmViewerMaxRes'>Maximum Resolution</a>"
+		$(maxResButton).appendTo("#dmViewerMenu");
+		
+		// Fit Window
+		var fitWindowButton = "<a href='#' id='dmViewerFitWindow'>Maximum Resolution</a>"
+		$(fitWindowButton).appendTo("#dmViewerMenu");		
+		
+		// Fit Width
+		var fitWidthButton = "<a href='#' id='dmViewerFitWidth'>Maximum Resolution</a>"
+		$(fitWidthButton).appendTo("#dmViewerMenu");		
+		
+		// Rotate Counterclockwise
+		var rotateCounterclockwiseButton = "<a href='#' id='dmViewerRotateCounterclockwise'>Maximum Resolution</a>"
+		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu");
+		
+		// Rotate Clockwise
+		var rotateClockwiseButton = "<a href='#' id='dmViewerRotateClockwise'>Maximum Resolution</a>"
+		$(rotateClockwiseButton).appendTo("#dmViewerMenu");	
+		
+		// Hide Nav
+		var hideNavButton = "<a href='#' id='dmViewerHideNavigator'>Maximum Resolution</a>"
+		$(hideNavButton).appendTo("#dmViewerMenu");	
+		
+		/*************************
+		*  BIND THE MENU
+		**************************/
+		
+		
+	}
+	
 	
 	/*****************************************
 	*
@@ -973,7 +1038,7 @@ $(document).ready(function() {
 		var containerX = $(container).offset().left;
 		var containerY = $(container).offset().top;
 		var containerWidth = $(container).width();
-		var containerHeight = $(container).height();
+		var containerHeight = $(container).height();	
 		
 		// Get the nav dimensions
 		var mainImage = $('div#mainimage');
@@ -1007,11 +1072,6 @@ $(document).ready(function() {
 		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
   		$(mainImage).css({ left:tempX, top:tempY });
 		$('#mainimagedragger').css({ left:tempX, top:tempY });
-		
-		//if (mainImageY > containerHeight) { $(mainImage).css({ left: (containerHeight - mainImageHeight) });
-		
-		//if (tempX >= 0 && mainImageX <= containerWidth){ $(mainImage).css({ left:tempX }); $('#mainimagedragger').css({ left:tempX }); };
-  		//if (tempY >= 0 && mainImageY <= containerHeight){ $(mainImage).css({ top:tempY }); $('#mainimagedragger').css({ top:tempY }); };
 		
 		// Get MainImage Position Information
 		var mainLeft = parseFloat($('#mainimage').css('left'));
@@ -1415,7 +1475,7 @@ $(document).ready(function() {
 			scrollbarDragHandleYOffset = scrollbarBottomHandle - scrollbarDragHandleYHeight;
 		} 
 		
-		/* Add the Direction Handles to the Viewer
+		//Add the Direction Handles to the Viewer
 		$('<div id="scrollbarLeftHandle"></div>')
 			.appendTo("#viewer")
 			.css('left', scrollbarLeftHandle);
@@ -1471,7 +1531,7 @@ $(document).ready(function() {
 					
 		//$('#feedback').html(scrollbarLeftHandleX + ", " + scrollbarRightHandleX);
 		
-	}*/
+	} */
 	
 	/* function moveScrollbarDragHandleX(event) {
 		$('#feedback').html("Yo.");
@@ -1484,7 +1544,7 @@ $(document).ready(function() {
 	*	MENU FUNCTIONALITY!
 	*
 	******************************************/
-	$('a.plus').bind('mousedown', function() {
+	function viewerZoomIn() {
 		if (zoomLevel + .1 < 1) {
 			zoomLevel = Math.round((zoomLevel + .1)*100) / 100;
 			
@@ -1502,9 +1562,10 @@ $(document).ready(function() {
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
-	 });
+	}
 	
-	$('a.minus').bind('mousedown', function() {
+	function viewerZoomOut() {
+		
 		if (zoomLevel - .1 >= 0.05) {
 			zoomLevel = Math.round((zoomLevel - .1)*100) / 100;
 			
@@ -1522,7 +1583,7 @@ $(document).ready(function() {
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
-	});
+	}
 						   
 	/*****************************************
 	*

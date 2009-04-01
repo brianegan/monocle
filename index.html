@@ -25,23 +25,34 @@ $(document).ready(function() {
 </head>
 <body>
 
-<div id="zoom" style="display: inline-block">
+<div id="feedback"> <!-- this div is for testing, allows me to dump text into it to check teh mathz --> </div>
+
+
+
+
+<div id="viewer">
+	<!-- all necessary divs will be generated. The idea will to be able to call dmViewer like any jquery class. Ex:
+    	
+        $('#viewer').dmViewer({
+        	CISOPTR: 426,
+            CISOROOT: Hughes,
+            defaultZoom: .25,
+            defaultRotation: 0,
+            dmMaxHeight: (maximum height of the image),
+            dmMaxWidth: (maximum width of the image),
+            dmBridge: true (this value would be called for dmBridge enabled sites, which would provide additional functionality, such as shared slices).
+        });
+    	
+     -->
+</div>
+
+<br />
+<br />
+<div id="zoom" style="display: inline-block; text-align: center;">
 	&nbsp;&nbsp;&nbsp;<a href="#" class="plus">+</a>&nbsp;&nbsp;&nbsp;
     <a href="#" class="minus">-</a>
 </div>
 
-<div id="rotate" style="display: inline-block; margin-left: 20px;">
-	<a href="#" class="clockwise">Clockwise</a>&nbsp;&nbsp;&nbsp;
-    <a href="#" class="counterclockwise">Counterclockwise</a>
-</div>
-<br />
-<br />
-
-<div id="viewer">
-	<!-- all necessary divs will be generated -->
-</div>
-
-<div id="feedback"></div>
 
 </body>
 </html>

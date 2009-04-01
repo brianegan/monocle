@@ -12,7 +12,7 @@ div#viewer {
 	background-position:center center;
 	margin-top: 20px;
 	position:relative;
-	overflow:auto;
+	overflow:hidden;
 	margin: 0 auto;
 	text-align: center;
 }
@@ -28,9 +28,9 @@ div#viewer {
 	margin: 0 60px 0 20px;
 }
 #thumbnail {
-	position: fixed;
-	top:0%;
-	left:0%;
+	position: absolute;
+	top:0;
+	left:0;
 	border-right: 5px solid #FFF;
 	border-bottom: 5px solid #FFF;
 	z-index: 15;
@@ -175,3 +175,89 @@ div#viewer {
 	width: 0;
 	height: 0;
 }
+
+/************************
+  =MENU
+***********************/
+#dmViewerMenu {
+	background-color: #CCC;
+	width: 730px;
+	margin: 0 auto;
+	padding: 7px 0 3px 0;
+	}
+#dmViewerMenu a {
+	display: inline-block;
+	text-indent: -1000em;
+	overflow: hidden;
+	margin-right: 15px;
+	background-repeat: no-repeat;
+	}
+#dmViewerZoomOut {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/zoomOut.gif);
+	margin-left: 10px;
+	}
+#dmViewerZoomIn {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/zoomIn.gif);
+	}
+#dmViewerMaxRes {
+	width: 13px;
+	height: 16px;
+	background-image: url(../images/menu/maxRes.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
+	}
+#dmViewerFitWindow {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/fitWindow.gif);
+	}
+#dmViewerFitWidth {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/fitWidth.gif);
+	}
+#dmViewerRotateCounterclockwise {
+	width: 12px;
+	height: 12px;
+	background-image: url(../images/menu/rotateCounter.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
+	}
+#dmViewerRotateClockwise {
+	width: 12px;
+	height: 12px;
+	background-image: url(../images/menu/rotateClockwise.gif);
+	}
+#dmViewerHideNavigator {
+	width: 14px;
+	height: 14px;
+	background-image: url(../images/menu/hideNavigator.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
+	}
+		/* 		// Rotate Clockwise
+		var rotateClockwiseButton = "<a href='#' id='dmViewerRotateClockwise'>Maximum Resolution</a>"
+		$(rotateClockwiseButton).appendTo("#dmViewerMenu");		
+		
+		// Rotate Counterclockwise
+		var rotateCounterclockwiseButton = "<a href='#' id='dmViewerRotateCounterclockwise'>Maximum Resolution</a>"
+		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu");
+		
+		// Hide Nav
+		var hideNavButton = "<a href='#' id='dmViewerHideNavigator'>Maximum Resolution</a>"
+		$(hideNavButton).appendTo("#dmViewerMenu");	*/
+
+
+
+
+
+
+
+
