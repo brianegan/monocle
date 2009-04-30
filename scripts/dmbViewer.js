@@ -49,6 +49,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var initialImageX;
 	var initialImageY;
 	var loadImagesTimer;
+	var hideNav = true;
 	var tileImageSrc = new Array();
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
@@ -104,7 +105,11 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var prevRotation = lvlRotation; 
 		
 		// Adds back in the necessary building blocks
-		$('<div id="thumbnail"></div>').appendTo('#viewer');
+		if (hideNav == true) {
+			$('<div id="thumbnail" class="dmHideNav"></div>').appendTo('#viewer');
+		} else {
+			$('<div id="thumbnail"></div>').appendTo('#viewer');	
+		}
 		$('<div id="mainimagecontainer"></div>').appendTo('#viewer');
 		$('<div id="mainimage"></div>').appendTo('#mainimagecontainer');
 
@@ -1741,7 +1746,12 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	}
 	
 	function viewerHideNavigator() {
-		
+		$('#thumbnail').toggleClass('dmHideNav');
+		if (hideNav == true) {
+			hideNav = false;	
+		} else {
+			hideNav = true;	
+		}
 	}
 	
 	/*		// Zoom Out

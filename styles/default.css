@@ -36,6 +36,9 @@ div#viewer {
 	border-bottom: 5px solid #FFF;
 	z-index: 15;
 }
+.dmHideNav {
+	visibility: hidden;	
+}
 #mainimage {	
 	z-index: 1;
 	cursor: move;
