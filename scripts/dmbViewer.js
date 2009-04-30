@@ -22,25 +22,23 @@ $( document ).bind("mouseleave",function( event ){
 	$.event.handle.call( this, event );
 });
 
-
-$(document).ready(function() {
+function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 
 	/*****************************************
 	*
 	*	DEFAULT VARIABLES!
 	*
-	******************************************/
-	var zoomLevel = .65;
+	******************************************/	
 	var rotationLevel = 0;
-	var viewerWidth = 730;
-	var viewerHeight = 500;
+	var viewerWidth = $('#viewer').width();
+	var viewerHeight = $('#viewer').height();
 	/*var bigWidth = 10360;
 	var bigHeight = 9590;
 	var CISOPTR = 426;*/ 
-	var bigWidth = 11320;
-	var bigHeight = 6590;
-	var CISOPTR = 423;
-	var CISOROOT = "LV_Maps";
+	var bigWidth = dmImgWidth;
+	var bigHeight = dmImgHeight;
+	var CISOPTR = dmCISOPTR;
+	var CISOROOT = dmCISOROOT;
 	var thumbWidth;
 	var thumbHeight;
 	var thumbWidthMax = 120;
@@ -55,14 +53,19 @@ $(document).ready(function() {
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
 	var tileNum = 0;
+	
+	// Zoom Default - Fit Window!
+	var viewerWidthRatio = viewerWidth / bigWidth;
+	var viewerHeightRatio = viewerHeight / bigHeight;
+	
+	if (viewerWidthRatio >= viewerHeightRatio) {
+		var zoomLevel = viewerHeightRatio;
+	} else {
+		var zoomLevel = viewerWidthRatio;
+	}
+	
 
 	// Cursor defaults
-	
-	/* Unfortunately, IE is completely dumb when it comes to cursors. According to CSS2 documentation:
-	"For CSS style sheets, the base URI is that of the style sheet, not that of the source document."
-	Well, that doesn't stop IE from making the base URI that of the source document, not the style sheet, and
-	only for the cursor element. This means we have 3 definitions. The first is the URI for IE, the second
-	is for all non-dumb (CSS Compliant) browsers, the 3rd is if loading the cursor should fail. */
 																							 
 	var closedHandCursor = "url(images/cursors/closedhand.cur), url(../images/cursors/closedhand.cur), move";
 	var openHandCursor = "url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move";
@@ -181,7 +184,7 @@ $(document).ready(function() {
 		var thumbImage = new Image();
 		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
-		if (imageWidth < viewerWidth && imageHeight < viewerHeight) {						
+		if (imageWidth <= viewerWidth && imageHeight <= viewerHeight) {						
 			
 			$(thumbImage)
 				.load(function () {
@@ -232,7 +235,7 @@ $(document).ready(function() {
 				.attr('class', 'thumbImage')
 				.attr('src', thumbSrc);
 		
-		} else if (imageWidth < viewerWidth && imageHeight > viewerHeight) {
+		} else if (imageWidth <= viewerWidth && imageHeight >= viewerHeight) {
 			
 			$(thumbImage)
 				.load(function () { 
@@ -294,7 +297,7 @@ $(document).ready(function() {
 				.attr('class', 'thumbImage')
 				.attr('src', thumbSrc);
 			
-		} else if (imageWidth > viewerWidth && imageHeight < viewerHeight) {
+		} else if (imageWidth >= viewerWidth && imageHeight <= viewerHeight) {
 			
 			$(thumbImage)
 				.load(function () { 
@@ -920,50 +923,52 @@ $(document).ready(function() {
 	******************************************/
 	function buildMenu(initZoomLevel, initRotationLevel) {
 		
-		/*************************
-		*  BUILD THE MENU
-		**************************/
+		/*******************************
+		*  CONSTRUCT & BIND THE PARTS
+		*******************************/
 		
 		// Build the Menu Div
-		$('<div id="dmViewerMenu">&nbsp;</div>').insertBefore('#viewer');
+		$('<div id="dmViewerMenu"></div>').insertBefore('#viewer');
 		
 		// Zoom Out
-		var zoomOutButton = "<a href='#' id='dmViewerZoomOut'>Zoom Out</a>";
-		$(zoomOutButton).appendTo("#dmViewerMenu");
+		var zoomOutButton = "<div id='dmViewerZoomOut'>Zoom Out</div>";
+		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
+						
+		// Zoom Level Gague
+		var zoomLevelGague = "<div id='zoomLevelGague'>" + Math.round(zoomLevel * 100) + " %</div>";
+		$(zoomLevelGague).appendTo("#dmViewerMenu");
 		
 		// Zoom In
-		var zoomInButton = "<a href='#' id='dmViewerZoomIn'>Zoom In</a>";
-		$(zoomInButton).appendTo("#dmViewerMenu");
-		
+		var zoomInButton = "<div id='dmViewerZoomIn'>Zoom In</div>";
+		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });		
+				
 		// Maximum Resolution
-		var maxResButton = "<a href='#' id='dmViewerMaxRes'>Maximum Resolution</a>"
-		$(maxResButton).appendTo("#dmViewerMenu");
+		var maxResButton = "<div id='dmViewerMaxRes'>Maximum Resolution</div>";
+		$(maxResButton).appendTo("#dmViewerMenu").bind('click', function() { viewerMaxRes(); });
 		
 		// Fit Window
-		var fitWindowButton = "<a href='#' id='dmViewerFitWindow'>Maximum Resolution</a>"
-		$(fitWindowButton).appendTo("#dmViewerMenu");		
+		var fitWindowButton = "<div id='dmViewerFitWindow'>Maximum Resolution</div>";
+		$(fitWindowButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWindow() });	
 		
 		// Fit Width
-		var fitWidthButton = "<a href='#' id='dmViewerFitWidth'>Maximum Resolution</a>"
-		$(fitWidthButton).appendTo("#dmViewerMenu");		
+		var fitWidthButton = "<div id='dmViewerFitWidth'>Maximum Resolution</div>";
+		$(fitWidthButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWidth() });		
 		
 		// Rotate Counterclockwise
-		var rotateCounterclockwiseButton = "<a href='#' id='dmViewerRotateCounterclockwise'>Maximum Resolution</a>"
-		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu");
+		var rotateCounterclockwiseButton = "<div id='dmViewerRotateCounterclockwise'>Maximum Resolution</div>";
+		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateCounterclockwise() });
 		
 		// Rotate Clockwise
-		var rotateClockwiseButton = "<a href='#' id='dmViewerRotateClockwise'>Maximum Resolution</a>"
-		$(rotateClockwiseButton).appendTo("#dmViewerMenu");	
+		var rotateClockwiseButton = "<div id='dmViewerRotateClockwise'>Maximum Resolution</div>";
+		$(rotateClockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateClockwise() });
 		
 		// Hide Nav
-		var hideNavButton = "<a href='#' id='dmViewerHideNavigator'>Maximum Resolution</a>"
-		$(hideNavButton).appendTo("#dmViewerMenu");	
+		var hideNavButton = "<div id='dmViewerHideNavigator'>Maximum Resolution</div>";
+		$(hideNavButton).appendTo("#dmViewerMenu").bind('click', function() { viewerHideNavigator() });
 		
-		/*************************
-		*  BIND THE MENU
-		**************************/
-		
-		
+		// Clear
+		var menuClearDiv = "<div class='clear'>&nbsp;</div>";
+		$(menuClearDiv).appendTo("#dmViewerMenu");
 	}
 	
 	
@@ -1106,7 +1111,7 @@ $(document).ready(function() {
 			var mainLeft = (mainTempLeft + viewerWidth / 2) - (xPos - $('#viewer').offset().left);		
 			
 			//$("#feedback").html("Image Left/Top: " + ((xPos - $('#viewer').offset().left) - viewerWidth / 2) + " x " + (xPos - $('#viewer').offset().left));
-			$("#feedback").html("Image Left/Top: " + mainLeft + " x " + viewerWidth / 2);
+			//$("#feedback").html("Image Left/Top: " + mainLeft + " x " + viewerWidth / 2);
 			
 			
 			// Bounds Checking
@@ -1117,7 +1122,7 @@ $(document).ready(function() {
 		} else if ((xPos - $('#viewer').offset().left) < (viewerWidth / 2)) {
 			var mainLeft = mainTempLeft + (viewerWidth / 2 - (xPos - $('#viewer').offset().left));
 			
-			$("#feedback").html("Image Left/Top: " + mainLeft + " x " + mainTempTop);
+			//$("#feedback").html("Image Left/Top: " + mainLeft + " x " + mainTempTop);
 			
 			// Bounds Checking
 			if (mainLeft > $('#mainimage').width() - viewerWidth) {
@@ -1335,7 +1340,7 @@ $(document).ready(function() {
 		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
 		
-		$("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		//$("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
@@ -1398,7 +1403,8 @@ $(document).ready(function() {
 		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); // (($('#mainimage').width() / scrollZoomLvl) * newScrollZoomLvl) - viewerWidth - (bigWidth * newScrollZoomLvl * zoomOffsetRatioX);
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
 		
-		$("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		// $("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
@@ -1431,6 +1437,8 @@ $(document).ready(function() {
 		var navOffsetRatioY = navOffsetY / $('#thumbnail').height();
 		
 		buildImage(newScrollZoomLvl, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
 		
 	}
 
@@ -1548,7 +1556,7 @@ $(document).ready(function() {
 		if (zoomLevel + .1 < 1) {
 			zoomLevel = Math.round((zoomLevel + .1)*100) / 100;
 			
-		} else if (zoomLevel + .1 > 1) {
+		} else if (zoomLevel + .1 >= 1) {
 			zoomLevel = 1;	
 		}
 		
@@ -1558,7 +1566,8 @@ $(document).ready(function() {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);				
+		//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
@@ -1566,10 +1575,10 @@ $(document).ready(function() {
 	
 	function viewerZoomOut() {
 		
-		if (zoomLevel - .1 >= 0.05) {
+		if (zoomLevel - .1 > 0.05) {
 			zoomLevel = Math.round((zoomLevel - .1)*100) / 100;
 			
-		} else if (zoomLevel - .1 < .05) {
+		} else if (zoomLevel - .1 <= .05) {
 			zoomLevel = .05;	
 		}
 		
@@ -1579,11 +1588,185 @@ $(document).ready(function() {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+	}
+	
+	function viewerMaxRes() {
+		
+		zoomLevel = 1;
+
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();	
+		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+	}
+	
+	function viewerFitWindow() {
+		
+		switch(rotationLevel)
+			{
+			case 0:
+			  var viewerWidthRatio = viewerWidth / bigWidth;
+			  var viewerHeightRatio = viewerHeight / bigHeight;			  
+			  break;
+			case 90:
+			  var viewerWidthRatio = viewerWidth / bigHeight;
+			  var viewerHeightRatio = viewerHeight / bigWidth;	
+			  break;
+			case 180:
+			  var viewerWidthRatio = viewerWidth / bigWidth;
+			  var viewerHeightRatio = viewerHeight / bigHeight;	
+			  break;
+			case 270:
+			  var viewerWidthRatio = viewerWidth / bigHeight;
+			  var viewerHeightRatio = viewerHeight / bigWidth;		
+			  break; 
+		}
+		
+		if (viewerWidthRatio >= viewerHeightRatio) {
+			var zoomLevel = viewerHeightRatio;
+		} else {
+			var zoomLevel = viewerWidthRatio;
+		}
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');	
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);		
+		
+	}
+	
+	function viewerFitWidth() {
+		
+		switch(rotationLevel)
+			{
+			case 0:
+				zoomLevel = viewerWidth / bigWidth;
+			 	break;
+			case 90:
+		  		zoomLevel = viewerWidth / bigHeight;
+			  	break;
+			case 180:
+				zoomLevel = viewerWidth / bigWidth;
+			  	break;
+			case 270:
+				zoomLevel = viewerWidth / bigHeight;
+				break; 
+			}
+		
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');		
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
 	}
+	
+	function viewerRotateCounterclockwise() {
+		switch(rotationLevel)
+			{
+			case 0:
+			  rotationLevel = 90;
+			  break;
+			case 90:
+			  rotationLevel = 180;
+			  break;
+			case 180:
+			  rotationLevel = 270;
+			  break;
+			case 270:
+			  rotationLevel = 0;
+			  break; 
+			}
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);	
+		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+			
+	}
+	
+	function viewerRotateClockwise() {
+		
+		switch(rotationLevel)
+			{
+			case 0:
+			  rotationLevel = 270;
+			  break;
+			case 90:
+			  rotationLevel = 0;
+			  break;
+			case 180:
+			  rotationLevel = 90;
+			  break;
+			case 270:
+			  rotationLevel = 180;
+			  break; 
+			}
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+						
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		
+		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+		
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+		
+	}
+	
+	function viewerHideNavigator() {
+		
+	}
+	
+	/*		// Zoom Out
+		$('dmViewerZoomOut').bind('click', viewerZoomOut());
+		
+		// Zoom In
+		$('dmViewerZoomIn').bind('click', viewerZoomIn())
+		
+		// Maximum Resolution
+		$('dmViewerMaxRes').bind('click', viewerMaxRes())
+		
+		// Fit Window
+		$('dmViewerFitWindow').bind('click', viewerFitWindow());
+		
+		// Fit Width
+		$('dmViewerFitWidth').bind('click', viewerFitWidth());
+		
+		// Rotate Counterclockwise
+		$('dmViewerRotateCounterclockwise').bind('click', viewerRotateCounterclockwise());
+		
+		// Rotate Clockwise
+		$('dmViewerRotateClockwise').bind('click', viewerRotateClockwise());
+		
+		// Hide Nav
+		$('dmViewerHideNavigator').bind('click', viewerHideNavigator()); */
 						   
 	/*****************************************
 	*
@@ -1592,4 +1775,4 @@ $(document).ready(function() {
 	******************************************/
 	buildImage(zoomLevel, rotationLevel, 0, 0);
 
-});
+}

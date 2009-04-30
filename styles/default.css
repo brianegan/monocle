@@ -4,6 +4,7 @@ body,html {
 	margin: 0;
 	padding: 10px 0 0 0;
 }
+
 div#viewer {
 	width: 730px;
 	height: 500px;
@@ -182,15 +183,18 @@ div#viewer {
 #dmViewerMenu {
 	background-color: #CCC;
 	width: 730px;
+	height: 30px;
 	margin: 0 auto;
-	padding: 7px 0 3px 0;
+	padding: 0 0 3px 0;
 	}
-#dmViewerMenu a {
-	display: inline-block;
+#dmViewerMenu div {
 	text-indent: -1000em;
-	overflow: hidden;
 	margin-right: 15px;
 	background-repeat: no-repeat;
+	cursor: pointer;
+	margin-top: 9px;
+	padding-top: 0;
+	float: left;
 	}
 #dmViewerZoomOut {
 	width: 16px;
@@ -203,6 +207,11 @@ div#viewer {
 	height: 16px;
 	background-image: url(../images/menu/zoomIn.gif);
 	}
+#dmViewerMenu div#zoomLevelGague {
+	text-indent: 0;
+	margin-top: 6px;
+	cursor: text;
+}
 #dmViewerMaxRes {
 	width: 13px;
 	height: 16px;
@@ -242,20 +251,6 @@ div#viewer {
 	border-left: 1px solid #999;
 	background-position: right;
 	}
-		/* 		// Rotate Clockwise
-		var rotateClockwiseButton = "<a href='#' id='dmViewerRotateClockwise'>Maximum Resolution</a>"
-		$(rotateClockwiseButton).appendTo("#dmViewerMenu");		
-		
-		// Rotate Counterclockwise
-		var rotateCounterclockwiseButton = "<a href='#' id='dmViewerRotateCounterclockwise'>Maximum Resolution</a>"
-		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu");
-		
-		// Hide Nav
-		var hideNavButton = "<a href='#' id='dmViewerHideNavigator'>Maximum Resolution</a>"
-		$(hideNavButton).appendTo("#dmViewerMenu");	*/
-
-
-
 
 
 
