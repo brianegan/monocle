@@ -292,7 +292,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
@@ -354,7 +354,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 					
 					buildNav(offsetRatioX, offsetRatioY);
@@ -409,7 +409,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){ // Binds the scrolling functionality to the thumbnail						
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);						
+							// thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);						
 						});
 								
 					// Gets those measurements I was talking about!
@@ -841,7 +841,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
