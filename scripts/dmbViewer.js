@@ -49,7 +49,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var initialImageX;
 	var initialImageY;
 	var loadImagesTimer;
-	var hideNav = true;
+	var hideNav = false;
 	var tileImageSrc = new Array();
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
@@ -187,7 +187,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
-		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=%2F" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
+		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
 		if (imageWidth <= viewerWidth && imageHeight <= viewerHeight) {						
 			
@@ -203,7 +203,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();	
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(viewerHeight);
 					
@@ -218,7 +218,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 			
 					// Adds the navigator to the thumbnail
@@ -230,7 +230,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
+							// thumbScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
 						});
 					
 					// After building the nav load the images touching it
@@ -257,7 +257,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(imageHeight);
 					
@@ -319,7 +319,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(imageWidth).height(viewerHeight);
 					
@@ -500,7 +500,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -595,7 +595,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -694,7 +694,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -787,7 +787,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=/" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
