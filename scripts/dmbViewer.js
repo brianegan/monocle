@@ -61,8 +61,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	
 	if (viewerWidthRatio >= viewerHeightRatio) {
 		var zoomLevel = viewerHeightRatio;
+		var minZoomLevel = viewerHeightRatio;
 	} else {
 		var zoomLevel = viewerWidthRatio;
+		var minZoomLevel = viewerWidthRatio;
 	}
 	
 
@@ -282,8 +284,9 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-image', mainImageBG)
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); })
+						.css('cursor', openHandCursor)
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -296,7 +299,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
-					// buildScrollbars(offsetRatioX, offsetRatioY);
+					// buildScrollbars(offsetRatioX, offsetRatioY);									
 					
 					})
 				.attr('class', 'thumbImage')
@@ -344,8 +347,9 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-image', mainImageBG)
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { loadImages(); })
+						.css('cursor', openHandCursor)
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -936,39 +940,39 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		$('<div id="dmViewerMenu"></div>').insertBefore('#viewer');
 		
 		// Zoom Out
-		var zoomOutButton = "<div id='dmViewerZoomOut'>Zoom Out</div>";
+		var zoomOutButton = "<div id='dmViewerZoomOut' title='Zoom Out'>Zoom Out</div>";
 		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
 						
 		// Zoom Level Gague
-		var zoomLevelGague = "<div id='zoomLevelGague'>" + Math.round(zoomLevel * 100) + " %</div>";
+		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>" + Math.round(zoomLevel * 100) + " %</div>";
 		$(zoomLevelGague).appendTo("#dmViewerMenu");
 		
 		// Zoom In
-		var zoomInButton = "<div id='dmViewerZoomIn'>Zoom In</div>";
-		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });		
-				
-		// Maximum Resolution
-		var maxResButton = "<div id='dmViewerMaxRes'>Maximum Resolution</div>";
-		$(maxResButton).appendTo("#dmViewerMenu").bind('click', function() { viewerMaxRes(); });
+		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
+		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });								
 		
 		// Fit Window
-		var fitWindowButton = "<div id='dmViewerFitWindow'>Maximum Resolution</div>";
+		var fitWindowButton = "<div id='dmViewerFitWindow' title='Fit Image to Viewer'>Fit Document to Viewer</div>";
 		$(fitWindowButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWindow() });	
 		
 		// Fit Width
-		var fitWidthButton = "<div id='dmViewerFitWidth'>Maximum Resolution</div>";
+		var fitWidthButton = "<div id='dmViewerFitWidth' title='Fit Image to Viewer Width'>Fit Image to Viewer Width</div>";
 		$(fitWidthButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWidth() });		
 		
+		// Maximum Resolution
+		var maxResButton = "<div id='dmViewerMaxRes' title='Maximum Resolution'>Maximum Resolution</div>";
+		$(maxResButton).appendTo("#dmViewerMenu").bind('click', function() { viewerMaxRes(); });
+		
 		// Rotate Counterclockwise
-		var rotateCounterclockwiseButton = "<div id='dmViewerRotateCounterclockwise'>Maximum Resolution</div>";
+		var rotateCounterclockwiseButton = "<div id='dmViewerRotateCounterclockwise' title='Rotate Counterclockwise'>Rotate Counterclockwise</div>";
 		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateCounterclockwise() });
 		
 		// Rotate Clockwise
-		var rotateClockwiseButton = "<div id='dmViewerRotateClockwise'>Maximum Resolution</div>";
+		var rotateClockwiseButton = "<div id='dmViewerRotateClockwise' title='Rotate Clockwise'>Rotate Clockwise</div>";
 		$(rotateClockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateClockwise() });
 		
 		// Hide Nav
-		var hideNavButton = "<div id='dmViewerHideNavigator'>Maximum Resolution</div>";
+		var hideNavButton = "<div id='dmViewerHideNavigator' title='Hide Navigator'>Hide Navigator</div>";
 		$(hideNavButton).appendTo("#dmViewerMenu").bind('click', function() { viewerHideNavigator() });
 		
 		// Clear
@@ -1015,14 +1019,14 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				var newImageDiv = "#mainimagecontainer .tile-" + newImageNum;
 				$(this).removeClass('collision');
 				
-				$(newImageDiv).css('background-image', 'url(images/spinner.gif)').css('background-position', 'center center').css('background-repeat', 'no-repeat');
+				$(newImageDiv).toggleClass('dmImgTileLoading'); //.css('background-image', 'url(images/spinner.gif)').css('background-position', 'center center').css('background-repeat', 'no-repeat');
 									
 				var newImageTile = new Image();
 				
 				$(newImageTile)
 					.load(function () {
 						$(newImageDiv).append(this);
-						$(newImageDiv).css('background-image', 'none');						
+						$(newImageDiv).toggleClass('dmImgTileLoading');					
 						})
 					.width(tileImageWidth[newImageNum])
 					.height(tileImageHeight[newImageNum])
@@ -1056,8 +1060,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var mainImageHeight = $(mainImage).height();
 		
 		// Get the proper nav positioning
-		tempX = (event.offsetX + document.body.scrollLeft) - containerX;
-		tempY = (event.offsetY + document.body.scrollTop) - containerY;
+		tempX = (event.offsetX) - containerX;
+		tempY = (event.offsetY) - containerY;
+		
+		// $('#feedback').html(tempX + ", " + tempY);
 		
 		// Create Proper containment
 		var mainImageX = tempX + mainImageWidth;
@@ -1205,8 +1211,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navHeight = $(nav).height();
 		
 		// Get the proper nav positioning
-		tempX = (event.offsetX + document.body.scrollLeft) - containerX;
-		tempY = (event.offsetY + document.body.scrollTop) - containerY;
+		tempX = (event.offsetX) - containerX;
+		tempY = (event.offsetY) - containerY;
+		
+		// $('#feedback').html(tempX + ", " + tempY);
 		
 		// Create Proper containment
 		var navX = tempX + navWidth;
@@ -1558,45 +1566,79 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	*
 	******************************************/
 	function viewerZoomIn() {
-		if (zoomLevel + .1 < 1) {
-			zoomLevel = Math.round((zoomLevel + .1)*100) / 100;
+		if (zoomLevel + .05 < 1) {
+			zoomLevel = Math.round((zoomLevel + .05)*100) / 100;
+			
+			var navTempLeft = parseFloat($('.navigator').css('left'));
+			var navTempTop = parseFloat($('.navigator').css('top'));
+							
+			var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+			
+			//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+			$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+			
+			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			
 		} else if (zoomLevel + .1 >= 1) {
-			zoomLevel = 1;	
-		}
-		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
-						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
-		
-		//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
-		
-		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+			
+			if (zoomLevel == 1) {
+				zoomLevel = 1;
+			} else {
+				zoomLevel = 1;	
+			
+				var navTempLeft = parseFloat($('.navigator').css('left'));
+				var navTempTop = parseFloat($('.navigator').css('top'));
+								
+				var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+				var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+				
+				//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+				$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+				
+				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+			}
+		}				
 		
 	}
 	
 	function viewerZoomOut() {
 		
-		if (zoomLevel - .1 > 0.05) {
-			zoomLevel = Math.round((zoomLevel - .1)*100) / 100;
+		if (zoomLevel - .05 > minZoomLevel) {
+			zoomLevel = Math.round((zoomLevel - .05)*100) / 100;
 			
-		} else if (zoomLevel - .1 <= .05) {
-			zoomLevel = .05;	
+			var navTempLeft = parseFloat($('.navigator').css('left'));
+			var navTempTop = parseFloat($('.navigator').css('top'));
+							
+			var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+			
+			// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+			$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+			
+			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);			
+			
+		} else if (zoomLevel - .05 <= minZoomLevel) {
+			if (zoomLevel == minZoomLevel) {
+				zoomLevel = minZoomLevel;	
+			} else {
+				zoomLevel = minZoomLevel;
+				
+				var navTempLeft = parseFloat($('.navigator').css('left'));
+				var navTempTop = parseFloat($('.navigator').css('top'));
+								
+				var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+				var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+				
+				// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+				$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+				
+				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
+			}
+			
 		}
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
-						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
-		
-		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 	}
 	
 	function viewerMaxRes() {
