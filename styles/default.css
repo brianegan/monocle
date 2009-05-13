@@ -6,7 +6,7 @@ body,html {
 }
 
 div#viewer {
-	width: 730px;
+	width: 930px;
 	height: 500px;
 	background-color: #EEE;
 	background-repeat:no-repeat;
@@ -35,6 +35,7 @@ div#viewer {
 	border-right: 5px solid #FFF;
 	border-bottom: 5px solid #FFF;
 	z-index: 15;
+
 }
 .dmHideNav {
 	visibility: hidden;	
@@ -186,7 +187,7 @@ div#viewer {
 ***********************/
 #dmViewerMenu {
 	background-color: #CCC;
-	width: 730px;
+	width: 930px;
 	height: 30px;
 	margin: 0 auto;
 	padding: 0 0 3px 0;
@@ -203,8 +204,10 @@ div#viewer {
 #dmViewerZoomOut {
 	width: 16px;
 	height: 16px;
-	background-image: url(../images/menu/zoomOut.gif);
-	margin-left: 10px;
+	background-image: url(../images/menu/zoomOut.gif);	
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
 	}
 #dmViewerZoomIn {
 	width: 16px;
@@ -216,23 +219,23 @@ div#viewer {
 	margin-top: 6px;
 	cursor: text;
 }
-#dmViewerMaxRes {
-	width: 13px;
-	height: 16px;
-	background-image: url(../images/menu/maxRes.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
-	}
 #dmViewerFitWindow {
 	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/fitWindow.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
 	}
 #dmViewerFitWidth {
 	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/fitWidth.gif);
+	}
+#dmViewerMaxRes {
+	width: 13px;
+	height: 16px;
+	background-image: url(../images/menu/maxRes.gif);
 	}
 #dmViewerRotateCounterclockwise {
 	width: 12px;
@@ -251,9 +254,7 @@ div#viewer {
 	width: 14px;
 	height: 14px;
 	background-image: url(../images/menu/hideNavigator.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
+	margin-left: 15px;
 	}
 
 

@@ -51,6 +51,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var loadImagesTimer;
 	var hideNav = false;
 	var tileImageSrc = new Array();
+	var tileImageErrorSrc = new Array();
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
 	var tileNum = 0;
@@ -108,9 +109,9 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		// Adds back in the necessary building blocks
 		if (hideNav == true) {
-			$('<div id="thumbnail" class="dmHideNav"></div>').appendTo('#viewer');
+			$('<div id="thumbnail"></div>').appendTo('#viewer').css('top', ((thumbHeightMax + 10) * -1) + 'px');
 		} else {
-			$('<div id="thumbnail"></div>').appendTo('#viewer');	
+			$('<div id="thumbnail" style="left:0; top:0"></div>').appendTo('#viewer');	
 		}
 		$('<div id="mainimagecontainer"></div>').appendTo('#viewer');
 		$('<div id="mainimage"></div>').appendTo('#mainimagecontainer');
@@ -205,6 +206,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();	
 					
+					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					
 					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(viewerHeight);
@@ -254,6 +257,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
+					
+					$('#thumbnail').width(thumbWidth).height(thumbHeight);
 					
 					// Adds the invisible clickable Nav
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
@@ -318,6 +323,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
 					
+					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					
 					// Adds the invisible clickable Nav
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
@@ -372,23 +379,23 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 			// Build Tile Width & Height. For Larger Images make the Tiles Larger to increase performance and reduce server calls which take a long time to process
 			if (imageWidth < 2000 || imageHeight < 2000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 400;
+				tileHeight = 400;
 			} else if (imageWidth >= 2000 && imageWidth < 3000 || imageHeight >= 2000 && imageHeight < 3000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 400;
+				tileHeight = 400;
 			} else if (imageWidth >= 3000 && imageWidth < 4000 || imageHeight >= 3000 && imageHeight < 4000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 500;
+				tileHeight = 500;
 			} else if (imageWidth >= 4000 && imageWidth < 5000 || imageHeight >= 4000 && imageHeight < 5000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 500;
+				tileHeight = 500;
 			} else if (imageWidth >= 5000 && imageWidth < 6000 || imageHeight >= 5000 && imageHeight < 6000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 600;
+				tileHeight = 600;
 			} else if (imageWidth >= 6000 && imageWidth < 7000 || imageHeight >= 6000 && imageHeight < 7000) {
-				tileWidth = 800;
-				tileHeight = 800;
+				tileWidth = 700;
+				tileHeight = 700;
 			} else if (imageWidth >= 7000 && imageWidth < 8000 || imageHeight >= 7000 && imageHeight < 8000) {
 				tileWidth = 800;
 				tileHeight = 800;
@@ -419,6 +426,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
+					
+					$('#thumbnail').width(thumbWidth).height(thumbHeight);
 					
 					// Adds the invisible clickable Nav
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
@@ -504,7 +513,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageErrorSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -698,7 +708,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								tileImageErrorSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -869,8 +880,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function buildNav(navRatioPosX, navRatioPosY) {
 		
 		// Calculates the width and Height of the navigator
-		var navigatorWidth = ($('#thumbnail img').width() / $('#mainimage').width()) * viewerWidth;
-		var navigatorHeight = ($('#thumbnail img').height() / $('#mainimage').height()) * viewerHeight;
+		var navigatorWidth = (($('#thumbnail img').width() / $('#mainimage').width()) * viewerWidth);
+		var navigatorHeight = (($('#thumbnail img').height() / $('#mainimage').height()) * viewerHeight);			 
 
 		if (navigatorWidth > $('#thumbnail img').width()) {
 			navigatorWidth = $('#thumbnail img').width();
@@ -939,17 +950,9 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		// Build the Menu Div
 		$('<div id="dmViewerMenu"></div>').insertBefore('#viewer');
 		
-		// Zoom Out
-		var zoomOutButton = "<div id='dmViewerZoomOut' title='Zoom Out'>Zoom Out</div>";
-		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
-						
-		// Zoom Level Gague
-		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>" + Math.round(zoomLevel * 100) + " %</div>";
-		$(zoomLevelGague).appendTo("#dmViewerMenu");
-		
-		// Zoom In
-		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
-		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });								
+		// Hide Nav
+		var hideNavButton = "<div id='dmViewerHideNavigator' title='Show/Hide Navigator'>Hide Navigator</div>";
+		$(hideNavButton).appendTo("#dmViewerMenu").bind('click', function() { viewerHideNavigator() });											
 		
 		// Fit Window
 		var fitWindowButton = "<div id='dmViewerFitWindow' title='Fit Image to Viewer'>Fit Document to Viewer</div>";
@@ -971,13 +974,25 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var rotateClockwiseButton = "<div id='dmViewerRotateClockwise' title='Rotate Clockwise'>Rotate Clockwise</div>";
 		$(rotateClockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateClockwise() });
 		
-		// Hide Nav
-		var hideNavButton = "<div id='dmViewerHideNavigator' title='Hide Navigator'>Hide Navigator</div>";
-		$(hideNavButton).appendTo("#dmViewerMenu").bind('click', function() { viewerHideNavigator() });
+		// Zoom Out
+		var zoomOutButton = "<div id='dmViewerZoomOut' title='Zoom Out'>Zoom Out</div>";
+		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
+						
+		// Zoom Level Gague
+		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>" + Math.round(zoomLevel * 100) + " %</div>";
+		$(zoomLevelGague).appendTo("#dmViewerMenu");
+		
+		// Zoom In
+		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
+		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });				
+		
+		// If dmBridge is enabled, append the "search text" field to the viewer
+		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmViewerMenu'); }
 		
 		// Clear
 		var menuClearDiv = "<div class='clear'>&nbsp;</div>";
 		$(menuClearDiv).appendTo("#dmViewerMenu");
+				
 	}
 	
 	
@@ -1026,12 +1041,36 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				$(newImageTile)
 					.load(function () {
 						$(newImageDiv).append(this);
-						$(newImageDiv).toggleClass('dmImgTileLoading');					
-						})
-					.width(tileImageWidth[newImageNum])
-					.height(tileImageHeight[newImageNum])
+						// alert(newImageDiv + " width: " + $(this).width());
+						$(newImageDiv).toggleClass('dmImgTileLoading');							
+							if(($(this).width() < tileImageWidth[newImageNum] && $(this).width() > 10) || ($(this).height() < tileImageHeight[newImageNum] && $(this).height() > 10)) {
+								$(this).width(tileImageWidth[newImageNum])
+								$(this).height(tileImageHeight[newImageNum])
+							}
+						})					
 					.attr('class', 'tileimage')
-					.attr('src', tileImageSrc[newImageNum]);
+					.attr('src', tileImageSrc[newImageNum])
+					
+					// By design, the program tries to load an image slightly larger than needed. This is due to getimage.exe oftentimes outputting the incorrect image size, mostly 1x1 smaller.
+					// This causes Firefox to resize the image within the browser, dramatically slowing down Firefox's performance
+					// However, the slightly larger image doesn't always load properly, leaving blank tiles. 
+					// If it does this, the program will revert to the exactly sized image which always loads consistently.
+					.error(function () {
+						var newImageErrorTile = new Image();
+							
+						$(newImageErrorTile)
+							.load(function () {
+								$(newImageDiv).append(this);
+								// alert(newImageDiv + " width: " + $(this).width());
+								$(newImageDiv).toggleClass('dmImgTileLoading');							
+									if(($(this).width() < tileImageWidth[newImageNum] && $(this).width() > 10) || ($(this).height() < tileImageHeight[newImageNum] && $(this).height() > 10)) {
+										$(this).width(tileImageWidth[newImageNum])
+										$(this).height(tileImageHeight[newImageNum])
+									}
+								})					
+							.attr('class', 'tileimage')
+							.attr('src', tileImageErrorSrc[newImageNum]);						
+					});
 				
 			}
 			
@@ -1090,19 +1129,30 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		$('#mainimagedragger').css({ left:tempX, top:tempY });
 		
 		// Get MainImage Position Information
-		var mainLeft = parseFloat($('#mainimage').css('left'));
-		var mainTop = parseFloat($('#mainimage').css('top'));
+		var mainLeft = parseFloat($(mainImage).css('left'));
+		var mainTop = parseFloat($(mainImage).css('top'));
 		
 		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		var imagePositionX = (mainImageWidth - viewerWidth);
+		var imagePositionY = (mainImageHeight - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
-		var navLeft = -1 * ((mainLeft - imagePositionX) * ($('#thumbnail img').width() / $('#mainimage').width()));
-		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / $('#mainimage').height()));
+		var navLeft = -1 * ((mainLeft - imagePositionX) * ($('#thumbnail img').width() / mainImageWidth));
+		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / mainImageHeight));
 		
 		// Converts the Position to the Thumnail Ratio
 		$('div.navigator').css('left', navLeft).css('top', navTop);
+		
+		/*
+		// Speed Test - Way Faster. Need to trim this function down.
+		var container = $('div#mainimagecontainer');
+		var mainImage = $('div#mainimage');
+		var containerX = $(container).offset().left;
+		var containerY = $(container).offset().top;
+		tempX = (event.offsetX) - containerX;
+		tempY = (event.offsetY) - containerY;
+		$(mainImage).css({ left:tempX, top:tempY });
+		$('#mainimagedragger').css({ left:tempX, top:tempY }); */
 		 
 	}
 	
@@ -1679,10 +1729,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		}
 		
 		if (viewerWidthRatio >= viewerHeightRatio) {
-			var zoomLevel = viewerHeightRatio;
+			zoomLevel = viewerHeightRatio;
 		} else {
-			var zoomLevel = viewerWidthRatio;
-		}
+			zoomLevel = viewerWidthRatio;
+		}				
 		
 		var navTempLeft = parseFloat($('.navigator').css('left'));
 		var navTempTop = parseFloat($('.navigator').css('top'));
@@ -1788,11 +1838,18 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	}
 	
 	function viewerHideNavigator() {
-		$('#thumbnail').toggleClass('dmHideNav');
+		
+		//$('#thumbnail').toggleClass('dmHideNav');
+		
+		thumbDivTempWidth = (thumbWidth + 10) * -1;
+		thumbDivTempHeight = (thumbHeight + 10) * -1;
+		
 		if (hideNav == true) {
-			hideNav = false;	
+			hideNav = false;
+			$('#thumbnail').animate({ top: 0, left: 0 }, 300);
 		} else {
-			hideNav = true;	
+			hideNav = true;
+			$('#thumbnail').animate({ top: thumbDivTempHeight, left: 0 }, 300);
 		}
 	}
 	
