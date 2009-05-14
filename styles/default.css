@@ -32,8 +32,8 @@ div#viewer {
 	position: absolute;
 	top:0;
 	left:0;
-	border-right: 5px solid #FFF;
-	border-bottom: 5px solid #FFF;
+	border-right: 3px solid #FFF;
+	border-bottom: 3px solid #FFF;
 	z-index: 15;
 
 }
@@ -218,6 +218,7 @@ div#viewer {
 	text-indent: 0;
 	margin-top: 6px;
 	cursor: text;
+	width: 100px;
 }
 #dmViewerFitWindow {
 	width: 16px;

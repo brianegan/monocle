@@ -66,8 +66,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	} else {
 		var zoomLevel = viewerWidthRatio;
 		var minZoomLevel = viewerWidthRatio;
-	}
-	
+	}	
 
 	// Cursor defaults
 																							 
@@ -76,6 +75,11 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	
 	$('<div class="openhand">&nbsp;</div>').appendTo('body');
 	$('<div class="closedhand">&nbsp;</div>').appendTo('body');
+	
+	/* $('#viewer').bind('wheel', function () { 
+     	return false;
+    }); */
+
 	
 	/*****************************************
 	*
@@ -190,7 +194,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
-		var thumbSrc = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
+		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
 		if (imageWidth <= viewerWidth && imageHeight <= viewerHeight) {						
 			
@@ -208,7 +212,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					
 					$('#thumbnail').width(thumbWidth).height(thumbHeight);
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(viewerHeight);
 					
@@ -220,11 +224,12 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-image', mainImageBG)
 						.css('background-position', 'center center')
 						.css('background-repeat', 'no-repeat')
-						.bind('wheel',function(event,delta){
+						;/*.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);
+							return false;
+						});*/
 			
 					// Adds the navigator to the thumbnail
 					$('<div class="navigator"></div>')
@@ -264,7 +269,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(viewerWidth).height(imageHeight);
 					
@@ -274,6 +279,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
 					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
+					var imagePositionMoveX = (viewerWidth - viewerWidth);
+					var imagePositionMoveY = (imageHeight - viewerHeight);	
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -290,18 +297,27 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
 						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.draggable({ 
+							containment: 'parent',
+							cursor: closedHandCursor,
+							scroll: false,
+							drag: function(event, ui) { moveImageNav(viewerWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
+							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
+
+						})
+						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
 							dblClickMove(posX, posY);
 						})
-						.bind('wheel',function(event,delta){
+						;/*.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);
+							return false;
+						});*/
 						 
 					buildNav(offsetRatioX, offsetRatioY);
 					// buildScrollbars(offsetRatioX, offsetRatioY);									
@@ -329,7 +345,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#thumbnail");
 					
-					mainImageBG = "url(/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#mainimage').width(imageWidth).height(viewerHeight);
 					
@@ -339,6 +355,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
 					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
+					var imagePositionMoveX = (imageWidth - viewerWidth);
+					var imagePositionMoveY = (viewerHeight - viewerHeight);
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -355,18 +373,27 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
 						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.draggable({ 
+							containment: 'parent',
+							cursor: closedHandCursor,
+							scroll: false,
+							drag: function(event, ui) { moveImageNav(imageWidth, viewerHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
+							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
+
+						})
+						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						//.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
 							dblClickMove(posX, posY);
 						})
-						.bind('wheel',function(event,delta){
+						;/*.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
-							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);
+							return false;
+						});*/
 					
 					buildNav(offsetRatioX, offsetRatioY);
 					// buildScrollbars(offsetRatioX, offsetRatioY);
@@ -513,8 +540,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
-								tileImageErrorSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageErrorSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -609,7 +636,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -708,8 +735,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
-								tileImageErrorSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								tileImageErrorSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -802,7 +829,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#thumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -830,14 +857,37 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('left', containerX)
 						.css('top', containerY);
 										
+					var imagePositionMoveX = (imageWidth - viewerWidth);
+					var imagePositionMoveY = (imageHeight - viewerHeight);				
+					
 					$('#mainimage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
-						.css('top', imagePositionY);											
+						.css('top', imagePositionY)
+						.css('cursor', openHandCursor)
+						.draggable({ 
+							containment: 'parent',
+							cursor: closedHandCursor,
+							scroll: false,
+							drag: function(event, ui) { moveImageNav(imageWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
+							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
+
+						})
+						.bind("dblclick", function(e){												   
+							var posX = e.pageX;
+							var posY = e.pageY;
+							dblClickMove(posX, posY);
+						})
+						;/*.bind('wheel',function(event,delta){
+							var scrollPosX = event.pageX;
+							var scrollPosY = event.pageY;
+							imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);
+							return false;
+						});*/
 						
-					// A Draggable div for IE
+					/* A Draggable div for IE
 					$('<div id="mainimagedragger"></div>')
-						.appendTo('#mainimagecontainer')
+						// .appendTo('#mainimagecontainer')
 						.width(imageWidth)
 						.height(imageHeight)
 						.css('position', 'absolute')
@@ -845,19 +895,16 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('top', imagePositionY)
 						.css('z-index', '14')
 						.css('background-image', 'url(images/bg_ie.gif)')
-						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
-						.bind("dblclick", function(e){												   
-							var posX = e.pageX;
-							var posY = e.pageY;
-							dblClickMove(posX, posY);
-						})
+						.css('cursor', openHandCursor) 
+						
+						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event, containerSendX, containerSendY); })
+						// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
 							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});
+						});*/
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
 					// buildScrollbars(offsetRatioX, offsetRatioY);
@@ -913,8 +960,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				var posY = e.pageY;
 				clickNav(posX, posY);
 			})
-			.bind('drag', function(){ }) 
-			.bind('dragend', function() { }); // The two empty drag lines added here are meant to prevent Firefox from selecting images when double clicking on the nav. This is not the coolest workaround, and I will look for something better down the road.
+			// .bind('drag', function(){ }) 
+			// .bind('dragend', function() { }); // The two empty drag lines added here are meant to prevent Firefox from selecting images when double clicking on the nav. This is not the coolest workaround, and I will look for something better down the road.
 					
 
 		// Adds the navigator to the thumbnail
@@ -926,8 +973,16 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			.css('left', navOffsetX + "px")
 			.css('top', navOffsetY + "px")
 			.css('cursor', openHandCursor)
-			.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
-			.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
+			.draggable({ 
+				containment: 'div#thumbnail',
+				cursor: closedHandCursor,
+				scroll: false,
+				drag: function(event, ui) { moveNav(event) },
+				stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
+
+			})
+			// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
+			// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
 		
 		// After building the nav load the images touching it
 		loadImagesTimer = setTimeout(function() {
@@ -979,8 +1034,15 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
 						
 		// Zoom Level Gague
-		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>" + Math.round(zoomLevel * 100) + " %</div>";
-		$(zoomLevelGague).appendTo("#dmViewerMenu");
+		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>&nbsp;</div>";
+		$(zoomLevelGague)
+		.appendTo("#dmViewerMenu")
+		.slider({ 
+			animate: true,
+			max: 100,
+			min: (minZoomLevel * 100),
+			change: function(event, ui) { sliderZoomInOut() }
+		});
 		
 		// Zoom In
 		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
@@ -1004,30 +1066,24 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function loadImages() {
 		
 		// Grabs the area coordinates of the navigator
-		var y1 = parseFloat($('.navigator').css('top'));
-		var y2 = y1 + $('.navigator').height();
-		var x1 = parseFloat($('.navigator').css('left'));
-		var x2 = x1 + $('.navigator').width();
+		var navCollisionY1 = parseFloat($('.navigator').css('top'));
+		var navCollisionY2 = navCollisionY1 + $('.navigator').height();
+		var navCollisionX1 = parseFloat($('.navigator').css('left'));
+		var navCollisionX2 = navCollisionX1 + $('.navigator').width();
 		
 		// Check each div w/o an image yet to see if it is touching the navigator
 		$('.collision').each(function() {
 			
 			// Grabs the area coordinates of the div
-			var t = parseFloat($(this).css('top'));
-			var b = t + $(this).height();
-			var l = parseFloat($(this).css('left'));
-			var r = l + $(this).width();
+			var collisionTop = parseFloat($(this).css('top'));
+			var collisionBottom = collisionTop + $(this).height();
+			var collisionLeft = parseFloat($(this).css('left'));
+			var collisionRight = collisionLeft + $(this).width();
 			
-			// Checks to see if the div & nav are toucing
-			if (((y1 >= t && y1 <= b) ||	// Top edge touching
-					(y2 >= t && y2 <= b) ||	// Bottom edge touching
-					(y1 < t && y2 > b)		// Surrounded vertically
-				) && (
-					(x1 >= l && x1 <= r) ||	// Left edge touching
-					(x2 >= l && x2 <= r) ||	// Right edge touching
-					(x1 < l && x2 > r)		// Surrounded horizontally
-				))	
-		 	{ // If so, load and place the image
+			// Checks to see if the div & nav are touching
+			if (((navCollisionY1 >= collisionTop && navCollisionY1 <= collisionBottom) || (navCollisionY2 >= collisionTop && navCollisionY2 <= collisionBottom) || (navCollisionY1 < collisionTop && navCollisionY2 > collisionBottom)) && ((navCollisionX1 >= collisionLeft && navCollisionX1 <= collisionRight) || (navCollisionX2 >= collisionLeft && navCollisionX2 <= collisionRight) || (navCollisionX1 < collisionLeft && navCollisionX2 > collisionRight))) {
+				
+				// If they're touching, load and place the image.
 				
 				var newImageClasses = $(this).attr('class').toString().split(" ");
 				var newImageNum = newImageClasses[0];		
@@ -1084,9 +1140,26 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	*
 	******************************************/
 	// When the main image window is dragged, move it and the navigator as well
-	function moveImage(event) {
+	function moveImageNav(mainImageWidth, mainImageHeight, imagePositionX, imagePositionY, thumbImgMoveWidth, thumbImgMoveHeight) {				
 		
-		// Get the container dimensions
+		var mainLeft = $('#mainimage').position().left;
+		var mainTop = $('#mainimage').position().top;
+		
+		$('#feedback').html(mainLeft);
+		/*
+		// Grabs the current boundaries of the container
+		 */
+		
+		// Convert the inverted difference into the Thumbnail / MainImage ratios
+		var navLeft = -1 * ((mainLeft - imagePositionX) * ( thumbImgMoveWidth / mainImageWidth));
+		var navTop = -1 * ((mainTop - imagePositionY) * ( thumbImgMoveHeight / mainImageHeight));
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').css('left', navLeft).css('top', navTop);
+	}
+	function moveImage(event, containerCoordsX, containerCoordsY) {
+		
+		/* Get the container dimensions
 		var container = $('div#mainimagecontainer');
 		var containerX = $(container).offset().left;
 		var containerY = $(container).offset().top;
@@ -1122,15 +1195,27 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			tempY = 0;
 		} else if (mainImageY > containerHeight) { 
 			tempY = containerMaxY;
-		}
+		} */
 		
 		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
-  		$(mainImage).css({ left:tempX, top:tempY });
+		
+		// Get the proper nav positioning
+
+		// Get the nav dimensions
+		/* var mainImage = $('div#mainimage');
+		var mainImageWidth = $(mainImage).width();
+		var mainImageHeight = $(mainImage).height(); */
+		
+		// Get the proper nav positioning
+		tempX = event.offsetX - containerCoordsX;
+		tempY = event.offsetY - containerCoordsY;
+		$('#feedback').html(containerCoordsX + ", " + containerCoordsY);
+		$('#mainimage').css({ left:tempX, top:tempY });
 		$('#mainimagedragger').css({ left:tempX, top:tempY });
 		
-		// Get MainImage Position Information
-		var mainLeft = parseFloat($(mainImage).css('left'));
-		var mainTop = parseFloat($(mainImage).css('top'));
+		/* Get MainImage Position Information
+		var mainLeft = tempX;
+		var mainTop = tempY;
 		
 		// Grabs the current boundaries of the container
 		var imagePositionX = (mainImageWidth - viewerWidth);
@@ -1141,18 +1226,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / mainImageHeight));
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').css('left', navLeft).css('top', navTop);
-		
-		/*
-		// Speed Test - Way Faster. Need to trim this function down.
-		var container = $('div#mainimagecontainer');
-		var mainImage = $('div#mainimage');
-		var containerX = $(container).offset().left;
-		var containerY = $(container).offset().top;
-		tempX = (event.offsetX) - containerX;
-		tempY = (event.offsetY) - containerY;
-		$(mainImage).css({ left:tempX, top:tempY });
-		$('#mainimagedragger').css({ left:tempX, top:tempY }); */
+		$('div.navigator').css('left', navLeft).css('top', navTop); */
 		 
 	}
 	
@@ -1246,49 +1320,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	}
 	
 	// When the nav is dragged, move it and the main image window as well
-	function moveNav(event) {
-		
-		// Get the container dimensions
-		var container = $('div#thumbnail img');
-		var containerX = $(container).offset().left;
-		var containerY = $(container).offset().top;
-		var containerWidth = $(container).width();
-		var containerHeight = $(container).height();
-		
-		// Get the nav dimensions
-		var nav = $('div.navigator');
-		var navWidth = $(nav).width();
-		var navHeight = $(nav).height();
-		
-		// Get the proper nav positioning
-		tempX = (event.offsetX) - containerX;
-		tempY = (event.offsetY) - containerY;
-		
-		// $('#feedback').html(tempX + ", " + tempY);
-		
-		// Create Proper containment
-		var navX = tempX + navWidth;
-		var navY = tempY + navHeight;
-
-		// If the box is in the proper container, move the Nav
-		// Max width the container can go
-		var containerMaxX = containerWidth - navWidth;
-		var containerMaxY = containerHeight - navHeight;
-		
-		// If the box is in the proper container, move the Nav
-		if (tempX < 0){ 
-			tempX = 0;
-		} else if (navX > containerWidth) { 
-			tempX = containerMaxX;
-		}
-  		if (tempY < 0){ 
-			tempY = 0
-		} else if (navY > containerHeight) { 
-			tempY = containerMaxY;
-		}
-		
-		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
-  		$(nav).css({ left:tempX, top:tempY });
+	function moveNav(event) {			
 		
 		// Get MainImage Position Information
 		var navLeft = ($('.navigator').offset().left - $('#thumbnail').offset().left);
@@ -1467,12 +1499,14 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY); // (($('#mainimage').height() / scrollZoomLvl) * newScrollZoomLvl) - viewerHeight - (bigHeight * newScrollZoomLvl * zoomOffsetRatioY);		
 		
 		// $("#feedback").html("Default ratio: " + newScrollZoomLvl); // + "  / " + checkMathY + "; ASDAS: " + zoomOffsetRatioX + ", " + zoomOffsetRatioY);
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
 		
 		// $("#feedback").html("Default ratio: " + checkMathX + "  / " + checkMathY + "; X, Y " + mainTempLeft + ", " + mainTempTop);
 		
+		// var scrollHold = $(document).scrollTop();		
+		
 		buildImage(newScrollZoomLvl, rotationLevel, zoomOffsetRatioX, zoomOffsetRatioY);
-
+		
 	}	
 	
 	function thumbScroll(xNavScrollPos, yNavScrollPos, scrollZoomLvl, scrollDelta) {
@@ -1626,7 +1660,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 			
 			//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-			$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+			$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 			
 			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			
@@ -1644,7 +1678,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 				
 				//$("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-				$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+				$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 				
 				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			}
@@ -1664,7 +1698,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 			
 			// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-			$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+			$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 			
 			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);			
 			
@@ -1681,15 +1715,31 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 				
 				// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
-				$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+				$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 				
 				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			}
 			
-		}
+		}				
+	}
+	
+	function sliderZoomInOut() {
 		
+		zoomLevel = $('#zoomLevelGague').slider('option', 'value') / 100;
+		
+		var navTempLeft = parseFloat($('.navigator').css('left'));
+		var navTempTop = parseFloat($('.navigator').css('top'));
+								
+		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+				
+		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);		
+		// $('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
+			
+		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
 	}
+	
 	
 	function viewerMaxRes() {
 		
@@ -1701,7 +1751,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();	
 		
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 	}
@@ -1740,7 +1790,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');	
+		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);		
 		
@@ -1771,7 +1821,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');		
+		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');	
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
@@ -1801,7 +1851,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
 		
 		// $("#feedback").html("Default ratio: " + navOffsetRatioX + ", " + navOffsetRatioY + "; ZOOM: " + zoomLevel);	
-		$('#zoomLevelGague').html(Math.round(zoomLevel * 100) + ' %');
+		// $('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100)); //.html(Math.round(zoomLevel * 100) + ' %');
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			
