@@ -67,6 +67,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var zoomLevel = viewerWidthRatio;
 		var minZoomLevel = viewerWidthRatio;
 	}	
+	
+	var zoomLevel = .5;
 
 	// Cursor defaults
 																							 
@@ -297,16 +299,16 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
 						.css('cursor', openHandCursor)
-						.draggable({ 
+						/* .draggable({ 
 							containment: 'parent',
 							cursor: closedHandCursor,
 							scroll: false,
 							drag: function(event, ui) { moveImageNav(viewerWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
 							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
 
-						})
-						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						}) */
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -373,16 +375,16 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
 						.css('cursor', openHandCursor)
-						.draggable({ 
+						/* .draggable({ 
 							containment: 'parent',
 							cursor: closedHandCursor,
 							scroll: false,
 							drag: function(event, ui) { moveImageNav(imageWidth, viewerHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
 							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
 
-						})
-						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						//.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						}) */
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -865,19 +867,15 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
 						.css('cursor', openHandCursor)
-						.draggable({ 
+						/* .draggable({ 
 							containment: 'parent',
 							cursor: closedHandCursor,
 							scroll: false,
 							drag: function(event, ui) { moveImageNav(imageWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
 							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
 
-						})
-						.bind("dblclick", function(e){												   
-							var posX = e.pageX;
-							var posY = e.pageY;
-							dblClickMove(posX, posY);
-						})
+						}) */
+						
 						;/*.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
@@ -885,9 +883,12 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 							return false;
 						});*/
 						
-					/* A Draggable div for IE
+						var containerSendX = $('#mainimagecontainer').offset().left;
+						var containerSendY = $('#mainimagecontainer').offset().top;
+						
+					// A Draggable div for IE
 					$('<div id="mainimagedragger"></div>')
-						// .appendTo('#mainimagecontainer')
+						.appendTo('#mainimagecontainer')
 						.width(imageWidth)
 						.height(imageHeight)
 						.css('position', 'absolute')
@@ -897,14 +898,19 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('background-image', 'url(images/bg_ie.gif)')
 						.css('cursor', openHandCursor) 
 						
-						// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event, containerSendX, containerSendY); })
-						// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event, containerSendX, containerSendY); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.bind("dblclick", function(e){												   
+							var posX = e.pageX;
+							var posY = e.pageY;
+							dblClickMove(posX, posY);
+						})
 						
 						.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
 							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});*/
+						});
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
 					// buildScrollbars(offsetRatioX, offsetRatioY);
@@ -973,16 +979,16 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			.css('left', navOffsetX + "px")
 			.css('top', navOffsetY + "px")
 			.css('cursor', openHandCursor)
-			.draggable({ 
+			/* .draggable({ 
 				containment: 'div#thumbnail',
 				cursor: closedHandCursor,
 				scroll: false,
 				drag: function(event, ui) { moveNav(event) },
 				stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
 
-			})
-			// .bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
-			// .bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
+			}) */
+			.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
+			.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
 		
 		// After building the nav load the images touching it
 		loadImagesTimer = setTimeout(function() {
@@ -1157,6 +1163,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		// Converts the Position to the Thumnail Ratio
 		$('div.navigator').css('left', navLeft).css('top', navTop);
 	}
+	
 	function moveImage(event, containerCoordsX, containerCoordsY) {
 		
 		/* Get the container dimensions
@@ -1209,7 +1216,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		// Get the proper nav positioning
 		tempX = event.offsetX - containerCoordsX;
 		tempY = event.offsetY - containerCoordsY;
-		$('#feedback').html(containerCoordsX + ", " + containerCoordsY);
+		$('#feedback').html(tempX + ", " + tempY);
+		// $('#mainimage').position.left = tempX;
 		$('#mainimage').css({ left:tempX, top:tempY });
 		$('#mainimagedragger').css({ left:tempX, top:tempY });
 		
