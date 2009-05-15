@@ -14,13 +14,6 @@ ChangeLog version .6 - version .7:
 	
 *****************************************************************/
 
-// Internet Explorer doesn't play 100% well with jquery.event.drag, in that when a user's
-// mouse leaves the page with a drag active, the drag doesn't function properly.
-// This piece of code cancels out the drag function should a user leave the page while dragging
-$( document ).bind("mouseleave",function( event ){
-	event.type = "mouseup";
-	$.event.handle.call( this, event );
-});
 
 function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 
@@ -55,6 +48,18 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var tileImageWidth = new Array();
 	var tileImageHeight = new Array();
 	var tileNum = 0;
+	
+	// Movement
+	var containerSendX;
+	var containerSendY;
+	var mainImageWidth;
+	var mainImageHeight;
+	var containerWidth;
+	var containerHeight;
+	var imagePositionMoveX;
+	var imagePositionMoveY;
+	var thumbMainWidthRatio;
+	var thumbMainHeightRatio
 	
 	// Zoom Default - Fit Window!
 	var viewerWidthRatio = viewerWidth / bigWidth;
@@ -276,7 +281,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					$('#mainimage').width(viewerWidth).height(imageHeight);
 					
 					var containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
-					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
+					var containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
@@ -287,7 +292,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
-						.css('height', containerHieght)
+						.css('height', containerHeight)
 						.css('left', containerX)
 						.css('top', containerY);
 										
@@ -351,8 +356,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					
 					$('#mainimage').width(imageWidth).height(viewerHeight);
 					
-					var containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
-					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
+					containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
+					containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
@@ -363,7 +368,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
-						.css('height', containerHieght)
+						.css('height', containerHeight)
 						.css('left', containerX)
 						.css('top', containerY);
 										
@@ -843,8 +848,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						
 					} // End Rotation IF													
 					
-					var containerWidth = parseInt(((imageWidth) + (imageWidth) - viewerWidth)) + "px";
-					var containerHieght = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
+					containerWidth = parseInt(((imageWidth) + (imageWidth) - viewerWidth)) + "px";
+					containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
@@ -855,26 +860,35 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
-						.css('height', containerHieght)
+						.css('height', containerHeight)
 						.css('left', containerX)
 						.css('top', containerY);
 										
-					var imagePositionMoveX = (imageWidth - viewerWidth);
-					var imagePositionMoveY = (imageHeight - viewerHeight);				
+					imagePositionMoveX = (imageWidth - viewerWidth);
+					imagePositionMoveY = (imageHeight - viewerHeight);									
+					containerSendX = $('#mainimagecontainer').offset().left;
+					containerSendY = $('#mainimagecontainer').offset().top;
+					mainImageWidth = $('#mainimage').width();
+					mainImageHeight = $('#mainimage').height();
+					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
+					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();
+					
 					
 					$('#mainimage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
 						.css('cursor', openHandCursor)
-						/* .draggable({ 
+						/*.draggable({ 
 							containment: 'parent',
 							cursor: closedHandCursor,
-							scroll: false,
-							drag: function(event, ui) { moveImageNav(imageWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
-							stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
+							scroll: false
+							// drag: function(event, ui) { moveImageNav(imageWidth, imageHeight, imagePositionMoveX, imagePositionMoveY, thumbWidth, thumbHeight) },
+							// stop: function(event, ui) { $(this).css('cursor', openHandCursor); loadImages(); }
 
 						}) */
+						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
+						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						
 						;/*.bind('wheel',function(event,delta){
 							var scrollPosX = event.pageX;
@@ -883,11 +897,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 							return false;
 						});*/
 						
-						var containerSendX = $('#mainimagecontainer').offset().left;
-						var containerSendY = $('#mainimagecontainer').offset().top;
+					
 						
 					// A Draggable div for IE
-					$('<div id="mainimagedragger"></div>')
+					/* $('<div id="mainimagedragger"></div>')
 						.appendTo('#mainimagecontainer')
 						.width(imageWidth)
 						.height(imageHeight)
@@ -896,8 +909,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 						.css('top', imagePositionY)
 						.css('z-index', '14')
 						.css('background-image', 'url(images/bg_ie.gif)')
-						.css('cursor', openHandCursor) 
-						
+						.css('cursor', openHandCursor) 						
 						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event, containerSendX, containerSendY); })
 						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
 						.bind("dblclick", function(e){												   
@@ -910,7 +922,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 							var scrollPosX = event.pageX;
 							var scrollPosY = event.pageY;
 							// imageScroll(scrollPosX, scrollPosY, lvlZoom, delta);													
-						});
+						}); */
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
 					// buildScrollbars(offsetRatioX, offsetRatioY);
@@ -1164,9 +1176,40 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		$('div.navigator').css('left', navLeft).css('top', navTop);
 	}
 	
-	function moveImage(event, containerCoordsX, containerCoordsY) {
+	function moveImage(event) {
 		
-		/* Get the container dimensions
+		/*  Get the container dimensions
+		
+		// Get the proper nav positioning
+		tempX = event.offsetX - containerSendX;
+		tempY = event.offsetY - containerSendY;
+		
+		// $('#feedback').html(tempX + ", " + tempY);
+		
+		// Create Proper containment
+		var mainImageX = tempX + mainImageWidth;
+		var mainImageY = tempY + mainImageHeight;
+		
+		$('#feedback').html(containerSendX + ", " + containerSendY);
+		
+		// Max width the container can go
+		var containerMaxX = containerWidth - mainImageWidth;
+		var containerMaxY = containerHeight - mainImageHeight;		
+		
+		// If the image is in the proper container, move the image
+		if (tempX < 0){ 
+			tempX = 0; 
+		} else if (mainImageX > containerWidth) { 
+			tempX = containerMaxX;
+		}
+  		if (tempY < 0){ 
+			tempY = 0;
+		} else if (mainImageY > containerHeight) { 
+			tempY = containerMaxY;
+		}
+		
+		$('#mainimage').css({ left:tempX, top:tempY }); */
+		// Get the container dimensions
 		var container = $('div#mainimagecontainer');
 		var containerX = $(container).offset().left;
 		var containerY = $(container).offset().top;
@@ -1181,7 +1224,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		// Get the proper nav positioning
 		tempX = (event.offsetX) - containerX;
 		tempY = (event.offsetY) - containerY;
-		
+						
 		// $('#feedback').html(tempX + ", " + tempY);
 		
 		// Create Proper containment
@@ -1202,7 +1245,25 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			tempY = 0;
 		} else if (mainImageY > containerHeight) { 
 			tempY = containerMaxY;
-		} */
+		}
+		
+		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
+  		$(mainImage).css({ left:tempX, top:tempY });
+		
+		
+		// Get MainImage Position Information
+	
+		// Grabs the current boundaries of the container
+		
+		
+		// Convert the inverted difference into the Thumbnail / MainImage ratios
+		var navLeft = -1 * ((tempX - imagePositionMoveX) * thumbMainWidthRatio);
+		var navTop = -1 * ((tempY - imagePositionMoveY) * thumbMainHeightRatio);
+		
+		$('#feedback').html(navLeft + ", " + navTop);
+		
+		// Converts the Position to the Thumnail Ratio
+		$('div.navigator').css('left', navLeft).css('top', navTop);
 		
 		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
 		
@@ -1214,12 +1275,12 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var mainImageHeight = $(mainImage).height(); */
 		
 		// Get the proper nav positioning
-		tempX = event.offsetX - containerCoordsX;
-		tempY = event.offsetY - containerCoordsY;
-		$('#feedback').html(tempX + ", " + tempY);
+		// tempX = event.offsetX - containerSendX;
+		// tempY = event.offsetY - containerSendY;
+		
 		// $('#mainimage').position.left = tempX;
-		$('#mainimage').css({ left:tempX, top:tempY });
-		$('#mainimagedragger').css({ left:tempX, top:tempY });
+		
+		// $('#mainimagedragger').css({ left:tempX, top:tempY });
 		
 		/* Get MainImage Position Information
 		var mainLeft = tempX;
@@ -1330,6 +1391,48 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	// When the nav is dragged, move it and the main image window as well
 	function moveNav(event) {			
 		
+		// Get the container dimensions
+		var container = $('div#thumbnail img');
+		var containerX = $(container).offset().left;
+		var containerY = $(container).offset().top;
+		var containerWidth = $(container).width();
+		var containerHeight = $(container).height();
+		
+		// Get the nav dimensions
+		var nav = $('div.navigator');
+		var navWidth = $(nav).width();
+		var navHeight = $(nav).height();
+		
+		// Get the proper nav positioning
+		tempX = (event.offsetX) - containerX;
+		tempY = (event.offsetY) - containerY;
+		
+		// $('#feedback').html(tempX + ", " + tempY);
+		
+		// Create Proper containment
+		var navX = tempX + navWidth;
+		var navY = tempY + navHeight;
+
+		// If the box is in the proper container, move the Nav
+		// Max width the container can go
+		var containerMaxX = containerWidth - navWidth;
+		var containerMaxY = containerHeight - navHeight;
+		
+		// If the box is in the proper container, move the Nav
+		if (tempX < 0){ 
+			tempX = 0;
+		} else if (navX > containerWidth) { 
+			tempX = containerMaxX;
+		}
+  		if (tempY < 0){ 
+			tempY = 0
+		} else if (navY > containerHeight) { 
+			tempY = containerMaxY;
+		}
+		
+		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
+  		$(nav).css({ left:tempX, top:tempY });
+		
 		// Get MainImage Position Information
 		var navLeft = ($('.navigator').offset().left - $('#thumbnail').offset().left);
 		var navTop = ($('.navigator').offset().top - $('#thumbnail').offset().top);
@@ -1344,7 +1447,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		// Converts the Position to the Thumnail Ratio
 		$('#mainimage').css('left', mainLeft).css('top', mainTop);
-		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
+		// $('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
 		 
 	}
 	
