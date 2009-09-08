@@ -3,14 +3,9 @@
 	version .7
 	by Brian Egan
 
-ChangeLog version .6 - version .7:
-	
-	* Goal of version: Fine tune the zooming functionality so it retains it's location when zooming in instead of resetting & allow for scrolling.
-	* Zoom retainment functionality built. The buildImage and buildNav functions now accept offset ratios (the distance from the middle of the zoom to the top left of the image divided by the width of the image). This allows the building functions to calculate where the initial nav should be placed when zoomed.
-	* Scroll zooming added to the image and thumbnail. Because getimage.exe is so slow to load the tiles, when the image is rebuilt (for rotations or zooms), the initial image build will pause for 3/4 of a second.
-	  Should the user chose to rotate or zoom again in that time frame, the image loading will be canceled. This way if a user zooms in quickly, the program will not have to load the 
-	  tiles from the skipped zoom or rotation level.
-	* Zooming funciontality added to the + and - buttons, and they are properly zooming in on the center of the viewport.
+Changelog v 1.0 - 1.1
+
+Goal of Release: Add print Functionality
 	
 *****************************************************************/
 
@@ -73,7 +68,7 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var minZoomLevel = viewerWidthRatio;
 	}	
 	
-	var zoomLevel = .5;
+	// var zoomLevel = .5;
 
 	// Cursor defaults
 																							 
@@ -1064,7 +1059,11 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		// Zoom In
 		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
-		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });				
+		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });	
+		
+		// Print
+		var downloadImageButton = "<div id='dmViewerDownloadButton' title='Download the Image'></div>";
+		$(downloadImageButton).appendTo("#dmViewerMenu").bind('click', function() { viewerDownloadImage(); });			
 		
 		// If dmBridge is enabled, append the "search text" field to the viewer
 		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmViewerMenu'); }
@@ -2012,6 +2011,103 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			hideNav = true;
 			$('#thumbnail').animate({ top: thumbDivTempHeight, left: 0 }, 300);
 		}
+	}
+	
+	function viewerDownloadImage() {
+		
+		// Create Lightbox type effect
+		$("<div id='dmDownloadImageBackground'></div><div id='dmDownloadImage'></div>").appendTo('body');
+		
+		var windowWidth = $(window).width();
+		var windowHeight = $(window).height();		
+		var topScroll = $(document).scrollTop();
+		var documentHeight = $(document).height();
+		
+		$('div#dmDownloadImageBackground')
+			.css('width', windowWidth + 'px')
+			.css('height', documentHeight + 'px')
+			.css('opacity', .6)
+			.css('top', '0px');				
+		
+		// Append Header & explanation
+		$("<h3>Download Image</h3>").appendTo("div#dmDownloadImage");
+		// $("<p>Please select from one of the common print sizes, or select a custom size with the slider, and click \"Download\"").appendTo("div#dmDownloadImage");
+		
+		
+		// Print sizes
+		var printSizes = ["3.5x5", "4x6", "5x7","8x10","11x17"];
+		// var printNames = [""]
+		
+		
+		// Calc 300 dpi sizes
+		var printSizes300DPI = [];
+		var printLinks300DPI = [];
+		var printSizes72DPI = [];
+		var printLinks72DPI = [];
+		
+		for (var i = 0; i < printSizes.length; i++) {
+			
+			var widthInches = printSizes[i].split("x")[0],
+				heightInches = printSizes[i].split("x")[1],
+				width300DPI = widthInches * 300,
+				height300DPI = heightInches * 300,
+				ratio300DPI = width300DPI / dmImgWidth * 100;
+				width72DPI = widthInches * 72,
+				height72DPI = heightInches * 72;
+				
+			if (dmImgWidth < dmImgHeight) {
+				printSizes300DPI.push(width300DPI + "x" + height300DPI);
+			} else if (dmImgWidth >= dmImgHeight) {
+								
+				if (width300DPI <= dmImgWidth) {
+					
+					printLinks300DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
+					printSizes300DPI.push(height300DPI + "x" + width300DPI);	
+				}
+			}
+			
+			console.log(printLinks300DPI[i]);
+		}; 
+		
+		
+		// Print Sizes
+		// $("<h4>Common Sizes</h4>").appendTo("div#dmDownloadImage");		
+		// $("<ul id='dmImageCommonSizes'></ul>").appendTo("div#dmDownloadImage");
+		
+		
+	 
+		// Append Slider
+				
+		var downloadRatio = dmImgHeight / dmImgWidth;		
+		
+		var imageDimensionsSlider = "<div id='dmDownloadImageSlider' title='Image Dimensions'>&nbsp;</div>";
+		$(imageDimensionsSlider)
+		.appendTo("#dmDownloadImage")
+		.slider({ 
+			animate: true,
+			value: (dmImgWidth / 2),
+			max: dmImgWidth,
+			min: 0
+		});
+		
+		// Append Slider Info & Download Button
+		$("<div id='dmDownloadImagSliderVals'>" + (dmImgWidth / 2) + " x " + (dmImgHeight / 2) + "</div><p><a href='http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=50&DMWIDTH=" + (dmImgWidth / 2) + "&DMHEIGHT=" + (dmImgHeight / 2) + "&DMROTATE=0' target='_blank' id='dmDownloadImageLink'>Download!</a></p>").appendTo("#dmDownloadImage");
+		
+		$('#dmDownloadImageSlider').bind('slide', function(event, ui) { 
+			var currentDownloadWidth = $('#dmDownloadImageSlider').slider('option', 'value');
+			var currentDownloadHeight = parseInt(currentDownloadWidth * downloadRatio);
+			var currentZoomLevel = (currentDownloadWidth / dmImgWidth) * 100;
+			var currentHTML = currentDownloadWidth + " x " + currentDownloadHeight; 
+			var currentLink = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + currentZoomLevel + "&DMWIDTH=" + currentDownloadWidth + "&DMHEIGHT=" + currentDownloadHeight + "&DMROTATE=0";
+			$("#dmDownloadImagSliderVals").html(currentHTML);
+			$("#dmDownloadImageLink").attr("href", currentLink);
+		});
+		
+		// Position DownloadImage box
+		$('#dmDownloadImage')
+			.css('top', ((windowHeight / 2) - ($('#dmDownloadImage').height() / 2) + topScroll) + "px")
+			.css('left', ((windowWidth / 2) - ($('#dmDownloadImage').width() / 2)) + "px");
+		
 	}
 	
 	/*		// Zoom Out

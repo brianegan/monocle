@@ -257,6 +257,30 @@ div#viewer {
 	background-image: url(../images/menu/hideNavigator.gif);
 	margin-left: 15px;
 	}
+#dmViewerDownloadButton {
+	width: 12px;
+	height: 12px;
+	background-image: url(../images/menu/rotateCounter.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;	
+	}
+/* Download Styles! */
+
+#dmDownloadImageBackground {
+	position: absolute;
+	left: 0;
+	background-color: #000000;
+	text-align: center;
+	z-index: 150;
+}
+#dmDownloadImage {
+	background-color: #FFF;
+	width: 450px;
+	padding: 10px 15px;
+	position: absolute;
+	z-index: 200;
+}
 
 
 
