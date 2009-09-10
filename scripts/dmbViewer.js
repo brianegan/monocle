@@ -2031,6 +2031,9 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		// Append Header & explanation
 		$("<h3>Download Image</h3>").appendTo("div#dmDownloadImage");
+		$("<p id='dmClosePrint'><a href='javascript: void()'>Close</a></p>").appendTo("div#dmDownloadImage").bind('click', function() {
+			$('#dmDownloadImageBackground, #dmDownloadImage').remove();
+		})
 		// $("<p>Please select from one of the common print sizes, or select a custom size with the slider, and click \"Download\"").appendTo("div#dmDownloadImage");
 		
 		
@@ -2044,39 +2047,115 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var printLinks300DPI = [];
 		var printSizes72DPI = [];
 		var printLinks72DPI = [];
+				
 		
 		for (var i = 0; i < printSizes.length; i++) {
 			
-			var widthInches = printSizes[i].split("x")[0],
-				heightInches = printSizes[i].split("x")[1],
-				width300DPI = widthInches * 300,
-				height300DPI = heightInches * 300,
-				ratio300DPI = width300DPI / dmImgWidth * 100;
-				width72DPI = widthInches * 72,
-				height72DPI = heightInches * 72;
-				
-			if (dmImgWidth < dmImgHeight) {
-				printSizes300DPI.push(width300DPI + "x" + height300DPI);
+			if (dmImgWidth < dmImgHeight) {			
+				var widthInches = printSizes[i].split("x")[0], 
+					heightInches = printSizes[i].split("x")[1];	
 			} else if (dmImgWidth >= dmImgHeight) {
-								
-				if (width300DPI <= dmImgWidth) {
-					
+				var widthInches = printSizes[i].split("x")[1], 
+					heightInches = printSizes[i].split("x")[0];					
+			}					
+			var width300DPI = widthInches * 300,
+				height300DPI = heightInches * 300,
+				widthRatio300DPI = width300DPI / dmImgWidth * 100,
+				heightRatio300DPI = height300DPI / dmImgHeight * 100,
+				width72DPI = widthInches * 72,
+				height72DPI = heightInches * 72,
+				widthRatio72DPI = width72DPI / dmImgWidth * 100,
+				heightRatio72DPI = height72DPI / dmImgHeight * 100;
+			
+			if (widthRatio300DPI < heightRatio300DPI) {
+				var ratio300DPI = widthRatio300DPI;
+				var ratio72DPI = widthRatio72DPI;
+			} else if (widthRatio300DPI >= heightRatio300DPI) {
+				var ratio300DPI = heightRatio300DPI;
+				var ratio72DPI = heightRatio72DPI;
+			}
+			
+				
+			if (dmImgWidth < dmImgHeight) {				
+				if (height300DPI <= dmImgHeight) {					
 					printLinks300DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
-					printSizes300DPI.push(height300DPI + "x" + width300DPI);	
+					printSizes300DPI.push(width300DPI + "x" + height300DPI);	
+				}
+				
+				if (height72DPI <= dmImgHeight) {
+					printLinks72DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
+					printSizes72DPI.push(width72DPI + "x" + height72DPI);
+				}				
+			} else if (dmImgWidth >= dmImgHeight) {													
+				if (width300DPI <= dmImgWidth) {								
+					printLinks300DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
+					printSizes300DPI.push(width300DPI + "x" + height300DPI);	
+				}				
+				if (width72DPI <= dmImgWidth) {
+					printLinks72DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
+					printSizes72DPI.push(width72DPI + "x" + height72DPI);
 				}
 			}
 			
-			console.log(printLinks300DPI[i]);
+			// console.log(printSizes72DPI[i]);
 		}; 
 		
 		
 		// Print Sizes
-		// $("<h4>Common Sizes</h4>").appendTo("div#dmDownloadImage");		
-		// $("<ul id='dmImageCommonSizes'></ul>").appendTo("div#dmDownloadImage");
+		$("<h4>Common Sizes</h4>").appendTo("div#dmDownloadImage");
+		$("<table id='dmPrintSizesListing'><tr><th>Paper Sizes</th><th>High Quality (300dpi)</th><th>Low Quality (72dpi)</th></tr></table>").appendTo("div#dmDownloadImage");
 		
+		for (var j = 0; j < printSizes.length; j++) {
+			
+			// Print the Paper Sizes
+			$("<tr><td>" + printSizes[j] + "</td></tr>").appendTo('#dmPrintSizesListing');
+
+			// Print 300 DPI Links
+			if (printLinks300DPI[j]) {
+				$("<td><a href='" + printLinks300DPI[j] +"' target='_blank'>Download</a></td>").appendTo('#dmPrintSizesListing tr:eq('+ (j + 1) + ')');
+			} else {
+				$("<td>&nbsp;</td>").appendTo('#dmPrintSizesListing tr:eq('+ (j + 1) + ')');
+			}
+
+			// Print 72 DPI Links
+			if (printLinks72DPI[j]) {
+				$("<td><a href='" + printLinks72DPI[j] +"' target='_blank'>Download</a></td>").appendTo('#dmPrintSizesListing tr:eq('+ (j + 1) + ')');
+			} else {
+				$("<td>&nbsp;</td>").appendTo('#dmPrintSizesListing tr:eq('+ (j + 1) + ')');
+			}
+		}
+		
+		$('#dmPrintSizesListing tr:even td').addClass('even');
+		
+		/* $("<div id='dmPaperSize'><h5>Paper Size</h5><ul>&nbsp;</ul></div>").appendTo("div#dmDownloadImage");				
+		$("<div id='dmPrinting300DPI'><h5>300 DPI</h5><ul>&nbsp;</ul></div>").appendTo("div#dmDownloadImage");		
+		$("<div id='dmPrinting72DPI'><h5>72 DPI</h5><ul>&nbsp;</ul></div>").appendTo("div#dmDownloadImage");
+		
+		var paperPrintSizesHTML, printSizes300DPIHTML, printSizes72DPIHTML;
+		
+		for (var j = 0; j < printSizes.length; j++) {
+			
+			// Print the Paper Sizes
+			paperPrintSizesHTML += "<li>" + printSizes[j] +"</li>"; //).appendTo("div#dmPaperSize ul");
+
+			// Print 300 DPI Links
+			if (printLinks300DPI[j]) {
+				printSizes300DPIHTML += "<li><a href='" + printLinks300DPI[j] +"' target='_blank'>Download</a></li>"; // ).appendTo("div#dmPrinting300DPI ul");
+			}
+
+			// Print 72 DPI Links
+			if (printLinks72DPI[j]) {
+				printSizes72DPIHTML += "<li><a href='" + printLinks72DPI[j] +"' target='_blank'>Download</a></li>"; //).appendTo("div#dmPrinting72DPI ul");
+			}
+		}
+		
+		$("div#dmPaperSize ul").html(paperPrintSizesHTML);
+		$("div#dmPrinting300DPI ul").html(printSizes300DPIHTML);
+		$("div#dmPrinting72DPI ul").html(printSizes72DPIHTML); */
 		
 	 
 		// Append Slider
+		$("<h4>Custom Size</h4>").appendTo("div#dmDownloadImage");
 				
 		var downloadRatio = dmImgHeight / dmImgWidth;		
 		
