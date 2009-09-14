@@ -15,10 +15,12 @@
  *	  * Clean up code for Google Code distribution (Remove old & obsolete comments, run JSLint)
  *	  * Remove wheel events until a solid plan is adopted for wheel movement
  *	  * Make Hide Nav Animation more fun
+ *	  * Change main function name to dmMonocle
+ *	  * Rename file to dmmonocle.js
  *	
 *****************************************************************/
 
-function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
+function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 
 	/*****************************************
 	*
