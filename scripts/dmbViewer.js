@@ -48,8 +48,6 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	tileImageWidth = [],
 	tileImageHeight = [],
 	tileNum = 0,
-	
-	// Movement
 	containerSendX,
 	containerSendY,
 	mainImageWidth,
@@ -249,8 +247,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
 					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
-					var imagePositionMoveX = (viewerWidth - viewerWidth);
-					var imagePositionMoveY = (imageHeight - viewerHeight);	
+					imagePositionMoveX = (viewerWidth - viewerWidth);
+					imagePositionMoveY = (imageHeight - viewerHeight);
+					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
+					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();	
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -306,12 +306,14 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					
 					containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
 					containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
+					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
+					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();
 					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
 					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
 					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
 					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionMoveX = (imageWidth - viewerWidth);
-					var imagePositionMoveY = (viewerHeight - viewerHeight);
+					imagePositionMoveX = (imageWidth - viewerWidth);
+					imagePositionMoveY = (viewerHeight - viewerHeight);
 					
 					$('#mainimagecontainer')
 						.css('position', 'absolute')
@@ -1026,6 +1028,8 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		tempX = (event.offsetX) - containerX;
 		tempY = (event.offsetY) - containerY;
 		
+		// $('#feedback').html(tempX + ", " + tempY);
+		
 		// Create Proper containment
 		var mainImageX = tempX + mainImageWidth;
 		var mainImageY = tempY + mainImageHeight;
@@ -1045,8 +1049,13 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		} else if (mainImageY > containerHeight) { 
 			tempY = containerMaxY;
 		}
-	
+		
+		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
   		$(mainImage).css({ left:tempX, top:tempY });
+		
+		// Grabs the current boundaries of the container
+		var imagePositionX = ($('#mainimage').width() - viewerWidth);
+		var imagePositionY = ($('#mainimage').height() - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
 		var navLeft = -1 * ((tempX - imagePositionMoveX) * thumbMainWidthRatio);
@@ -1527,10 +1536,10 @@ function dmBridgeZoomer(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		if (hideNav === true) {
 			hideNav = false;
-			$('#thumbnail').animate({ top: 0, left: 0 }, 300).animate({ top:-20, left: 0 }, 150).animate({ top: 0, left: 0 }, 150);
+			$('#thumbnail').animate({ top: 0, left: 0 }, 200).animate({ top:-30, left: 0 }, 200).animate({ top: 0, left: 0 }, 200);
 		} else {
 			hideNav = true;
-			$('#thumbnail').animate({ top: -20, left: 0 }, 150).animate({ top: 0, left: 0 }, 150).animate({ top: thumbDivTempHeight, left: 0 }, 300);
+			$('#thumbnail').animate({ top: -60, left: 0 }, 200).animate({ top: 0, left: 0 }, 200).animate({ top: thumbDivTempHeight, left: 0 }, 200);
 		}
 	}
 	
