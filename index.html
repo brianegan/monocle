@@ -1,96 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>dmBridge Image Viewer</title>
+	<title>dmMonocle - View CONTENTdm images with style!</title>	
+	<link rel="stylesheet" href="styles/default.css" type="text/css" media="screen">
+</head>
+<body>
+
+<div id="feedback"> <!-- this div is for testing, allowing developers to dump text into it to check teh mathz --> </div>
+
+<div id="dmMonocle">
+	<!-- Currently, dmMonocle is a bit unflexible. It requires there be a div called dmMonocle on the page to work. --> 
+</div>
+
+<!-- Put all JS at the bottom of the page (general best practice). -->
 <script type="text/javascript" src="scripts/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.event.drag-1.5.min.js"></script>
 <script type="text/javascript" src="scripts/jquery-ui-1.7.1.custom.min.js"></script>
-<script type="text/javascript" src="scripts/jquery.event.wheel.min.js"></script>
-<script type="text/javascript" src="scripts/dmbViewer.js"></script>
+<script type="text/javascript" src="scripts/dmmonocle.js"></script>
 
+<!-- Initialize dmMonocle. -->
+<!-- Usage: dmMonocle(Image Width, Image Height, CISOPTR, CISOROOT); -->
 <script type="text/javascript">
-<!-- 
-$(document).ready(function() {
-	/*****************************************
-	*
-	*	IT'S ALIVE!!!
-	*
-	******************************************/
-	// buildImage(25, 0);
-});
--->
-</script>
-
-<link rel="stylesheet" href="styles/default.css" type="text/css" media="screen">
-<link rel="stylesheet" href="styles/smoothness/jquery-ui-1.7.1.custom.css" type="text/css" media="screen">
-</head>
-<body>
-<br />
-<br /><br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<a name="vieweranchor" id="vieweranchor"></a>
-<br />
-
-<div id="feedback"> <!-- this div is for testing, allows me to dump text into it to check teh mathz --> </div>
-
-<script type="text/javascript">
-	$(window).load(function() {
-		// dmBridgeZoomer(10360, 9590, 426, "/LV_Maps")						   
-		//dmBridgeZoomer(5111, 3842, 9, "/snv")
-		// dmBridgeZoomer(2596, 3335, 5178, "/snv")
-		dmBridgeZoomer(5831, 3559, 2678, "/snv");
-		//dmBridgeZoomer(4012, 1432, 1493, "/snv")
+	$(window).ready(function() {
+		dmMonocle(4902, 3730, 30, "/snv");
+		// dmMonocle(5111, 3842, 9, "/snv");
+		// dmMonocle(2596, 3335, 5178, "/snv");
+		// dmMonocle(10360, 9590, 426, "/LV_Maps");						   		
+		// dmMonocle(5831, 3559, 2678, "/snv");
+		// dmMonocle(4012, 1432, 1493, "/snv");
 	});
 </script>
-
-
-<div id="viewer">
-	<!-- all necessary divs will be generated. The idea will to be able to call dmViewer like any jquery class. Ex:
-    	
-        $('#viewer').dmViewer({
-        	CISOPTR: 426,
-            CISOROOT: Hughes,
-            defaultZoom: .25,
-            defaultRotation: 0,
-            dmMaxHeight: (maximum height of the image),
-            dmMaxWidth: (maximum width of the image),
-            dmBridge: true (this value would be called for dmBridge enabled sites, which would provide additional functionality, such as shared slices).
-        });
-    	
-     -->
-</div>
-
-<br /><br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
-
 
 </body>
 </html>
