@@ -1,198 +1,99 @@
-/* dmBridge Image VIewer .5 styles */
+/* ****************************
+ *
+ *	dmMonocle
+ *	by Brian Egan
+ *	
+ *	Copyright (c) 2009 University of Nevada, Las Vegas
+ *	Licensed under GPLv3 
+ *  http://code.google.com/p/dmmonocle/wiki/License
+ *
+*************************************************************/
 
-body,html {
-	margin: 0;
-	padding: 10px 0 0 0;
-}
-
-div#viewer {
+/* This is the main viewer area. Set it's width and height 
+to reflect the size you would like your viewer to be. */
+div#dmMonocle {
 	width: 930px;
 	height: 500px;
 	background-color: #EEE;
-	background-repeat:no-repeat;
-	background-position:center center;
-	margin-top: 20px;
+	
+	/* These properties are necessary for dmMonocle functionality 
+	- do not edit unless necessary */
 	position:relative;
 	overflow:hidden;
 	margin: 0 auto;
 	text-align: center;
+	background-repeat:no-repeat;
+	background-position:center center;
 }
-.zoomout {
-	float: left;
-	display: block;
-	width: 300px;
-}
-.zoomin {
-	float: right;
-}
-#zoomcontrols {
-	margin: 0 60px 0 20px;
-}
-#thumbnail {
-	position: absolute;
-	top:0;
-	left:0;
+/* Positions the Thumbnail div. In future version, more flexibility will be given with the thumbnail. As is, it is rendered at the top-left corner. */
+#dmThumbnail {
 	border-right: 3px solid #FFF;
 	border-bottom: 3px solid #FFF;
-	z-index: 15;
-
-}
-.dmHideNav {
-	visibility: hidden;	
-}
-#mainimage {	
-	z-index: 1;
-}
-#mainimagedragger {
 	
+	/* Necessary Styles */
+	position: absolute;
+	z-index: 15;
 }
-.clicknav {
+/* This is where the program dumps and stiches together the tiles so they can be dragged. Most styles are generated automatically by dmMonocle, but if you want to use special cursors, this is the place to put them! */
+#dmMainImage {	
+	z-index: 1;
+	cursor: url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move;
+}
+/* IE was not accepting clicks directly on the thumbnail image, had to add
+   a div in between the Thumbnail and Navigator with a transparent BG
+   for IE to click on. Please ensure the path to the background-image is 
+   correct */
+.dmClickNavLayer {
 	z-index: 15;
 	position: absolute;
 	left: 0;
 	top: 0;
 	background-image: url(../images/bg_ie.gif);
 	}
-.navigator {	
+/* Navigator styles (the little thing inside the thumbnail you can drag around
+   to move the image). Feel free to change the color, give it a background, change the opacity, whatev! */
+.dmNavigator {	
 	background-color: #900;
 	border: 1px solid #300;
+	cursor: url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move;
+	opacity: .4;
+	filter: alpha(opacity = 40); /* IE does not recognize CSS's native opacity property */
+	
+	/* Do Not modify */
 	position: absolute;
 	z-index: 50;
 	top: 0;
 	left: 0;
-	opacity: .4;
-	filter: alpha(opacity = 40); /* IE does not recognize CSS's native opacity property */
-	}
-	
-
-
-/* Scroll Bars */
-#scrollbarRight {
-	position: absolute;
-	z-index: 100;
-	width: 20px;
-	top: 20%;
-	right: 20px;
-	background-color: #000;
-	opacity: .3;
-	filter: alpha(opacity = 30); /* IE does not recognize CSS's native opacity property */
 	}
 
-#scrollbarBottom {
-	position: absolute;
-	z-index: 100;
-	height: 20px;
-	bottom: 20px;
-	background-color: #000;
-	left: 20%;
-	opacity: .3;
-	filter: alpha(opacity = 30); /* IE does not recognize CSS's native opacity property */
-	}
-
-/* Scroll Bar Handles */
-#scrollbarDragHandleX {
-	background-color:#000;
-	height: 20px;
-	bottom: 20px;
-	position: absolute;
-	z-index: 100;
-	opacity: .3;
-	filter: alpha(opacity = 30); /* IE does not recognize CSS's native opacity property */
-	}
-#scrollbarDragHandleY {
-	background-color:#000;
-	width: 20px;
-	right: 20px;
-	position: absolute;
-	z-index: 100;
-	opacity: .3;
-	filter: alpha(opacity = 30); /* IE does not recognize CSS's native opacity property */
-	}
-	
-/* Scroll Bar Arrows */
-#scrollbarLeftHandle {
-	background-image: url(../images/arrows/left.gif);
-	z-index: 100;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	bottom: 20px;
-	opacity: .5;
-	filter: alpha(opacity = 50); /* IE does not recognize CSS's native opacity property */
+/* A special selector for when either the Nav or Main Image are being
+   dragged. Currently used to alter the cursor, to go from an open to closed
+   hand */
+.dmDragging {
+	cursor: url(images/cursors/closedhand.cur), url(../images/cursors/closedhand.cur), move !important;
 }
-#scrollbarRightHandle {
-	background-image: url(../images/arrows/right.gif);
-	z-index: 100;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	bottom: 20px;
-	opacity: .5;
-	filter: alpha(opacity = 50); /* IE does not recognize CSS's native opacity property */
-}
-#scrollbarTopHandle {
-	background-image: url(../images/arrows/top.gif);
-	z-index: 100;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	right: 20px;
-	opacity: .5;
-	filter: alpha(opacity = 50); /* IE does not recognize CSS's native opacity property */
-}
-#scrollbarBottomHandle {
-	background-image: url(../images/arrows/bottom.gif);
-	z-index: 100;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	right: 20px;
-	opacity: .5;
-	filter: alpha(opacity = 50); /* IE does not recognize CSS's native opacity property */
-}
-
-#feedback {
-	position:absolute;
-	left: 5px;
-	top: 400px;	
-}
-
-.openhand {
-	background-color: #00FF00;
-	background-image: url(../images/cursors/openhand.cur);
-	display: none;
-	visibility: hidden;
-	position: absolute;
-	left: -10000px;
-	top: -1000px;
-	overflow: hidden;
-	width: 0;
-	height: 0;
-}
-.closedhand {
-	background-color: #00FF00;
-	background-image: url(../images/cursors/closedhand.cur);
-	display: none;
-	visibility: hidden;
-	position: absolute;
-	left: -10000px;
-	top: -1000px;
-	overflow: hidden;
-	width: 0;
-	height: 0;
+/* A special selector for when the nav or main image aren't draggable,
+   such as when the image is fit to the viewer size */
+.dmNoDrag {
+	cursor: default !important;
 }
 
 /************************
   =MENU
+  
+  By default, dmMonocle does not ouptut graphical icons for menu items, 
+  but rather it outputs text links. The link styles can be overridden
+  with the following as to display graphical icons.
+  
 ***********************/
-#dmViewerMenu {
+#dmMonocleMenu {
 	background-color: #CCC;
 	width: 930px;
 	height: 30px;
 	margin: 0 auto;
 	padding: 0 0 3px 0;
 	}
-#dmViewerMenu div {
+#dmMonocleMenu div {
 	text-indent: -1000em;
 	margin-right: 15px;
 	background-repeat: no-repeat;
@@ -201,72 +102,112 @@ div#viewer {
 	padding-top: 0;
 	float: left;
 	}
-#dmViewerZoomOut {
+#dmMonocleHideNavigator {
 	width: 16px;
 	height: 16px;
-	background-image: url(../images/menu/zoomOut.gif);	
+	background-image: url(../images/menu/toggleNav.gif);
+	margin-left: 15px;
+	}
+#dmMonocleFitWindow {
 	padding-left: 15px;
 	border-left: 1px solid #999;
 	background-position: right;
-	}
-#dmViewerZoomIn {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/zoomIn.gif);
-	}
-#dmViewerMenu div#zoomLevelGague {
-	text-indent: 0;
-	margin-top: 6px;
-	cursor: text;
-	width: 100px;
-}
-#dmViewerFitWindow {
 	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/fitWindow.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
 	}
-#dmViewerFitWidth {
+#dmMonocleFitWidth {
 	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/fitWidth.gif);
 	}
-#dmViewerMaxRes {
-	width: 13px;
+#dmMonocleMaxRes {
+	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/maxRes.gif);
 	}
-#dmViewerRotateCounterclockwise {
-	width: 12px;
-	height: 12px;
-	background-image: url(../images/menu/rotateCounter.gif);
+#dmMonocleRotateCounterclockwise {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/rotateCounterClockwise.gif);
 	padding-left: 15px;
 	border-left: 1px solid #999;
 	background-position: right;
 	}
-#dmViewerRotateClockwise {
-	width: 12px;
-	height: 12px;
+#dmMonocleRotateClockwise {
+	width: 16px;
+	height: 16px;
 	background-image: url(../images/menu/rotateClockwise.gif);
 	}
-#dmViewerHideNavigator {
-	width: 14px;
-	height: 14px;
-	background-image: url(../images/menu/hideNavigator.gif);
-	margin-left: 15px;
+#dmMonocleZoomOut {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/zoomOut.gif);
+	padding-left: 15px;
+	border-left: 1px solid #999;
+	background-position: right;
 	}
-#dmViewerDownloadButton {
+#dmMonocleZoomIn {
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/menu/zoomIn.gif);
+	}
+	
+#dmMonocleDownloadButton {
 	width: 16px;
 	height: 16px;
 	background-image: url(../images/menu/print.gif);
 	padding-left: 15px;
 	border-left: 1px solid #999;
 	background-position: right;	
-	}
-/* Download Styles! */
+	}	
 
+/* Slider */
+
+/* dmMonocle uses the jQuery UI Slider. These styles were
+   created from scratch, but more styles can be easily
+   generated using the jQueryUI theme roller (http://jqueryui.com/themeroller/)
+*/
+#dmMonocleMenu div#dmZoomLevelGague {
+	text-indent: 0;
+	margin-top: 7px;
+	width: 100px;
+}
+#dmMonocleMenu .ui-slider { 
+	position: relative; 
+	text-align: left; 
+	}
+#dmMonocleMenu .ui-slider .ui-slider-handle { 
+	outline: none; 
+	position: absolute; 
+	margin-top: 9px; 
+	z-index: 2; 
+	width: 12px; 
+	height: 12px; 
+	background-image: url(../images/menu/sliderHandle.gif); 
+	background-repeat: no-repeat; 
+	background-position: 0 0; 
+	overflow: hidden;
+	}
+#dmMonocleMenu .ui-slider .ui-slider-handle:hover, #dmMonocleMenu .ui-slider .ui-slider-handle:active { 
+	background-position: 0 -12px; 
+	cursor: default; 
+}
+#dmMonocleMenu .ui-slider-horizontal { 
+	height: 20px; 
+	background-image: url(../images/menu/sliderBG.gif); 
+	background-repeat: repeat-x; 
+	background-position: left center;
+	}
+#dmMonocleMenu .ui-slider-horizontal .ui-slider-handle { 
+	top: -5px; 
+	margin-left: -5px; 
+	}
+
+/* Print Image Styles
+   These styles are output when a user clicks on the "print"
+   icon.
+*/
 #dmDownloadImageBackground {
 	position: absolute;
 	left: 0;
@@ -280,9 +221,6 @@ div#viewer {
 	padding: 10px 15px;
 	position: absolute;
 	z-index: 200;
-}
-.ui-slider {
-	margin-bottom: 10px;
 }
 #dmDownloadImage table {
 	width: 100%;
@@ -301,12 +239,24 @@ div#viewer {
 	right: 15px;
 	top:  10px;
 }
-
-
-
 .dmImgTileLoading {
 	background-image: url(../images/spinner.gif); 
 	background-position: center center;
 	background-repeat: no-repeat;
-}	
+}
 
+/**********************
+* =DEVELOPMENT
+***********************/
+
+/* Development Styles needed for dmMonocle development,
+   but not live sites */
+body,html {
+	margin: 0;
+	padding: 10px 0 0 0;
+}
+#feedback {
+	position:absolute;
+	left: 5px;
+	top: 400px;	
+}
