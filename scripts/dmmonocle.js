@@ -1,11 +1,11 @@
 /**************************************
  *
- *	dmMonocle v1.1
+ *	dmMonocle
  *	by Brian Egan
  *	
  *	Copyright (c) 2009 University of Nevada, Las Vegas
  *	Licensed under GPLv3 
- *  http://code.google.com/p/dmmonocle/wiki/License  
+ *  http://code.google.com/p/dmmonocle/wiki/License 
  *
  *	Changelog v 1.0 - 1.1
  *
@@ -28,8 +28,8 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	*
 	******************************************/	
 	var rotationLevel = 0,
-	viewerWidth = $('#viewer').width(),
-	viewerHeight = $('#viewer').height(),
+	viewerWidth = $('#dmMonocle').width(),
+	viewerHeight = $('#dmMonocle').height(),
 	bigWidth = dmImgWidth,
 	bigHeight = dmImgHeight,
 	CISOPTR = dmCISOPTR,
@@ -60,11 +60,6 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	imagePositionMoveY,
 	thumbMainWidthRatio,
 	thumbMainHeightRatio,
-
-	// Cursor defaults
-																						 
-	closedHandCursor = "url(images/cursors/closedhand.cur), url(../images/cursors/closedhand.cur), move",
-	openHandCursor = "url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move",
 	
 	// Zoom Default - Fit Window!
 	viewerWidthRatio = viewerWidth / bigWidth,
@@ -78,11 +73,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	} else {
 		zoomLevel = viewerWidthRatio;
 		minZoomLevel = viewerWidthRatio;
-	}	
-	
-	$('<div class="openhand">&nbsp;</div>').appendTo('body');
-	$('<div class="closedhand">&nbsp;</div>').appendTo('body');
-
+	}
 	
 	/*****************************************
 	*
@@ -92,30 +83,29 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function buildImage(lvlZoom, lvlRotation, offsetRatioX, offsetRatioY) {
 		
 		// Builds the menu if one does not exist
-		if($('#dmViewerMenu').length > 0) { 
-			// alert("dmViewerMenu Exists"); 
+		if($('#dmMonocleMenu').length > 0) { 
+			// alert("dmMonocleMenu Exists"); 
 		} else {
 			buildMenu(lvlZoom, lvlRotation);	
 		}		
 		
 		// Cleans out the previous images, timeouts, & nav should there be any
-		$('#viewer div').remove();
-		$('#thumbnail div').remove();
-		$('#mainimage div').remove();
-		$('#mainimagedragger').remove();
-		$('#thumbnail').remove();
-		$('#mainimagecontainer').remove();
-		$('#mainimage').remove();		
+		$('#dmMonocle div').remove();
+		$('#dmThumbnail div').remove();
+		$('#dmMainImage div').remove();
+		$('#dmThumbnail').remove();
+		$('#dmMainImageContainer').remove();
+		$('#dmMainImage').remove();		
 		clearTimeout(loadImagesTimer);
 		
 		// Adds back in the necessary building blocks
 		if (hideNav === true) {
-			$('<div id="thumbnail"></div>').appendTo('#viewer').css('top', ((thumbHeightMax + 10) * -1) + 'px');
+			$('<div id="dmThumbnail"></div>').appendTo('#dmMonocle').css('top', ((thumbHeightMax + 10) * -1) + 'px');
 		} else {
-			$('<div id="thumbnail" style="left:0; top:0"></div>').appendTo('#viewer');	
+			$('<div id="dmThumbnail" style="left:0; top:0"></div>').appendTo('#dmMonocle');	
 		}
-		$('<div id="mainimagecontainer"></div>').appendTo('#viewer');
-		$('<div id="mainimage"></div>').appendTo('#mainimagecontainer');
+		$('<div id="dmMainImageContainer"></div>').appendTo('#dmMonocle');
+		$('<div id="dmMainImage"></div>').appendTo('#dmMainImageContainer');
 
 		// Adjust the measurements for the rotation
 		if (lvlRotation === 0) {
@@ -185,33 +175,35 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations
 											
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#dmThumbnail').append(this);
 					
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();	
 					
-					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					$('#dmThumbnail').width(thumbWidth).height(thumbHeight);
 					
 					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
-					$('#mainimage').width(viewerWidth).height(viewerHeight);
+					$('#dmMainImage').width(viewerWidth).height(viewerHeight);
 					
-					$('#mainimagecontainer').width(viewerWidth).height(imageHeight);
+					$('#dmMainImageContainer').width(viewerWidth).height(imageHeight);
 										
-					$('#mainimage')
+					$('#dmMainImage')
 						.css('position', 'relative')
 						.css('margin', '0 auto')
 						.css('background-image', mainImageBG)
 						.css('background-position', 'center center')
-						.css('background-repeat', 'no-repeat');
+						.css('background-repeat', 'no-repeat')
+						.addClass('dmNoDrag');
 			
 					// Adds the navigator to the thumbnail
-					$('<div class="navigator"></div>')
-						.appendTo('#thumbnail')
+					$('<div class="dmNavigator"></div>')
+						.appendTo('#dmThumbnail')
 						.width(thumbWidth)
 						.height(thumbHeight)
-						.css('z-index', '20');
+						.css('z-index', '20')
+						.addClass("dmNoDrag");
 					
 					// After building the nav load the images touching it
 					loadImages();
@@ -227,50 +219,51 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations
 											
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#dmThumbnail').append(this);
 							
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
 					
-					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					$('#dmThumbnail').width(thumbWidth).height(thumbHeight);
 					
 					// Adds the invisible clickable Nav
-					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
-					$(clickNav).appendTo("#thumbnail");
+					var clickNav = "<div class=\"dmClickNavLayer\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#dmThumbnail");
 					
 					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
-					$('#mainimage').width(viewerWidth).height(imageHeight);
+					$('#dmMainImage').width(viewerWidth).height(imageHeight);
 					
-					var containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
-					var containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
-					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
-					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
+					var containerWidth = ($('#dmMainImage').width() + $('#dmMainImage').width() - viewerWidth) + "px";
+					var containerHeight = ($('#dmMainImage').height() + $('#dmMainImage').height() - viewerHeight) + "px";
+					var containerX = "-" + ($('#dmMainImage').width() - viewerWidth) + "px";
+					var containerY = "-" + ($('#dmMainImage').height() - viewerHeight) + "px";
+					var imagePositionX = ($('#dmMainImage').width() - viewerWidth) + "px";
+					var imagePositionY = ($('#dmMainImage').height() - viewerHeight - imageOffsetY) + "px";
 					imagePositionMoveX = (viewerWidth - viewerWidth);
 					imagePositionMoveY = (imageHeight - viewerHeight);
-					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
-					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();	
+					thumbMainWidthRatio = $('#dmThumbnail img').width() / $('#dmMainImage').width();
+					thumbMainHeightRatio = $('#dmThumbnail img').height() / $('#dmMainImage').height();	
 					
-					$('#mainimagecontainer')
+					$('#dmMainImageContainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
 						.css('height', containerHeight)
 						.css('left', containerX)
 						.css('top', containerY);
 										
-					$('#mainimage')
+					$('#dmMainImage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
 						.css('background-image', mainImageBG)
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
-						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.toggleClass('dmHover')
+						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
+						.bind('drag', function(event){ moveImage(event); })
+						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -290,50 +283,50 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					// As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations
 											
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#dmThumbnail').append(this);
 							
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
 					
-					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					$('#dmThumbnail').width(thumbWidth).height(thumbHeight);
 					
 					// Adds the invisible clickable Nav
-					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
-					$(clickNav).appendTo("#thumbnail");
+					var clickNav = "<div class=\"dmClickNavLayer\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#dmThumbnail");
 					
 					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
-					$('#mainimage').width(imageWidth).height(viewerHeight);
+					$('#dmMainImage').width(imageWidth).height(viewerHeight);
 					
-					containerWidth = ($('#mainimage').width() + $('#mainimage').width() - viewerWidth) + "px";
-					containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
-					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
-					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();
-					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
-					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight) + "px";
+					containerWidth = ($('#dmMainImage').width() + $('#dmMainImage').width() - viewerWidth) + "px";
+					containerHeight = ($('#dmMainImage').height() + $('#dmMainImage').height() - viewerHeight) + "px";
+					thumbMainWidthRatio = $('#dmThumbnail img').width() / $('#dmMainImage').width();
+					thumbMainHeightRatio = $('#dmThumbnail img').height() / $('#dmMainImage').height();
+					var containerX = "-" + ($('#dmMainImage').width() - viewerWidth) + "px";
+					var containerY = "-" + ($('#dmMainImage').height() - viewerHeight) + "px";
+					var imagePositionX = ($('#dmMainImage').width() - viewerWidth - imageOffsetX) + "px";
+					var imagePositionY = ($('#dmMainImage').height() - viewerHeight) + "px";
 					imagePositionMoveX = (imageWidth - viewerWidth);
 					imagePositionMoveY = (viewerHeight - viewerHeight);
 					
-					$('#mainimagecontainer')
+					$('#dmMainImageContainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
 						.css('height', containerHeight)
 						.css('left', containerX)
 						.css('top', containerY);
 										
-					$('#mainimage')
+					$('#dmMainImage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
 						.css('background-image', mainImageBG)
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
-						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); })
+						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
+						.bind('drag', function(event){ moveImage(event); })
+						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); })
 						.bind("dblclick", function(e){ 
 							var posX = e.pageX;
 							var posY = e.pageY;
@@ -376,7 +369,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			}
 			
 			// Adjusts the main image for the width and height of the current zoom level
-			$('#mainimage')
+			$('#dmMainImage')
 				.width(imageWidth).height(imageHeight)
 				.css('background-color',  '#EEE')
 				.css('position', 'absolute')
@@ -386,16 +379,16 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				.load(function () { // As the thumbnail width and height are needed for certain calculations, we must wait until it is done loading to perform those calculations					
 								
 					// Adds the image to the thumbnail div
-					$('#thumbnail').append(this);
+					$('#dmThumbnail').append(this);
 					// Gets those measurements I was talking about!
 					thumbWidth = $(this).width();
 					thumbHeight = $(this).height();
 					
-					$('#thumbnail').width(thumbWidth).height(thumbHeight);
+					$('#dmThumbnail').width(thumbWidth).height(thumbHeight);
 					
 					// Adds the invisible clickable Nav
-					var clickNav = "<div class=\"clicknav\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
-					$(clickNav).appendTo("#thumbnail");
+					var clickNav = "<div class=\"dmClickNavLayer\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
+					$(clickNav).appendTo("#dmThumbnail");
 					
 					// Calculate the exact number of tiles
 					var preciseWidth = imageWidth / tileWidth;
@@ -463,12 +456,12 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								// Create the divs in which to place the images
 								var bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";																
 										
-								$(bigDiv).appendTo('#mainimage');
+								$(bigDiv).appendTo('#dmMainImage');
 										
 								// Create the nav divs for collision detection
 								var littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";						
 										
-								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
@@ -550,12 +543,12 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								// Create the divs in which to place the images
 								bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";							
 										
-								$(bigDiv).appendTo('#mainimage');
+								$(bigDiv).appendTo('#dmMainImage');
 										
 								// Create the nav divs for collision detection
 								littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";											
 										
-								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
@@ -640,11 +633,11 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								// Create the divs in which to place the images
 								bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
 	
-								$(bigDiv).appendTo('#mainimage');
+								$(bigDiv).appendTo('#dmMainImage');
 										
 								// Create the nav divs for collision detection
 								littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";	
-								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
@@ -723,11 +716,11 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 									
 								// Create the divs in which to place the images
 								bigDiv = "<div class=\"tile-" + tileNum + "\" style=\"position: absolute; : 5; width: " + bigTileOutputWidth + "px; height: " + bigTileOutputHeight + "px; left: " + bigDivCoordsX + "px; top: " + bigDivCoordsY + "px; font-family: Arial; \"></div>";
-								$(bigDiv).appendTo('#mainimage');
+								$(bigDiv).appendTo('#dmMainImage');
 										
 								// Create the nav divs for collision detection
 								littleDiv = "<div class=\"" + tileNum + "\" style=\"position: absolute; : 5; width: " + smallTileOutputWidth + "px; height: " + smallTileOutputHeight + "px; left: " + smallDivCoordsX + "px; top: " + smallDivCoordsY + "px; font-family: Arial; \"></div>";		
-								$(littleDiv).appendTo('#thumbnail').addClass('collision');
+								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
@@ -743,13 +736,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					} // End Rotation IF													
 					
 					containerWidth = parseInt(((imageWidth) + (imageWidth) - viewerWidth), 10) + "px";
-					containerHeight = ($('#mainimage').height() + $('#mainimage').height() - viewerHeight) + "px";
-					var containerX = "-" + ($('#mainimage').width() - viewerWidth) + "px";
-					var containerY = "-" + ($('#mainimage').height() - viewerHeight) + "px";
-					var imagePositionX = ($('#mainimage').width() - viewerWidth - imageOffsetX) + "px";
-					var imagePositionY = ($('#mainimage').height() - viewerHeight - imageOffsetY) + "px";
+					containerHeight = ($('#dmMainImage').height() + $('#dmMainImage').height() - viewerHeight) + "px";
+					var containerX = "-" + ($('#dmMainImage').width() - viewerWidth) + "px";
+					var containerY = "-" + ($('#dmMainImage').height() - viewerHeight) + "px";
+					var imagePositionX = ($('#dmMainImage').width() - viewerWidth - imageOffsetX) + "px";
+					var imagePositionY = ($('#dmMainImage').height() - viewerHeight - imageOffsetY) + "px";
 									
-					$('#mainimagecontainer')
+					$('#dmMainImageContainer')
 						.css('position', 'absolute')
 						.css('width', containerWidth)
 						.css('height', containerHeight)
@@ -758,33 +751,29 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 										
 					imagePositionMoveX = (imageWidth - viewerWidth);
 					imagePositionMoveY = (imageHeight - viewerHeight);									
-					containerSendX = $('#mainimagecontainer').offset().left;
-					containerSendY = $('#mainimagecontainer').offset().top;
-					mainImageWidth = $('#mainimage').width();
-					mainImageHeight = $('#mainimage').height();
-					thumbMainWidthRatio = $('#thumbnail img').width() / $('#mainimage').width();
-					thumbMainHeightRatio = $('#thumbnail img').height() / $('#mainimage').height();
+					containerSendX = $('#dmMainImageContainer').offset().left;
+					containerSendY = $('#dmMainImageContainer').offset().top;
+					mainImageWidth = $('#dmMainImage').width();
+					mainImageHeight = $('#dmMainImage').height();
+					thumbMainWidthRatio = $('#dmThumbnail img').width() / $('#dmMainImage').width();
+					thumbMainHeightRatio = $('#dmThumbnail img').height() / $('#dmMainImage').height();
 					
 					
-					$('#mainimage')
+					$('#dmMainImage')
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
-						.css('cursor', openHandCursor)
-						.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveImage(event); })
-						.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
+						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
+						.bind('drag', function(event){ moveImage(event); })
+						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); });
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
 						
 				})
 				.attr('class', 'thumbImage')
 				.attr('src', thumbSrc);
-				
 		}
-		
-	}
-	
-	
+	} // end BuildImage
 	
 	/*****************************************
 	*
@@ -794,34 +783,34 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function buildNav(navRatioPosX, navRatioPosY) {
 		
 		// Calculates the width and Height of the navigator
-		var navigatorWidth = (($('#thumbnail img').width() / $('#mainimage').width()) * viewerWidth);
-		var navigatorHeight = (($('#thumbnail img').height() / $('#mainimage').height()) * viewerHeight);			 
+		var navigatorWidth = (($('#dmThumbnail img').width() / $('#dmMainImage').width()) * viewerWidth);
+		var navigatorHeight = (($('#dmThumbnail img').height() / $('#dmMainImage').height()) * viewerHeight);			 
 
-		if (navigatorWidth > $('#thumbnail img').width()) {
-			navigatorWidth = $('#thumbnail img').width();
+		if (navigatorWidth > $('#dmThumbnail img').width()) {
+			navigatorWidth = $('#dmThumbnail img').width();
 		}
-		if (navigatorHeight > $('#thumbnail img').height()) {
-			navigatorHeight = $('#thumbnail img').height();
+		if (navigatorHeight > $('#dmThumbnail img').height()) {
+			navigatorHeight = $('#dmThumbnail img').height();
 		}
 		
 		// Calculates the default nav position
-		navOffsetX = (navRatioPosX * $('#thumbnail img').width()) - (navigatorWidth / 2);
-		navOffsetY = (navRatioPosY * $('#thumbnail img').height()) - (navigatorHeight / 2);
+		navOffsetX = (navRatioPosX * $('#dmThumbnail img').width()) - (navigatorWidth / 2);
+		navOffsetY = (navRatioPosY * $('#dmThumbnail img').height()) - (navigatorHeight / 2);
 		
 		if (navOffsetX < 0) {
 			navOffsetX = 0;
-		} else if ((navOffsetX + navigatorWidth) > $('#thumbnail img').width()) {
-			navOffsetX = $('#thumbnail img').width() - navigatorWidth;
+		} else if ((navOffsetX + navigatorWidth) > $('#dmThumbnail img').width()) {
+			navOffsetX = $('#dmThumbnail img').width() - navigatorWidth;
 		}
 		
 		if (navOffsetY < 0) {
 			navOffsetY = 0;
-		} else if ((navOffsetY + navigatorHeight) > $('#thumbnail img').height()) {
-			navOffsetY = $('#thumbnail img').height() - navigatorHeight;
+		} else if ((navOffsetY + navigatorHeight) > $('#dmThumbnail img').height()) {
+			navOffsetY = $('#dmThumbnail img').height() - navigatorHeight;
 		} 
 		
 		// Binds a click to the nav
-		$('#thumbnail .clicknav')
+		$('#dmThumbnail .dmClickNavLayer')
 			.bind("click", function(e){ 
 				var posX = e.pageX;
 				var posY = e.pageY;
@@ -829,16 +818,16 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			});
 
 		// Adds the navigator to the thumbnail
-		$('<div class="navigator"></div>')
-			.appendTo('#thumbnail')
+		$('<div class="dmNavigator"></div>')
+			.appendTo('#dmThumbnail')
 			.width(navigatorWidth)
 			.height(navigatorHeight)
 			.css('z-index', '20')
 			.css('left', navOffsetX + "px")
 			.css('top', navOffsetY + "px")
-			.css('cursor', openHandCursor)
-			.bind('drag', function(event){ $(this).css('cursor', closedHandCursor); moveNav(event); })
-			.bind('dragend', function() { $(this).css('cursor', openHandCursor); loadImages(); });
+			.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })						
+			.bind('drag', function(event){ moveNav(event); })
+			.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); });
 		
 		// After building the nav load the images touching it
 		loadImagesTimer = setTimeout(function() {
@@ -859,40 +848,40 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		*******************************/
 		
 		// Build the Menu Div
-		$('<div id="dmViewerMenu"></div>').insertBefore('#viewer');
+		$('<div id="dmMonocleMenu"></div>').insertBefore('#dmMonocle');
 		
 		// Hide Nav
-		var hideNavButton = "<div id='dmViewerHideNavigator' title='Show/Hide Navigator'>Hide Navigator</div>";
-		$(hideNavButton).appendTo("#dmViewerMenu").bind('click', function() { viewerHideNavigator(); });											
+		var hideNavButton = "<div id='dmMonocleHideNavigator' title='Show/Hide Navigator'>Hide Navigator</div>";
+		$(hideNavButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerHideNavigator(); });											
 		
 		// Fit Window
-		var fitWindowButton = "<div id='dmViewerFitWindow' title='Fit Image to Viewer'>Fit Document to Viewer</div>";
-		$(fitWindowButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWindow(); });	
+		var fitWindowButton = "<div id='dmMonocleFitWindow' title='Fit Image to Viewer'>Fit Document to Viewer</div>";
+		$(fitWindowButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerFitWindow(); });	
 		
 		// Fit Width
-		var fitWidthButton = "<div id='dmViewerFitWidth' title='Fit Image to Viewer Width'>Fit Image to Viewer Width</div>";
-		$(fitWidthButton).appendTo("#dmViewerMenu").bind('click', function() { viewerFitWidth(); });		
+		var fitWidthButton = "<div id='dmMonocleFitWidth' title='Fit Image to Viewer Width'>Fit Image to Viewer Width</div>";
+		$(fitWidthButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerFitWidth(); });		
 		
 		// Maximum Resolution
-		var maxResButton = "<div id='dmViewerMaxRes' title='Maximum Resolution'>Maximum Resolution</div>";
-		$(maxResButton).appendTo("#dmViewerMenu").bind('click', function() { viewerMaxRes(); });
+		var maxResButton = "<div id='dmMonocleMaxRes' title='Maximum Resolution'>Maximum Resolution</div>";
+		$(maxResButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerMaxRes(); });
 		
 		// Rotate Counterclockwise
-		var rotateCounterclockwiseButton = "<div id='dmViewerRotateCounterclockwise' title='Rotate Counterclockwise'>Rotate Counterclockwise</div>";
-		$(rotateCounterclockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateCounterclockwise(); });
+		var rotateCounterclockwiseButton = "<div id='dmMonocleRotateCounterclockwise' title='Rotate Counterclockwise'>Rotate Counterclockwise</div>";
+		$(rotateCounterclockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerRotateCounterclockwise(); });
 		
 		// Rotate Clockwise
-		var rotateClockwiseButton = "<div id='dmViewerRotateClockwise' title='Rotate Clockwise'>Rotate Clockwise</div>";
-		$(rotateClockwiseButton).appendTo("#dmViewerMenu").bind('click', function() { viewerRotateClockwise(); });
+		var rotateClockwiseButton = "<div id='dmMonocleRotateClockwise' title='Rotate Clockwise'>Rotate Clockwise</div>";
+		$(rotateClockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerRotateClockwise(); });
 		
 		// Zoom Out
-		var zoomOutButton = "<div id='dmViewerZoomOut' title='Zoom Out'>Zoom Out</div>";
-		$(zoomOutButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomOut(); });
+		var zoomOutButton = "<div id='dmMonocleZoomOut' title='Zoom Out'>Zoom Out</div>";
+		$(zoomOutButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerZoomOut(); });
 						
 		// Zoom Level Gague
-		var zoomLevelGague = "<div id='zoomLevelGague' title='Zoom Level'>&nbsp;</div>";
+		var zoomLevelGague = "<div id='dmZoomLevelGague' title='Zoom Level'>&nbsp;</div>";
 		$(zoomLevelGague)
-		.appendTo("#dmViewerMenu")
+		.appendTo("#dmMonocleMenu")
 		.slider({ 
 			animate: true,
 			max: 100,
@@ -901,22 +890,21 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		});
 		
 		// Zoom In
-		var zoomInButton = "<div id='dmViewerZoomIn' title='Zoom In'>Zoom In</div>";
-		$(zoomInButton).appendTo("#dmViewerMenu").bind('click', function() { viewerZoomIn(); });	
+		var zoomInButton = "<div id='dmMonocleZoomIn' title='Zoom In'>Zoom In</div>";
+		$(zoomInButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerZoomIn(); });	
 		
 		// Print
-		var downloadImageButton = "<div id='dmViewerDownloadButton' title='Download the Image'></div>";
-		$(downloadImageButton).appendTo("#dmViewerMenu").bind('click', function() { viewerDownloadImage(); });			
+		var downloadImageButton = "<div id='dmMonocleDownloadButton' title='Download the Image'></div>";
+		$(downloadImageButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerDownloadImage(); });			
 		
 		// If dmBridge is enabled, append the "search text" field to the viewer
-		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmViewerMenu'); }
+		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmMonocleMenu'); }
 		
 		// Clear
 		var menuClearDiv = "<div class='clear'>&nbsp;</div>";
-		$(menuClearDiv).appendTo("#dmViewerMenu");
+		$(menuClearDiv).appendTo("#dmMonocleMenu");
 				
 	}
-	
 	
 	/*****************************************
 	*
@@ -926,10 +914,10 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function loadImages() {
 		
 		// Grabs the area coordinates of the navigator
-		var navCollisionY1 = parseFloat($('.navigator').css('top'));
-		var navCollisionY2 = navCollisionY1 + $('.navigator').height();
-		var navCollisionX1 = parseFloat($('.navigator').css('left'));
-		var navCollisionX2 = navCollisionX1 + $('.navigator').width();
+		var navCollisionY1 = parseFloat($('.dmNavigator').css('top'));
+		var navCollisionY2 = navCollisionY1 + $('.dmNavigator').height();
+		var navCollisionX1 = parseFloat($('.dmNavigator').css('left'));
+		var navCollisionX2 = navCollisionX1 + $('.dmNavigator').width();
 		
 		// Check each div w/o an image yet to see if it is touching the navigator
 		$('.collision').each(function() {
@@ -946,7 +934,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				// If they're touching, load and place the image.				
 				var newImageClasses = $(this).attr('class').toString().split(" ");
 				var newImageNum = newImageClasses[0];		
-				var newImageDiv = "#mainimagecontainer .tile-" + newImageNum;
+				var newImageDiv = "#dmMainImageContainer .tile-" + newImageNum;
 				$(this).removeClass('collision');
 				
 				$(newImageDiv).toggleClass('dmImgTileLoading');
@@ -999,8 +987,8 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	// When the main image window is dragged, move it and the navigator as well
 	function moveImageNav(mainImageWidth, mainImageHeight, imagePositionX, imagePositionY, thumbImgMoveWidth, thumbImgMoveHeight) {				
 		
-		var mainLeft = $('#mainimage').position().left;
-		var mainTop = $('#mainimage').position().top;
+		var mainLeft = $('#dmMainImage').position().left;
+		var mainTop = $('#dmMainImage').position().top;
 		
 		$('#feedback').html(mainLeft);
 		
@@ -1009,20 +997,20 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		var navTop = -1 * ((mainTop - imagePositionY) * ( thumbImgMoveHeight / mainImageHeight));
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').css('left', navLeft).css('top', navTop);
+		$('div.dmNavigator').css('left', navLeft).css('top', navTop);
 	}
 	
 	function moveImage(event) {
 		
 		// Get the container dimensions
-		var container = $('div#mainimagecontainer');
+		var container = $('div#dmMainImageContainer');
 		var containerX = $(container).offset().left;
 		var containerY = $(container).offset().top;
 		var containerWidth = $(container).width();
 		var containerHeight = $(container).height();	
 		
 		// Get the nav dimensions
-		var mainImage = $('div#mainimage');
+		var mainImage = $('div#dmMainImage');
 		var mainImageWidth = $(mainImage).width();
 		var mainImageHeight = $(mainImage).height();
 		
@@ -1052,19 +1040,19 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			tempY = containerMaxY;
 		}
 		
-		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.navigator').css({ left:tempX, top:tempY }); };
+		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.dmNavigator').css({ left:tempX, top:tempY }); };
   		$(mainImage).css({ left:tempX, top:tempY });
 		
 		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		var imagePositionX = ($('#dmMainImage').width() - viewerWidth);
+		var imagePositionY = ($('#dmMainImage').height() - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
 		var navLeft = -1 * ((tempX - imagePositionMoveX) * thumbMainWidthRatio);
 		var navTop = -1 * ((tempY - imagePositionMoveY) * thumbMainHeightRatio);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').css('left', navLeft).css('top', navTop);
+		$('div.dmNavigator').css('left', navLeft).css('top', navTop);
 		 
 	}
 	
@@ -1072,73 +1060,72 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function dblClickMove(xPos, yPos) {
 		
 		// Grabs viewer dimensions
-		var viewerWidth = $('#viewer').width();
-		var viewerHeight = $('#viewer').height();
+		var viewerWidth = $('#dmMonocle').width();
+		var viewerHeight = $('#dmMonocle').height();
 		
 		// Grabs 
-		var mainTempLeft = parseFloat($('#mainimage').css('left'));
-		var mainTempTop = parseFloat($('#mainimage').css('top'));				
+		var mainTempLeft = parseFloat($('#dmMainImage').css('left'));
+		var mainTempTop = parseFloat($('#dmMainImage').css('top'));				
 		
 		// Checks to see which side of the viewer is clicked (left/right), then horizontally moves the image
-		if ((xPos - $('#viewer').offset().left) > (viewerWidth / 2)) {
-			var mainLeft = (mainTempLeft + viewerWidth / 2) - (xPos - $('#viewer').offset().left);					
+		if ((xPos - $('#dmMonocle').offset().left) > (viewerWidth / 2)) {
+			var mainLeft = (mainTempLeft + viewerWidth / 2) - (xPos - $('#dmMonocle').offset().left);					
 			
 			// Bounds Checking
 			if (mainLeft < 0) {
 				mainLeft = 0;	
 			} 
 			
-		} else if ((xPos - $('#viewer').offset().left) < (viewerWidth / 2)) {
-			mainLeft = mainTempLeft + (viewerWidth / 2 - (xPos - $('#viewer').offset().left));
+		} else if ((xPos - $('#dmMonocle').offset().left) < (viewerWidth / 2)) {
+			mainLeft = mainTempLeft + (viewerWidth / 2 - (xPos - $('#dmMonocle').offset().left));
 			
 			// Bounds Checking
-			if (mainLeft > $('#mainimage').width() - viewerWidth) {
-				mainLeft = $('#mainimage').width() - viewerWidth;
+			if (mainLeft > $('#dmMainImage').width() - viewerWidth) {
+				mainLeft = $('#dmMainImage').width() - viewerWidth;
 			}
 			
-		} else if ((xPos - $('#viewer').offset().left) == (viewerWidth / 2)) {
+		} else if ((xPos - $('#dmMonocle').offset().left) == (viewerWidth / 2)) {
 			mainLeft = mainTempLeft;						
 		}
 		
 		// Checks to see which half of the viewer is clicked (top/bottom), then vertically moves the image
-		if ((yPos - $('#viewer').offset().top) > (viewerHeight / 2)) {
-			var mainTop = (mainTempTop + viewerHeight / 2) - (yPos - $('#viewer').offset().top);
+		if ((yPos - $('#dmMonocle').offset().top) > (viewerHeight / 2)) {
+			var mainTop = (mainTempTop + viewerHeight / 2) - (yPos - $('#dmMonocle').offset().top);
 			
 			// Bounds Checking
 			if (mainTop < 0) {
 				mainTop = 0;	
 			} 
 			
-		} else if ((yPos - $('#viewer').offset().top) < (viewerHeight / 2)) {
-			mainTop = mainTempTop + (viewerHeight / 2 - (yPos - $('#viewer').offset().top));
+		} else if ((yPos - $('#dmMonocle').offset().top) < (viewerHeight / 2)) {
+			mainTop = mainTempTop + (viewerHeight / 2 - (yPos - $('#dmMonocle').offset().top));
 			
 			// Bounds Checking
-			if (mainTop > $('#mainimage').height() - viewerHeight) {
-				mainTop = $('#mainimage').height() - viewerHeight;
+			if (mainTop > $('#dmMainImage').height() - viewerHeight) {
+				mainTop = $('#dmMainImage').height() - viewerHeight;
 			}
 			
-		} else if ((yPos - $('#viewer').offset().top) == (viewerHeight / 2)) {
+		} else if ((yPos - $('#dmMonocle').offset().top) == (viewerHeight / 2)) {
 			mainTop = mainTempTop;
 		}					
 							
 		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		var imagePositionX = ($('#dmMainImage').width() - viewerWidth);
+		var imagePositionY = ($('#dmMainImage').height() - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
-		var navLeft = -1 * ((mainLeft - imagePositionX) * ($('#thumbnail img').width() / $('#mainimage').width()));
-		var navTop = -1 * ((mainTop - imagePositionY) * ($('#thumbnail img').height() / $('#mainimage').height()));
+		var navLeft = -1 * ((mainLeft - imagePositionX) * ($('#dmThumbnail img').width() / $('#dmMainImage').width()));
+		var navTop = -1 * ((mainTop - imagePositionY) * ($('#dmThumbnail img').height() / $('#dmMainImage').height()));
 		
 		// Converts the Position to the Thumnail Ratio
-		$('#mainimage').animate(
+		$('#dmMainImage').animate(
 			{ 
 				top: mainTop,
 				left: mainLeft			
-			}, "normal", "swing");
-		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);		
+			}, "normal", "swing");	
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').animate(
+		$('div.dmNavigator').animate(
 			{ 
 				top: navTop,
 				left: navLeft
@@ -1154,14 +1141,14 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	function moveNav(event) {			
 		
 		// Get the container dimensions
-		var container = $('div#thumbnail img');
+		var container = $('div#dmThumbnail img');
 		var containerX = $(container).offset().left;
 		var containerY = $(container).offset().top;
 		var containerWidth = $(container).width();
 		var containerHeight = $(container).height();
 		
 		// Get the nav dimensions
-		var nav = $('div.navigator');
+		var nav = $('div.dmNavigator');
 		var navWidth = $(nav).width();
 		var navHeight = $(nav).height();
 		
@@ -1193,19 +1180,19 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
   		$(nav).css({ left:tempX, top:tempY });
 		
 		// Get MainImage Position Information
-		var navLeft = ($('.navigator').offset().left - $('#thumbnail').offset().left);
-		var navTop = ($('.navigator').offset().top - $('#thumbnail').offset().top);
+		var navLeft = ($('.dmNavigator').offset().left - $('#dmThumbnail').offset().left);
+		var navTop = ($('.dmNavigator').offset().top - $('#dmThumbnail').offset().top);
 		
 		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		var imagePositionX = ($('#dmMainImage').width() - viewerWidth);
+		var imagePositionY = ($('#dmMainImage').height() - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
-		var mainLeft = imagePositionX + -1 * (($('#mainimage').width() / $('#thumbnail img').width()) * navLeft);
-		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
+		var mainLeft = imagePositionX + -1 * (($('#dmMainImage').width() / $('#dmThumbnail img').width()) * navLeft);
+		var mainTop = imagePositionY + -1 * (($('#dmMainImage').height() / $('#dmThumbnail img').height()) * navTop);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('#mainimage').css('left', mainLeft).css('top', mainTop);
+		$('#dmMainImage').css('left', mainLeft).css('top', mainTop);
 		 
 	}
 	
@@ -1213,42 +1200,41 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	// When the thumbnail is double clicked, move the navigator & main image
 	function clickNav(xPos, yPos) {		
 	
-		var navigatorTempWidth = $('div.navigator').width();
-		var navigatorTempHeight = $('div.navigator').height();
-		var navTop = (yPos - $('#thumbnail').offset().top) - (navigatorTempHeight / 2);
-		var navLeft = (xPos - $('#thumbnail').offset().left) - (navigatorTempWidth / 2);
+		var navigatorTempWidth = $('div.dmNavigator').width();
+		var navigatorTempHeight = $('div.dmNavigator').height();
+		var navTop = (yPos - $('#dmThumbnail').offset().top) - (navigatorTempHeight / 2);
+		var navLeft = (xPos - $('#dmThumbnail').offset().left) - (navigatorTempWidth / 2);
 		
-		if ((navTop + navigatorTempHeight) > $('#thumbnail img').height()) {
-			navTop = $('#thumbnail img').height() - navigatorTempHeight;
+		if ((navTop + navigatorTempHeight) > $('#dmThumbnail img').height()) {
+			navTop = $('#dmThumbnail img').height() - navigatorTempHeight;
 		}
 		else if (navTop < 0) {
 			navTop = 0;
 		}
-		if ((navLeft + navigatorTempWidth) > $('#thumbnail img').width()) {
-			navLeft = $('#thumbnail img').width() - navigatorTempWidth;
+		if ((navLeft + navigatorTempWidth) > $('#dmThumbnail img').width()) {
+			navLeft = $('#dmThumbnail img').width() - navigatorTempWidth;
 		}
 		else if (navLeft < 0) {
 			navLeft = 0;
 		}
 		
 		// Grabs the current boundaries of the container
-		var imagePositionX = ($('#mainimage').width() - viewerWidth);
-		var imagePositionY = ($('#mainimage').height() - viewerHeight);
+		var imagePositionX = ($('#dmMainImage').width() - viewerWidth);
+		var imagePositionY = ($('#dmMainImage').height() - viewerHeight);
 		
 		// Convert the inverted difference into the Thumbnail / MainImage ratios
-		var mainLeft = imagePositionX + -1 * (($('#mainimage').width() / $('#thumbnail img').width()) * navLeft);
-		var mainTop = imagePositionY + -1 * (($('#mainimage').height() / $('#thumbnail img').height()) * navTop);
+		var mainLeft = imagePositionX + -1 * (($('#dmMainImage').width() / $('#dmThumbnail img').width()) * navLeft);
+		var mainTop = imagePositionY + -1 * (($('#dmMainImage').height() / $('#dmThumbnail img').height()) * navTop);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('#mainimage').animate(
+		$('#dmMainImage').animate(
 			{ 
 				top: mainTop,
 				left: mainLeft			
 			}, "normal", "swing");
-		$('#mainimagedragger').css('left', mainLeft).css('top', mainTop);
 		
 		// Converts the Position to the Thumnail Ratio
-		$('div.navigator').animate(
+		$('div.dmNavigator').animate(
 			{ 
 				top: navTop,
 				left: navLeft
@@ -1275,23 +1261,23 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		}
 		
 		// Grabs viewer dimensions
-		var viewerWidth = $('#viewer').width();
-		var viewerHeight = $('#viewer').height();
+		var viewerWidth = $('#dmMonocle').width();
+		var viewerHeight = $('#dmMonocle').height();
 		
 		// Grabs default position of the main image
-		var defaultMainLeft = $('#mainimage').width() - viewerWidth;
-		var defaultMainTop = $('#mainimage').height() - viewerHeight;
+		var defaultMainLeft = $('#dmMainImage').width() - viewerWidth;
+		var defaultMainTop = $('#dmMainImage').height() - viewerHeight;
 		
 		// Grabs current position of the main image
-		var mainTempLeft = parseFloat($('#mainimage').css('left'));
-		var mainTempTop = parseFloat($('#mainimage').css('top'));
+		var mainTempLeft = parseFloat($('#dmMainImage').css('left'));
+		var mainTempTop = parseFloat($('#dmMainImage').css('top'));
 		
-		var tempImageWidth = $('#mainimage').width() / scrollZoomLvl;
-		var tempImageHeight = $('#mainimage').height() / scrollZoomLvl;
+		var tempImageWidth = $('#dmMainImage').width() / scrollZoomLvl;
+		var tempImageHeight = $('#dmMainImage').height() / scrollZoomLvl;
 				
 		// Get the Ratio of the zoomed spot to the top, left corner of the image
-		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#viewer').offset().left)) / (tempImageWidth * scrollZoomLvl);
-		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#viewer').offset().top)) / (tempImageHeight * scrollZoomLvl);
+		var zoomOffsetRatioX = ((defaultMainLeft - mainTempLeft) + (xScrollPos - $('#dmMonocle').offset().left)) / (tempImageWidth * scrollZoomLvl);
+		var zoomOffsetRatioY = ((defaultMainTop - mainTempTop) + (yScrollPos - $('#dmMonocle').offset().top)) / (tempImageHeight * scrollZoomLvl);
 		
 		var checkMathX = (bigHeight * newScrollZoomLvl * zoomOffsetRatioX); 
 		var checkMathY = (bigWidth * newScrollZoomLvl * zoomOffsetRatioY);
@@ -1309,13 +1295,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		if (zoomLevel + 0.05 < 1) {
 			zoomLevel = Math.round((zoomLevel + 0.05)*100) / 100;
 			
-			var navTempLeft = parseFloat($('.navigator').css('left'));
-			var navTempTop = parseFloat($('.navigator').css('top'));
+			var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+			var navTempTop = parseFloat($('.dmNavigator').css('top'));
 							
-			var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+			var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+			var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 					
-			$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+			$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 			
 			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			
@@ -1326,13 +1312,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			} else {
 				zoomLevel = 1;	
 			
-				navTempLeft = parseFloat($('.navigator').css('left'));
-				navTempTop = parseFloat($('.navigator').css('top'));
+				navTempLeft = parseFloat($('.dmNavigator').css('left'));
+				navTempTop = parseFloat($('.dmNavigator').css('top'));
 								
-				navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-				navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+				navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+				navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 						
-				$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+				$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 				
 				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			}
@@ -1345,13 +1331,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		if (zoomLevel - 0.05 > minZoomLevel) {
 			zoomLevel = Math.round((zoomLevel - 0.05)*100) / 100;
 			
-			var navTempLeft = parseFloat($('.navigator').css('left'));
-			var navTempTop = parseFloat($('.navigator').css('top'));
+			var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+			var navTempTop = parseFloat($('.dmNavigator').css('top'));
 							
-			var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-			var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+			var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+			var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 					
-			$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+			$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 			
 			buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);			
 			
@@ -1361,13 +1347,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			} else {
 				zoomLevel = minZoomLevel;
 				
-				navTempLeft = parseFloat($('.navigator').css('left'));
-				navTempTop = parseFloat($('.navigator').css('top'));
+				navTempLeft = parseFloat($('.dmNavigator').css('left'));
+				navTempTop = parseFloat($('.dmNavigator').css('top'));
 								
-				navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-				navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+				navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+				navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 					
-				$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+				$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 				
 				buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			}
@@ -1377,13 +1363,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	
 	function sliderZoomInOut() {
 		
-		zoomLevel = $('#zoomLevelGague').slider('option', 'value') / 100;
+		zoomLevel = $('#dmZoomLevelGague').slider('option', 'value') / 100;
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 								
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 			
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
@@ -1394,13 +1380,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		zoomLevel = 1;
 
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();	
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();	
 		
-		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+		$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 	}
@@ -1433,13 +1419,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			zoomLevel = viewerWidthRatio;
 		}				
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 		
-		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));
+		$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);		
 		
@@ -1464,13 +1450,13 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			}
 		
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();				
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();				
 		
-		$('#zoomLevelGague').slider('option', 'value', (zoomLevel * 100));	
+		$('#dmZoomLevelGague').slider('option', 'value', (zoomLevel * 100));	
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
@@ -1493,11 +1479,11 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			  break; 
 			}
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();			
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();			
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 			
@@ -1521,11 +1507,11 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			  break; 
 			}
 		
-		var navTempLeft = parseFloat($('.navigator').css('left'));
-		var navTempTop = parseFloat($('.navigator').css('top'));
+		var navTempLeft = parseFloat($('.dmNavigator').css('left'));
+		var navTempTop = parseFloat($('.dmNavigator').css('top'));
 						
-		var navOffsetRatioX = (navTempLeft + ($('.navigator').width() / 2)) / $('#thumbnail').width();
-		var navOffsetRatioY = (navTempTop + ($('.navigator').height() / 2)) / $('#thumbnail').height();						
+		var navOffsetRatioX = (navTempLeft + ($('.dmNavigator').width() / 2)) / $('#dmThumbnail').width();
+		var navOffsetRatioY = (navTempTop + ($('.dmNavigator').height() / 2)) / $('#dmThumbnail').height();						
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 		
@@ -1538,10 +1524,10 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		if (hideNav === true) {
 			hideNav = false;
-			$('#thumbnail').animate({ top: 0, left: 0 }, 200).animate({ top:-30, left: 0 }, 200).animate({ top: 0, left: 0 }, 200);
+			$('#dmThumbnail').animate({ top: 0, left: 0 }, 200).animate({ top:-30, left: 0 }, 200).animate({ top: 0, left: 0 }, 200);
 		} else {
 			hideNav = true;
-			$('#thumbnail').animate({ top: -60, left: 0 }, 200).animate({ top: 0, left: 0 }, 200).animate({ top: thumbDivTempHeight, left: 0 }, 200);
+			$('#dmThumbnail').animate({ top: -60, left: 0 }, 200).animate({ top: 0, left: 0 }, 200).animate({ top: thumbDivTempHeight, left: 0 }, 200);
 		}
 	}
 	
