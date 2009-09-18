@@ -27,7 +27,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/	
-	var rotationLevel = 180,
+	var rotationLevel = 0,
 	viewerWidth = $('#dmMonocle').width(),
 	viewerHeight = $('#dmMonocle').height(),
 	bigWidth = dmImgWidth,
