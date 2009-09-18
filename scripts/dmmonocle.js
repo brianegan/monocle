@@ -27,7 +27,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	*	DEFAULT VARIABLES!
 	*
 	******************************************/	
-	var rotationLevel = 0,
+	var rotationLevel = 180,
 	viewerWidth = $('#dmMonocle').width(),
 	viewerHeight = $('#dmMonocle').height(),
 	bigWidth = dmImgWidth,
@@ -640,7 +640,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								}																
 								
 								// Calculates the X, Y Positioning for the Images in those Tiles
-								bigmageCoordsX = tileWidth * -(x - (tileNumWidth-1));
+								bigImageCoordsX = tileWidth * -(x - (tileNumWidth-1));
 								bigImageCoordsY = tileHeight * -(y - (tileNumHeight-1));
 								
 								// Convert the X, Y for the Navigator
@@ -983,11 +983,12 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 			
 			// Checks to see if the div & nav are touching
 			if (((navCollisionY1 >= collisionTop && navCollisionY1 <= collisionBottom) || (navCollisionY2 >= collisionTop && navCollisionY2 <= collisionBottom) || (navCollisionY1 < collisionTop && navCollisionY2 > collisionBottom)) && ((navCollisionX1 >= collisionLeft && navCollisionX1 <= collisionRight) || (navCollisionX2 >= collisionLeft && navCollisionX2 <= collisionRight) || (navCollisionX1 < collisionLeft && navCollisionX2 > collisionRight))) {
-				
+			
 				// If they're touching, load and place the image.				
 				var newImageClasses = $(this).attr('class').toString().split(" ");
 				var newImageNum = newImageClasses[0];		
 				var newImageDiv = "#dmMainImageContainer .tile-" + newImageNum;
+				console.log(tileImageSrc[newImageNum]);
 				$(this).removeClass('collision');
 				
 				$(newImageDiv).toggleClass('dmImgTileLoading');
@@ -1756,7 +1757,6 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		$('#dmDownloadImage')
 			.css('top', ((windowHeight / 2) - ($('#dmDownloadImage').height() / 2) + topScroll) + "px")
 			.css('left', ((windowWidth / 2) - ($('#dmDownloadImage').width() / 2)) + "px");
-		
 	}
 							   
 	/*****************************************
