@@ -1,0 +1,3 @@
+These cursors were adapted from the QT 4.5 Library, under the GPLv3 License.
+
+http://qt.nokia.com/products/licensing

@@ -1,0 +1,5 @@
+Twotone Icons 
+http://code.google.com/p/twotiny/
+
+Licensed under Artistic License/GPL
+http://dev.perl.org/licenses/
