@@ -29,7 +29,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var rotationLevel = 0,
 	viewerWidth = $('#dmMonocle').width(),
 	viewerHeight = $('#dmMonocle').height(),
-	devUrlPrefix = "http://cdmtest.library.unlv.edu",
+	devUrlPrefix = "",
 	bigWidth = dmImgWidth,
 	bigHeight = dmImgHeight,
 	CISOPTR = dmCISOPTR,
