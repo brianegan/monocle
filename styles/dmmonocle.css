@@ -1,6 +1,6 @@
 /* ****************************
  *
- *	dmMonocle
+ *	dmMonocle 1.0
  *	by Brian Egan
  *	
  *	Copyright (c) 2009 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas
@@ -208,55 +208,3 @@ div#dmMonocle {
 	top: -5px; 
 	margin-left: -5px; 
 	}
-
-/* Print Image Styles
-   These styles are output when a user clicks on the "print"
-   icon.
-*/
-#dmDownloadImageBackground {
-	position: absolute;
-	left: 0;
-	background-color: #000000;
-	text-align: center;
-	z-index: 150;
-}
-#dmDownloadImage {
-	background-color: #FFF;
-	width: 450px;
-	padding: 10px 15px;
-	position: absolute;
-	z-index: 200;
-}
-#dmDownloadImage table {
-	width: 100%;
-}
-#dmDownloadImage tr th {
-	font-size: 100%;
-	font-weight: bold;
-	text-align: left;
-	background-color: #DDD;
-}
-.even {
-	background-color: #EEE;
-}
-#dmClosePrint {
-	position: absolute;
-	right: 15px;
-	top:  10px;
-}
-
-/**********************
-* =DEVELOPMENT
-***********************/
-
-/* Development Styles needed for dmMonocle development,
-   but not live sites */
-body,html {
-	margin: 0;
-	padding: 10px 0 0 0;
-}
-#feedback {
-	position:absolute;
-	left: 5px;
-	top: 400px;	
-}
