@@ -3,8 +3,8 @@
  *	dmMonocle
  *	by Brian Egan
  *	
- *	Copyright (c) 2009 University of Nevada, Las Vegas
- *	Licensed under GPLv3 
+ *	Copyright (c) 2009 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas
+ *	Licensed under MIT License 
  *  http://code.google.com/p/dmmonocle/wiki/License
  *
 *************************************************************/
@@ -77,6 +77,11 @@ div#dmMonocle {
 .dmNoDrag {
 	cursor: default !important;
 }
+/* The style for the loading tiles */
+.dmImgTileLoading {
+	background-image: url(../images/loading.gif); 
+}
+
 
 /************************
   =MENU
@@ -238,11 +243,6 @@ div#dmMonocle {
 	position: absolute;
 	right: 15px;
 	top:  10px;
-}
-.dmImgTileLoading {
-	background-image: url(../images/spinner.gif); 
-	background-position: center center;
-	background-repeat: no-repeat;
 }
 
 /**********************
