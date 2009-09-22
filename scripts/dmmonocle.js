@@ -1,11 +1,11 @@
 /**************************************
  *
- *	dmMonocle
+ *	dmMonocle	
  *	by Brian Egan
  *	
- *	Copyright (c) 2009 University of Nevada, Las Vegas
- *	Licensed under GPLv3 
- *  http://code.google.com/p/dmmonocle/wiki/License 
+ *	Copyright (c) 2009 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas
+ *	Licensed under MIT License 
+ *  http://code.google.com/p/dmmonocle/wiki/License
  *
  *	Changelog v 1.0 - 1.1
  *
@@ -30,6 +30,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 	var rotationLevel = 0,
 	viewerWidth = $('#dmMonocle').width(),
 	viewerHeight = $('#dmMonocle').height(),
+	devUrlPrefix = "http://cdmtest.library.unlv.edu",
 	bigWidth = dmImgWidth,
 	bigHeight = dmImgHeight,
 	CISOPTR = dmCISOPTR,
@@ -165,7 +166,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		
 		var dmThumbScale = thumbRatio * 100;
 		var thumbImage = new Image();
-		var thumbSrc = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
+		var thumbSrc = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmThumbScale + "&DMWIDTH=" + thumbWidthMax + "&DMHEIGHT=" + thumbHeightMax + "&DMROTATE=" + lvlRotation;
 		
 		if (imageWidth <= viewerWidth && imageHeight <= viewerHeight) {						
 			
@@ -183,7 +184,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					
 					$('#dmThumbnail').width(thumbWidth).height(thumbHeight);
 					
-					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(" + devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#dmMainImage').width(viewerWidth).height(viewerHeight);
 					
@@ -231,7 +232,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"dmClickNavLayer\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#dmThumbnail");
 					
-					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(" + devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#dmMainImage').width(viewerWidth).height(imageHeight);
 					
@@ -307,7 +308,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 					var clickNav = "<div class=\"dmClickNavLayer\" style=\"width:" + thumbWidth + "px; height:" + thumbHeight + "px;\"></div>";
 					$(clickNav).appendTo("#dmThumbnail");
 					
-					mainImageBG = "url(http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
+					mainImageBG = "url(" + devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + (lvlZoom * 100) + "&DMWIDTH=" + dmWidth + "&DMHEIGHT=" + dmHeight + "&DMROTATE=" + lvlRotation + ")";
 					
 					$('#dmMainImage').width(imageWidth).height(viewerHeight);
 					
@@ -488,8 +489,8 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
-								tileImageErrorSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+								tileImageErrorSrc[tileNum] = devUrlPrefix +  "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -575,7 +576,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -664,8 +665,8 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
-								tileImageErrorSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -747,7 +748,7 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -988,7 +989,6 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				var newImageClasses = $(this).attr('class').toString().split(" ");
 				var newImageNum = newImageClasses[0];		
 				var newImageDiv = "#dmMainImageContainer .tile-" + newImageNum;
-				console.log(tileImageSrc[newImageNum]);
 				$(this).removeClass('collision');
 				
 				$(newImageDiv).toggleClass('dmImgTileLoading');
@@ -1649,26 +1649,25 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 				
 			if (dmImgWidth < dmImgHeight) {				
 				if (height300DPI <= dmImgHeight) {					
-					printLinks300DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
+					printLinks300DPI.push(devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
 					printSizes300DPI.push(width300DPI + "x" + height300DPI);	
 				}
 				
 				if (height72DPI <= dmImgHeight) {
-					printLinks72DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
+					printLinks72DPI.push(devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
 					printSizes72DPI.push(width72DPI + "x" + height72DPI);
 				}				
 			} else if (dmImgWidth >= dmImgHeight) {													
 				if (width300DPI <= dmImgWidth) {								
-					printLinks300DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
+					printLinks300DPI.push(devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio300DPI + "&DMWIDTH=" + width300DPI + "&DMHEIGHT=" + height300DPI + "&DMROTATE=0");	
 					printSizes300DPI.push(width300DPI + "x" + height300DPI);	
 				}				
 				if (width72DPI <= dmImgWidth) {
-					printLinks72DPI.push("http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
+					printLinks72DPI.push(devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + ratio72DPI + "&DMWIDTH=" + width72DPI + "&DMHEIGHT=" + height72DPI + "&DMROTATE=0");
 					printSizes72DPI.push(width72DPI + "x" + height72DPI);
 				}
 			}
 			
-			// console.log(printSizes72DPI[i]);
 		} 
 		
 		
@@ -1741,14 +1740,14 @@ function dmMonocle(dmImgWidth, dmImgHeight, dmCISOPTR, dmCISOROOT) {
 		});
 		
 		// Append Slider Info & Download Button
-		$("<div id='dmDownloadImagSliderVals'>" + (dmImgWidth / 2) + " x " + (dmImgHeight / 2) + "</div><p><a href='http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=50&DMWIDTH=" + (dmImgWidth / 2) + "&DMHEIGHT=" + (dmImgHeight / 2) + "&DMROTATE=0' target='_blank' id='dmDownloadImageLink'>Download!</a></p>").appendTo("#dmDownloadImage");
+		$("<div id='dmDownloadImagSliderVals'>" + (dmImgWidth / 2) + " x " + (dmImgHeight / 2) + "</div><p><a href='" + devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=50&DMWIDTH=" + (dmImgWidth / 2) + "&DMHEIGHT=" + (dmImgHeight / 2) + "&DMROTATE=0' target='_blank' id='dmDownloadImageLink'>Download!</a></p>").appendTo("#dmDownloadImage");
 		
 		$('#dmDownloadImageSlider').bind('slide', function(event, ui) { 
 			var currentDownloadWidth = $('#dmDownloadImageSlider').slider('option', 'value');
 			var currentDownloadHeight = parseInt(currentDownloadWidth * downloadRatio, 10);
 			var currentZoomLevel = (currentDownloadWidth / dmImgWidth) * 100;
 			var currentHTML = currentDownloadWidth + " x " + currentDownloadHeight; 
-			var currentLink = "http://cdmtest.library.unlv.edu/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + currentZoomLevel + "&DMWIDTH=" + currentDownloadWidth + "&DMHEIGHT=" + currentDownloadHeight + "&DMROTATE=0";
+			var currentLink = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + currentZoomLevel + "&DMWIDTH=" + currentDownloadWidth + "&DMHEIGHT=" + currentDownloadHeight + "&DMROTATE=0";
 			$("#dmDownloadImagSliderVals").html(currentHTML);
 			$("#dmDownloadImageLink").attr("href", currentLink);
 		});
