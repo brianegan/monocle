@@ -6,10 +6,10 @@
 
 <!-- At the very bottom of the file, include this code. Make sure to adjust the src attribute to
 	 point to the correct location -->
-<script type="text/javascript" src="/dmMonocle-1.0/scripts/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/dmMonocle-1.0/scripts/jquery.event.drag-1.5.min.js"></script>
-<script type="text/javascript" src="/dmMonocle-1.0/scripts/jquery-ui-1.7.1.custom.min.js"></script>
-<script type="text/javascript" src="/dmMonocle-1.0/scripts/dmmonocle.min.js"></script>
+<script type="text/javascript" src="/dmmonocle/scripts/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/dmmonocle/scripts/jquery.event.drag-1.5.min.js"></script>
+<script type="text/javascript" src="/dmmonocle/scripts/jquery-ui-1.7.1.custom.min.js"></script>
+<script type="text/javascript" src="/dmmonocle/scripts/dmmonocle.min.js"></script>
 
 <? dmGetImageInfo($image_cisoroot, $image_cisoptr, $filename, $type, $width, $height); ?>
 
