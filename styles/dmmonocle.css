@@ -1,6 +1,6 @@
 /* ****************************
  *
- *	dmMonocle
+ *	dmMonocle 1.01
  *	by Brian Egan
  *	
  *	Copyright (c) 2009 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas
@@ -24,6 +24,9 @@ div#dmMonocle {
 	text-align: center;
 	background-repeat:no-repeat;
 	background-position:center center;
+}
+body.smallDmMonocle {
+	width: 450px;
 }
 /* Positions the Thumbnail div. In future version, more flexibility will be given with the thumbnail. As is, it is rendered at the top-left corner. */
 #dmThumbnail {
@@ -243,6 +246,16 @@ div#dmMonocle {
 	position: absolute;
 	right: 15px;
 	top:  10px;
+}
+
+/**********************
+* =COMPOUND OBJECT STYLES
+****************************/
+body.dmMonocleCompound div#dmMonocle, body.dmMonocleCompound div#dmMonocleMenu {
+	width: 100%;
+}
+body.dmMonocleFullText div#dmMonocle, body.dmMonocleFullText div#dmMonocleMenu {
+	width: 500px;
 }
 
 /**********************
