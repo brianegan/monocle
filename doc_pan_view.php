@@ -6,11 +6,11 @@
 <script type="text/javascript" src="/dmmonocle/scripts/jquery-ui-1.7.1.custom.min.js"></script>
 <script type="text/javascript" src="/dmmonocle/scripts/dmmonocle.min.js"></script>
 
-<script type="text/javascript"> $(window).ready(function() {
-    dmMonocle(<?= $image_width ?>, <?= $image_height ?>,
-       <?= $image_cisoptr ?>, "<?= $image_cisoroot ?>");
- });
- </script>
+<? dmGetImageInfo($image_cisoroot, $image_cisoptr, $filename, $type, $width, $height); ?>
 
-<? dmGetImageInfo($image_cisoroot, $image_cisoptr,
-    $filename, $type, $width, $height); ?>
+<script type="text/javascript">
+$(window).ready(function() {
+	dmMonocle(<?= $width ?>, <?= $height ?>,
+		<?= $image_cisoptr ?>, "<?= $image_cisoroot ?>");
+});
+</script>
