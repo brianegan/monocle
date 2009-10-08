@@ -10,12 +10,12 @@
  *	Changelog v .95-1.01
  *
  *	Goals:
- *
+ *    * FIX Thumbnail bug. Best idea: create 4, preloaded divs and append them as necessary. Avoid loading every time.
  *	  * Clean up code for Google Code distribution (Remove old & obsolete comments, run JSLint)
  *	  * Remove wheel events until a solid plan is adopted for wheel movement
  *	  * Make Hide Nav Animation more fun
  *	  * Change main function name to dmMonocle
- *	  * Rename file to dmmonocle.js
+ *	  * Rename functioinle to dmmonocle.js
  *	
 *****************************************************************/
 
