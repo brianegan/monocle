@@ -11,16 +11,16 @@
 
 /* This is the main viewer area. Set it's width and height 
 to reflect the size you would like your viewer to be. */
-div#dmMonocle {
+div.dmMonocle {
 	width: 930px;
 	height: 500px;
 	background-color: #EEE;
+	margin:  0 auto;
 	
 	/* These properties are necessary for dmMonocle functionality 
 	- do not edit unless necessary */
 	position:relative;
 	overflow:hidden;
-	margin: 0 auto;
 	text-align: center;
 	background-repeat:no-repeat;
 	background-position:center center;
