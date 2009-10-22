@@ -82,7 +82,7 @@ $.fn.dmMonocle = function(options) {
 		$('#dmThumbnail div').remove();
 		$('#dmMainImage div').remove();
 		$('#dmThumbnail').remove();
-		$('#dmMainImageContainer').remove();
+		$('#dmMainIma˝geContainer').remove();
 		$('#dmMainImage').remove();		
 		clearTimeout(loadImagesTimer);
 		
@@ -1576,6 +1576,9 @@ $.fn.dmMonocle = function(options) {
 	*
 	******************************************/
 	buildImage(zoomLevel, rotationLevel, 0, 0);
+	
+	// Watch the chain, yo
+	return this;
 
   });
 
