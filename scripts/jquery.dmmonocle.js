@@ -934,9 +934,10 @@ $.fn.dmMonocle = function(options) {
 		var zoomInButton = "<div id='dmMonocleZoomIn' title='Zoom In'>Zoom In</div>";
 		$(zoomInButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerZoomIn(); });	
 		
-		// Print
-    var downloadImageButton = "<div id='dmMonocleDownloadButton' title='Download the Image'></div>";
-    $(downloadImageButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerDownloadImage(); });		
+		if (o.printing === true) {// Print
+      var downloadImageButton = "<div id='dmMonocleDownloadButton' title='Download the Image'></div>";
+      $(downloadImageButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerDownloadImage(); });		
+		}
 		
 		// If dmBridge is enabled, append the "search text" field to the viewer
 		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmMonocleMenu'); }
@@ -1771,18 +1772,18 @@ $.fn.dmMonocle = function(options) {
 // default options
 $.fn.dmMonocle.defaults = {
     CISOROOT: "/snv",
-	CISOPTR: 2678,
-	dmImageHeight: 3559,
+	  CISOPTR: 2678,
+	  dmImageHeight: 3559,
     dmImageWidth: 5831,
-	thumbMaxWidth: 120,
-	thumbMaxHeight: 120,
-	thumbPosition: "TL",
-	defaultX: 0,
-	defaultY: 0,
+	  thumbMaxWidth: 120,
+	  thumbMaxHeight: 120,
+	  thumbPosition: "TL",
+	  defaultX: 0,
+	  defaultY: 0,
     rotation: 0,
     dmBridge: true,
-	printing: true,
-	urlPrefix: "http://cdmtest.library.unlv.edu"
+	  printing: true,
+	  urlPrefix: "http://cdmtest.library.unlv.edu"
 };
 
 })(jQuery);
