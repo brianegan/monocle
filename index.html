@@ -23,7 +23,7 @@
 <script type="text/javascript" src="scripts/jquery.dmmonocle.js"></script>
 
 <!-- Initialize dmMonocle. -->
-<div class="dmMonocle { CISOROOT: '/snv',  CISOPTR: 1493, dmImageHeight: 1432, dmImageWidth: 4012, dmBridge: true }">
+<div class="dmMonocle">
 		
 	<!-- all necessary divs will be generated. The idea will to be able to call dmViewer like any jquery class. Ex:
     	
@@ -44,6 +44,7 @@
 
 <script type="text/javascript">
 	$(window).load(function() {
+		/* Panoramic View
 		
 		$('.dmMonocle').dmMonocle({ 
 			CISOROOT: '/snv',  
@@ -52,6 +53,29 @@
 			dmImageWidth: 4012, 
 			dmBridge: true 
 		});
+		
+		*/
+		
+		/* Search Text */
+		$('.dmMonocle').dmMonocle({ 
+			CISOROOT: '/university',  
+			CISOPTR: 1089, 
+			dmImageHeight: 9188, 
+			dmImageWidth: 6404, 
+			dmBridge: false,
+			searchText: "snow",
+			urlPrefix: "http://dlsd.sdln.net" 
+		}); 
+		
+		/* Maps 
+		$('.dmMonocle').dmMonocle({ 
+			CISOROOT: '/LV_Maps',  
+			CISOPTR: 426, 
+			dmImageHeight: 9590, 
+			dmImageWidth: 10360, 
+			dmBridge: true 
+		});	*/
+		
 		
 		// Examples in the old format
 		//dmBridgeZoomer(10360, 9590, 426, "/LV_Maps")						   
