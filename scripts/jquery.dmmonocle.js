@@ -1,5 +1,5 @@
 ;(function($) {
-// // dmMonocle is an advanced image viewer for CONTENTdm, meant to integrate seamlessly with dmBridge
+// dmMonocle is an advanced image viewer for CONTENTdm, meant to integrate seamlessly with dmBridge
 $.fn.dmMonocle = function(options) {
   var opts = $.extend({}, $.fn.dmMonocle.defaults, options);
 
@@ -579,9 +579,10 @@ $.fn.dmMonocle = function(options) {
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								if (o.searchText.length > 0) {
-									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;																		
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;
+									tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								} else {
-									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;																		
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
 								}
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
@@ -671,8 +672,13 @@ $.fn.dmMonocle = function(options) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
-								tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								if (o.searchText.length > 0) {
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;
+									tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								} else {
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+									tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								}
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -754,7 +760,13 @@ $.fn.dmMonocle = function(options) {
 								$(littleDiv).appendTo('#dmThumbnail').addClass('collision');
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
-								tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;																		
+								if (o.searchText.length > 0) {
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;
+									tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								} else {
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+									tileImageErrorSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigImageCoordsX + "&DMY=" + bigImageCoordsY + "&DMCROP=" + bigImageCoordsX + "," + bigImageCoordsY + "," + x2 + "," + y2;
+								}																		
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
 										
@@ -1791,8 +1803,8 @@ $.fn.dmMonocle = function(options) {
 // default options
 $.fn.dmMonocle.defaults = {
     CISOROOT: "/snv",
-	  CISOPTR: 2678,
-	  dmImageHeight: 3559,
+	CISOPTR: 2678,
+	dmImageHeight: 3559,
     dmImageWidth: 5831,
 	thumbMaxWidth: 120,
 	thumbMaxHeight: 120,
@@ -1802,8 +1814,8 @@ $.fn.dmMonocle.defaults = {
 	defaultY: 0,
     rotation: 0,
     dmBridge: true,
-	  printing: true,
-	  urlPrefix: "http://cdmtest.library.unlv.edu"
+	printing: true,
+	urlPrefix: "http://cdmtest.library.unlv.edu"
 };
 
 })(jQuery);
