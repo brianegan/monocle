@@ -28,9 +28,6 @@ $.fn.dmMonocle = function(options) {
 	thumbHeightMax = 120,
 	tileWidth,
 	tileHeight,
-	sliderVal,
-	initialImageX,
-	initialImageY,
 	loadImagesTimer,
 	hideNav = false,
 	tileImageSrc = [],
@@ -38,8 +35,6 @@ $.fn.dmMonocle = function(options) {
 	tileImageWidth = [],
 	tileImageHeight = [],
 	tileNum = 0,
-	containerSendX,
-	containerSendY,
 	mainImageWidth,
 	mainImageHeight,
 	containerWidth,
@@ -53,8 +48,8 @@ $.fn.dmMonocle = function(options) {
 	viewerWidthRatio = viewerWidth / bigWidth,
 	viewerHeightRatio = viewerHeight / bigHeight,
 	zoomLevel,
-	minZoomlevel;
-	
+	minZoomLevel;
+
 	if (viewerWidthRatio >= viewerHeightRatio) {
 		zoomLevel = viewerHeightRatio;
 		minZoomLevel = viewerHeightRatio;
@@ -255,9 +250,9 @@ $.fn.dmMonocle = function(options) {
 						.css('background-position', 'center top')
 						.css('background-repeat', 'no-repeat')
 						.toggleClass('dmHover')
-						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); })
+						.bind('dragstart', function() {$(this).toggleClass("dmDragging");})
+						.bind('drag', function(event){moveImage(event);})
+						.bind('dragend', function() {$(this).toggleClass("dmDragging");loadImages();})
 						.bind("dblclick", function(e){ 
 							var posx = 0;
 							var posy = 0;
@@ -273,7 +268,7 @@ $.fn.dmMonocle = function(options) {
 									+ document.documentElement.scrollTop;
 							}
 
-							dblClickMove(posx, posy);
+							dblClickZoom(posx, posy, zoomLevel);
 						});
 						 
 					buildNav(offsetRatioX, offsetRatioY);
@@ -334,9 +329,9 @@ $.fn.dmMonocle = function(options) {
 						.css('background-image', mainImageBG)
 						.css('background-position', 'left center')
 						.css('background-repeat', 'no-repeat')
-						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); })
+						.bind('dragstart', function() {$(this).toggleClass("dmDragging");})
+						.bind('drag', function(event){moveImage(event);})
+						.bind('dragend', function() {$(this).toggleClass("dmDragging");loadImages();})
 						.bind("dblclick", function(e){ 
 							var posx = 0;
 							var posy = 0;
@@ -352,7 +347,7 @@ $.fn.dmMonocle = function(options) {
 									+ document.documentElement.scrollTop;
 							}
 
-							dblClickMove(posx, posy);
+							dblClickZoom(posx, posy, zoomLevel);
 						});
 					
 					buildNav(offsetRatioX, offsetRatioY);				
@@ -487,11 +482,11 @@ $.fn.dmMonocle = function(options) {
 										
 								// Builds the Array of images to load, and an array for the width and height of those																					
 								if (o.searchText.length > 0) {
-									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2 + "&DMTEXT=" + o.searchText;
-									tileImageErrorSrc[tileNum] = devUrlPrefix +  "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMTEXT=" + o.searchText;
+									tileImageErrorSrc[tileNum] = devUrlPrefix +  "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY;															
 								} else {
-									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;															
-									tileImageErrorSrc[tileNum] = devUrlPrefix +  "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY + "&DMCROP=" + bigDivCoordsX + "," + bigDivCoordsY + "," + x2 + "," + y2;
+									tileImageSrc[tileNum] = devUrlPrefix + "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + (tileWidth + 1) + "&DMHEIGHT=" + (tileHeight + 1) + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY;															
+									tileImageErrorSrc[tileNum] = devUrlPrefix +  "/cgi-bin/getimage.exe?CISOROOT=" + CISOROOT + "&CISOPTR=" + CISOPTR + "&DMSCALE=" + dmScale + "&DMWIDTH=" + tileWidth + "&DMHEIGHT=" + tileHeight + "&DMROTATE=" + lvlRotation + "&DMX=" + bigDivCoordsX + "&DMY=" + bigDivCoordsY;
 								}
 								tileImageWidth[tileNum] = bigTileOutputWidth;										
 								tileImageHeight[tileNum] = bigTileOutputHeight;
@@ -794,8 +789,6 @@ $.fn.dmMonocle = function(options) {
 										
 					imagePositionMoveX = (imageWidth - viewerWidth);
 					imagePositionMoveY = (imageHeight - viewerHeight);									
-					containerSendX = $('#dmMainImageContainer').offset().left;
-					containerSendY = $('#dmMainImageContainer').offset().top;
 					mainImageWidth = $('#dmMainImage').width();
 					mainImageHeight = $('#dmMainImage').height();
 					thumbMainWidthRatio = $('#dmThumbnail img').width() / $('#dmMainImage').width();
@@ -806,9 +799,9 @@ $.fn.dmMonocle = function(options) {
 						.css('position', 'absolute')
 						.css('left', imagePositionX)
 						.css('top', imagePositionY)
-						.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })
-						.bind('drag', function(event){ moveImage(event); })
-						.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); })
+						.bind('dragstart', function() {$(this).toggleClass("dmDragging");})
+						.bind('drag', function(event){moveImage(event);})
+						.bind('dragend', function() {$(this).toggleClass("dmDragging");loadImages();})
 						.bind("dblclick", function(e){ 
 							var posx = 0;
 							var posy = 0;
@@ -824,7 +817,7 @@ $.fn.dmMonocle = function(options) {
 									+ document.documentElement.scrollTop;
 							}
 
-							dblClickMove(posx, posy);
+							dblClickZoom(posx, posy, zoomLevel);
 						});
 						 						
 					buildNav(offsetRatioX, offsetRatioY);
@@ -897,9 +890,9 @@ $.fn.dmMonocle = function(options) {
 			.css('z-index', '20')
 			.css('left', navOffsetX + "px")
 			.css('top', navOffsetY + "px")
-			.bind('dragstart', function() { $(this).toggleClass("dmDragging"); })						
-			.bind('drag', function(event){ moveNav(event); })
-			.bind('dragend', function() { $(this).toggleClass("dmDragging"); loadImages(); });
+			.bind('dragstart', function() {$(this).toggleClass("dmDragging");})						
+			.bind('drag', function(event){moveNav(event);})
+			.bind('dragend', function() {$(this).toggleClass("dmDragging");loadImages();});
 		
 		// After building the nav load the images touching it
 		loadImagesTimer = setTimeout(function() {
@@ -924,31 +917,31 @@ $.fn.dmMonocle = function(options) {
 		
 		// Hide Nav
 		var hideNavButton = "<div id='dmMonocleHideNavigator' title='Show/Hide Navigator'>Hide Navigator</div>";
-		$(hideNavButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerHideNavigator(); });											
+		$(hideNavButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerHideNavigator();});											
 		
 		// Fit Window
 		var fitWindowButton = "<div id='dmMonocleFitWindow' title='Fit Image to Viewer'>Fit Document to Viewer</div>";
-		$(fitWindowButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerFitWindow(); });	
+		$(fitWindowButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerFitWindow();});	
 		
 		// Fit Width
 		var fitWidthButton = "<div id='dmMonocleFitWidth' title='Fit Image to Viewer Width'>Fit Image to Viewer Width</div>";
-		$(fitWidthButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerFitWidth(); });		
+		$(fitWidthButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerFitWidth();});		
 		
 		// Maximum Resolution
 		var maxResButton = "<div id='dmMonocleMaxRes' title='Maximum Resolution'>Maximum Resolution</div>";
-		$(maxResButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerMaxRes(); });
+		$(maxResButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerMaxRes();});
 		
 		// Rotate Counterclockwise
 		var rotateCounterclockwiseButton = "<div id='dmMonocleRotateCounterclockwise' title='Rotate Counterclockwise'>Rotate Counterclockwise</div>";
-		$(rotateCounterclockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerRotateCounterclockwise(); });
+		$(rotateCounterclockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerRotateCounterclockwise();});
 		
 		// Rotate Clockwise
 		var rotateClockwiseButton = "<div id='dmMonocleRotateClockwise' title='Rotate Clockwise'>Rotate Clockwise</div>";
-		$(rotateClockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerRotateClockwise(); });
+		$(rotateClockwiseButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerRotateClockwise();});
 		
 		// Zoom Out
 		var zoomOutButton = "<div id='dmMonocleZoomOut' title='Zoom Out'>Zoom Out</div>";
-		$(zoomOutButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerZoomOut(); });
+		$(zoomOutButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerZoomOut();});
 						
 		// Zoom Level Gague
 		var zoomLevelGague = "<div id='dmZoomLevelGague' title='Zoom Level'>&nbsp;</div>";
@@ -958,15 +951,15 @@ $.fn.dmMonocle = function(options) {
 			animate: true,
 			max: 100,
 			min: (minZoomLevel * 100),
-			change: function(event, ui) { sliderZoomInOut(); }
+			change: function(event, ui) {sliderZoomInOut();}
 		});
 		
 		// Zoom In
 		var zoomInButton = "<div id='dmMonocleZoomIn' title='Zoom In'>Zoom In</div>";
-		$(zoomInButton).appendTo("#dmMonocleMenu").bind('click', function() { viewerZoomIn(); });	
+		$(zoomInButton).appendTo("#dmMonocleMenu").bind('click', function() {viewerZoomIn();});	
 		
 		// If dmBridge is enabled, append the "search text" field to the viewer
-		if($('#dmObjectSearch').width() > 0) { $('#dmObjectSearch').appendTo('#dmMonocleMenu'); }
+		if($('#dmObjectSearch').width() > 0) {$('#dmObjectSearch').appendTo('#dmMonocleMenu');}
 		
 		// Clear
 		var menuClearDiv = "<div class='clear'>&nbsp;</div>";
@@ -980,6 +973,7 @@ $.fn.dmMonocle = function(options) {
 	*
 	******************************************/
 	function loadImages() {
+
 		
 		// Grabs the area coordinates of the navigator
 		var navCollisionY1 = parseFloat($('.dmNavigator').css('top'));
@@ -1109,7 +1103,7 @@ $.fn.dmMonocle = function(options) {
 		}
 		
 		//if (tempX >= 0 && navX <= containerWidth && tempY >= 0 && navY <= containerHeight) { $('div.dmNavigator').css({ left:tempX, top:tempY }); };
-  		$(mainImage).css({ left:tempX, top:tempY });
+  		$(mainImage).css({left:tempX, top:tempY});
 		
 		// Grabs the current boundaries of the container
 		var imagePositionX = ($('#dmMainImage').width() - viewerWidth);
@@ -1245,7 +1239,7 @@ $.fn.dmMonocle = function(options) {
 			tempY = containerMaxY;
 		}
 	
-  		$(nav).css({ left:tempX, top:tempY });
+  		$(nav).css({left:tempX, top:tempY});
 		
 		// Get MainImage Position Information
 		var navLeft = ($('.dmNavigator').offset().left - $('#dmThumbnail').offset().left);
@@ -1458,7 +1452,7 @@ $.fn.dmMonocle = function(options) {
 		
 		buildImage(zoomLevel, rotationLevel, navOffsetRatioX, navOffsetRatioY);
 	}
-	
+
 	function viewerFitWindow() {
 		
 		switch(rotationLevel)
@@ -1592,10 +1586,10 @@ $.fn.dmMonocle = function(options) {
 		
 		if (hideNav === true) {
 			hideNav = false;
-			$('#dmThumbnail').animate({ top: 0, left: 0 }, 200).animate({ top:-30, left: 0 }, 200).animate({ top: 0, left: 0 }, 200);
+			$('#dmThumbnail').animate({top: 0, left: 0}, 200).animate({top:-30, left: 0}, 200).animate({top: 0, left: 0}, 200);
 		} else {
 			hideNav = true;
-			$('#dmThumbnail').animate({ top: -60, left: 0 }, 200).animate({ top: 0, left: 0 }, 200).animate({ top: thumbDivTempHeight, left: 0 }, 200);
+			$('#dmThumbnail').animate({top: -60, left: 0}, 200).animate({top: 0, left: 0}, 200).animate({top: thumbDivTempHeight, left: 0}, 200);
 		}
 	}
 	
@@ -1605,9 +1599,6 @@ $.fn.dmMonocle = function(options) {
 	*
 	******************************************/
 	buildImage(zoomLevel, rotationLevel, 0, 0);
-	
-	// Watch the chain, yo
-	return this;
 
   });
 
@@ -1621,20 +1612,20 @@ $.fn.dmMonocle = function(options) {
 
 // default options
 $.fn.dmMonocle.defaults = {
-    CISOROOT: "/snv",
-	CISOPTR: 2678,
-	dmImageHeight: 3559,
+    CISOROOT: "",
+    CISOPTR: 2678,
+    dmImageHeight: 3559,
     dmImageWidth: 5831,
-	thumbMaxWidth: 120,
-	thumbMaxHeight: 120,
-	thumbPosition: "TL",
-	searchText: "snow",
-	defaultX: 0,
-	defaultY: 0,
+    thumbMaxWidth: 120,
+    thumbMaxHeight: 120,
+    thumbPosition: "TL",
+    searchText: "",
+    defaultX: 0,
+    defaultY: 0,
     rotation: 0,
     dmBridge: true,
-	printing: true,
-	urlPrefix: "http://cdmtest.library.unlv.edu"
+    printing: true,
+    urlPrefix: "/"
 };
 
 })(jQuery);
