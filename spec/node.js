@@ -1,5 +1,5 @@
 
-require.paths.unshift('spec', '/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib', 'lib')
+require.paths.unshift('spec', './spec/lib', 'lib')
 require('jspec')
 require('unit/spec.helper')
 require('yourlib')
