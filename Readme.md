@@ -1,13 +1,20 @@
+# dmMonocle
 
-# YourLib
+View CONTENTdm Images with style!
 
-Description
+## Installation
 
-## License 
+You can find directions for installing dmMonocle at the Google Code Repository: [Installing dmMonocle](http://code.google.com/p/dmmonocle/wiki/Installation)
 
-(The MIT License)
+## Rewrite
 
-Copyright (c) 2009 Your Name &lt;Your Email&gt;
+You are currently viewing the documentation for the upcoming version of dmMonocle. I'm doing a full rewrite, and there are some fantastic changes coming in the 2.0 version! I'll update this documentation when the plugin becomes more stable.
+
+## License
+
+The MIT License
+
+Copyright (c) 2008-2010 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas &lt;brian.egan@unlv.edu&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
