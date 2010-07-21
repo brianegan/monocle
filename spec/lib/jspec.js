@@ -4,7 +4,7 @@
 ;(function(){
 
   JSpec = {
-    version   : '4.1.0',
+    version   : '4.2.0',
     assert    : true,
     cache     : {},
     suites    : [],
@@ -894,17 +894,21 @@
      */
     
     color : function(string, color) {
-      return "\u001B[" + {
-       bold    : 1,
-       black   : 30,
-       red     : 31,
-       green   : 32,
-       yellow  : 33,
-       blue    : 34,
-       magenta : 35,
-       cyan    : 36,
-       white   : 37
-      }[color] + 'm' + string + "\u001B[0m"
+      if (option('disableColors')) {
+        return string
+      } else {
+        return "\u001B[" + {
+         bold    : 1,
+         black   : 30,
+         red     : 31,
+         green   : 32,
+         yellow  : 33,
+         blue    : 34,
+         magenta : 35,
+         cyan    : 36,
+         white   : 37
+        }[color] + 'm' + string + "\u001B[0m"
+      }
     },
     
     /**
@@ -1068,6 +1072,26 @@
         default: 
           return object.toString()
       }
+    },
+
+    /**
+     * Parse an XML String and return a 'document'.
+     *
+     * @param {string} text
+     * @return {document}
+     * @api public
+     */
+
+    parseXML : function(text) {
+      var xmlDoc
+      if (window.DOMParser)
+        xmlDoc = (new DOMParser()).parseFromString(text, "text/xml")
+      else {
+        xmlDoc = new ActiveXObject("Microsoft.XMLDOM")
+        xmlDoc.async = "false"
+        xmlDoc.loadXML(text)
+      }
+      return xmlDoc
     },
 
     /**

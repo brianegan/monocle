@@ -1,275 +1,42 @@
-/* ****************************
- *
- *	dmMonocle 1.01
- *	by Brian Egan
- *	
- *	Copyright (c) 2009 Board of Regents of the Nevada System of Higher Education, on behalf, of the University of Nevada, Las Vegas
- *	Licensed under MIT License 
- *  http://code.google.com/p/dmmonocle/wiki/License
- *
-*************************************************************/
-
-/* This is the main viewer area. Set it's width and height 
-to reflect the size you would like your viewer to be. */
-div.dmMonocle {
-	width: 930px;
-	height: 500px;
-	background-color: #EEE;
-	margin:  0 auto;
-	
-	/* These properties are necessary for dmMonocle functionality 
-	- do not edit unless necessary */
-	position:relative;
-	overflow:hidden;
-	text-align: center;
-	background-repeat:no-repeat;
-	background-position:center center;
-}
-body.smallDmMonocle {
-	width: 450px;
-}
-/* Positions the Thumbnail div. In future version, more flexibility will be given with the thumbnail. As is, it is rendered at the top-left corner. */
-#dmThumbnail {
-	border-right: 3px solid #FFF;
-	border-bottom: 3px solid #FFF;
-	
-	/* Necessary Styles */
-	position: absolute;
-	z-index: 15;
-}
-/* This is where the program dumps and stiches together the tiles so they can be dragged. Most styles are generated automatically by dmMonocle, but if you want to use special cursors, this is the place to put them! */
-#dmMainImage {	
-	z-index: 1;
-	cursor: url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move;
-}
-/* IE was not accepting clicks directly on the thumbnail image, had to add
-   a div in between the Thumbnail and Navigator with a transparent BG
-   for IE to click on. Please ensure the path to the background-image is 
-   correct */
-.dmClickNavLayer {
-	z-index: 15;
-	position: absolute;
-	left: 0;
-	top: 0;
-	background-image: url(../images/bg_ie.gif);
-	}
-/* Navigator styles (the little thing inside the thumbnail you can drag around
-   to move the image). Feel free to change the color, give it a background, change the opacity, whatev! */
-.dmNavigator {	
-	background-color: #900;
-	border: 1px solid #300;
-	cursor: url(images/cursors/openhand.cur), url(../images/cursors/openhand.cur), move;
-	opacity: .4;
-	filter: alpha(opacity = 40); /* IE does not recognize CSS's native opacity property */
-	
-	/* Do Not modify */
-	position: absolute;
-	z-index: 50;
-	top: 0;
-	left: 0;
-	}
-
-/* A special selector for when either the Nav or Main Image are being
-   dragged. Currently used to alter the cursor, to go from an open to closed
-   hand */
-.dmDragging {
-	cursor: url(images/cursors/closedhand.cur), url(../images/cursors/closedhand.cur), move !important;
-}
-/* A special selector for when the nav or main image aren't draggable,
-   such as when the image is fit to the viewer size */
-.dmNoDrag {
-	cursor: default !important;
-}
-/* The style for the loading tiles */
-.dmImgTileLoading {
-	background-image: url(../images/loading.gif); 
-}
-
-
-/************************
-  =MENU
-  
-  By default, dmMonocle does not ouptut graphical icons for menu items, 
-  but rather it outputs text links. The link styles can be overridden
-  with the following as to display graphical icons.
-  
-***********************/
-#dmMonocleMenu {
-	background-color: #CCC;
-	width: 930px;
-	height: 30px;
+.dmMonocle {
+	width: 800px;
+	height: 600px;
 	margin: 0 auto;
-	padding: 0 0 3px 0;
-	}
-#dmMonocleMenu div {
-	text-indent: -1000em;
-	margin-right: 15px;
-	background-repeat: no-repeat;
-	cursor: pointer;
-	margin-top: 9px;
-	padding-top: 0;
-	float: left;
-	}
-#dmMonocleHideNavigator {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/toggleNav.gif);
-	margin-left: 15px;
-	}
-#dmMonocleFitWindow {
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/fitWindow.gif);
-	}
-#dmMonocleFitWidth {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/fitWidth.gif);
-	}
-#dmMonocleMaxRes {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/maxRes.gif);
-	}
-#dmMonocleRotateCounterclockwise {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/rotateCounterClockwise.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
-	}
-#dmMonocleRotateClockwise {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/rotateClockwise.gif);
-	}
-#dmMonocleZoomOut {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/zoomOut.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;
-	}
-#dmMonocleZoomIn {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/zoomIn.gif);
-	}
-	
-#dmMonocleDownloadButton {
-	width: 16px;
-	height: 16px;
-	background-image: url(../images/menu/print.gif);
-	padding-left: 15px;
-	border-left: 1px solid #999;
-	background-position: right;	
-	}	
-
-/* Slider */
-
-/* dmMonocle uses the jQuery UI Slider. These styles were
-   created from scratch, but more styles can be easily
-   generated using the jQueryUI theme roller (http://jqueryui.com/themeroller/)
-*/
-#dmMonocleMenu div#dmZoomLevelGague {
-	text-indent: 0;
-	margin-top: 7px;
-	width: 100px;
+	background-color:#EEE;
+	position:relative;
 }
-#dmMonocleMenu .ui-slider { 
-	position: relative; 
-	text-align: left; 
-	}
-#dmMonocleMenu .ui-slider .ui-slider-handle { 
-	outline: none; 
-	position: absolute; 
-	margin-top: 9px; 
-	z-index: 2; 
-	width: 12px; 
-	height: 12px; 
-	background-image: url(../images/menu/sliderHandle.gif); 
-	background-repeat: no-repeat; 
-	background-position: 0 0; 
-	overflow: hidden;
-	}
-#dmMonocleMenu .ui-slider .ui-slider-handle:hover, #dmMonocleMenu .ui-slider .ui-slider-handle:active { 
-	background-position: 0 -12px; 
-	cursor: default; 
-}
-#dmMonocleMenu .ui-slider-horizontal { 
-	height: 20px; 
-	background-image: url(../images/menu/sliderBG.gif); 
-	background-repeat: repeat-x; 
-	background-position: left center;
-	}
-#dmMonocleMenu .ui-slider-horizontal .ui-slider-handle { 
-	top: -5px; 
-	margin-left: -5px; 
-	}
-
-/* Print Image Styles
-   These styles are output when a user clicks on the "print"
-   icon.
-*/
-#dmDownloadImageBackground {
+.dmMonocle-zoomImage {
 	position: absolute;
 	left: 0;
-	background-color: #000000;
-	text-align: center;
-	z-index: 150;
+	top: 0;
 }
-#dmDownloadImage {
-	background-color: #FFF;
-	width: 450px;
-	padding: 10px 15px;
-	position: absolute;
-	z-index: 200;
+.dmMonocle-zoomImage_90 {
+     -moz-transform: rotate(90deg);  /* FF3.5+ */
+       -o-transform: rotate(90deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(90deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', 
+                     M11=6.123031769111886e-17, M12=-1, M21=1, M22=6.123031769111886e-17); /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', 
+                     M11=6.123031769111886e-17, M12=-1, M21=1, M22=6.123031769111886e-17)"; /* IE8 */
+               zoom: 1;
 }
-#dmDownloadImage table {
-	width: 100%;
+.dmMonocle-zoomImage_180 {
+     -moz-transform: rotate(180deg);  /* FF3.5+ */
+       -o-transform: rotate(180deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(180deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', 
+                     M11=-1, M12=-1.2246063538223773e-16, M21=1.2246063538223773e-16, M22=-1); /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', 
+                     M11=-1, M12=-1.2246063538223773e-16, M21=1.2246063538223773e-16, M22=-1)"; /* IE8 */
+               zoom: 1;
 }
-#dmDownloadImage tr th {
-	font-size: 100%;
-	font-weight: bold;
-	text-align: left;
-	background-color: #DDD;
-}
-.even {
-	background-color: #EEE;
-}
-#dmClosePrint {
-	position: absolute;
-	right: 15px;
-	top:  10px;
-}
-
-/**********************
-* =COMPOUND OBJECT STYLES
-****************************/
-body.dmMonocleCompound div#dmMonocle, body.dmMonocleCompound div#dmMonocleMenu {
-	width: 100%;
-}
-body.dmMonocleFullText div#dmMonocle, body.dmMonocleFullText div#dmMonocleMenu {
-	width: 500px;
-}
-
-/**********************
-* =DEVELOPMENT
-***********************/
-
-/* Development Styles needed for dmMonocle development,
-   but not live sites */
-body,html {
-	margin: 0;
-	padding: 10px 0 0 0;
-}
-#feedback {
-	position:absolute;
-	left: 5px;
-	top: 400px;	
+.dmMonocle-zoomImage_270 {
+     -moz-transform: rotate(270deg);  /* FF3.5+ */
+       -o-transform: rotate(270deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(270deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', 
+                     M11=-1.8369701987210297e-16, M12=1, M21=-1, M22=-1.8369701987210297e-16); /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', 
+                     M11=-1.8369701987210297e-16, M12=1, M21=-1, M22=-1.8369701987210297e-16)"; /* IE8 */
+               zoom: 1;
 }
