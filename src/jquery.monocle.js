@@ -7,7 +7,7 @@
 		if (this.length) {
 			return this.each(function(){	  
 		   	var monocle = new CDM(options, this);
-		  	$.data(this, 'dmMonocle', monocle);
+		  	$.data(this, 'CDM', monocle);
 			})
 		}
 	}
