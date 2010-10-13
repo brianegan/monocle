@@ -12,7 +12,7 @@
 
   $.fn.monocle = function(method) {
     
-    if ($.fn.monocle[method] || Monocle[method]) {
+    if (Monocle[method]) {
       return Monocle[method].apply(this, Array.prototype.slice.call(arguments, 1));
     } else if (typeof method === 'object' || !method) {
       return Monocle.init.apply(this, arguments);
