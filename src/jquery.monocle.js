@@ -1,19 +1,31 @@
-// jquery.dmmonocle.js - Copyright Brian Egan <brian@brianegan.com> (MIT Licensed)
-(function ($) {
-			
-	$.fn.dmMonocle = function (options) {
-		// Pattern egregiously stolen from this post: http://alexsexton.com/?p=51
-		// Adjusted for performance (Object.create is slow...)
-		if (this.length) {
-			return this.each(function(){	  
-		   	var monocle = new CDM(options, this);
-		  	$.data(this, 'CDM', monocle);
-			})
-		}
-	}
-	
-	// Exposing the defaults so they can be easily overwritten
-  $.fn.dmMonocle.defaults = {
+/*
+ * jQuery Monocle ===========================================================
+ *
+ * This is the jQuery plugin definition -- it mostly acts as a router, and 
+ * utilizes the methods from the Monocle class. 
+ */
+  
+// Stop JavaScript Lint Warnings Messages
+/*jsl:ignoreall*/ 
+
+(function($){
+
+  $.fn.monocle = function(method) {
+    
+    if ($.fn.monocle[method] || Monocle[method]) {
+      return Monocle[method].apply(this, Array.prototype.slice.call(arguments, 1));
+    } else if (typeof method === 'object' || !method) {
+      return Monocle.init.apply(this, arguments);
+    } else {
+      $.error('Method ' +  method + ' does not exist on jQuery.monocle');
+    }    
+  
+  };
+
+  /*
+   * Expose defaults so they can be overridden
+   */
+  $.fn.monocle.defaults = {
   	thumbMaxWidth: 120,
     thumbMaxHeight: 120,
     thumbPosition: "TL",
@@ -26,14 +38,16 @@
 		menuPosition: 'before'
      
     /* Additional options, not actual defaults
-    * TODO: Move options explanation into documentation above
-    * CISOROOT: "/snv",
-    * CISOPTR: 2678,
-    * dmImageHeight: 3559,
-    * dmImageWidth: 5831,
-    * initX: 0,
-    * initY: 0,
+    
+    CISOROOT: "/snv",
+    CISOPTR: 2678,
+    dmImageHeight: 3559,
+    dmImageWidth: 5831,
+    initX: 0,
+    initY: 0,
+   
     */ 
-	}
-  
-}(jQuery));
+  };
+
+})(jQuery);
+
