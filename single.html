@@ -5,7 +5,7 @@
 <html>
 <head>
 	<title>dmMonocle - View CONTENTdm images with style!</title>	
-	<link rel="stylesheet" href="css/dmmonocle.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="themes/arristo/css/dmmonocle.css" type="text/css" media="screen" />
 </head>
 <body>
 
@@ -15,40 +15,21 @@
 	<!-- Currently, dmMonocle is a bit unflexible. It requires there be a div called dmMonocle on the page to work. --> 
 </div>
 
-<!-- Put all JS at the bottom of the page (general best practice). -->
-<script src="lib/jquery-1.4.2.js"></script>
-<script src="lib/jquery.event.drag-1.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/jquery.monocle.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/cdm/jquery.dmmonocle-cdm.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/cdm/calculators.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/cdm/menu.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/cdm/thumbnail.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/cdm/images.js" type="text/javascript" charset="utf-8"></script>
+<!-- Sandbox Div -->
+<div class="dmMonocle">&nbsp;</div> <!-- /viewer -->
 
-<!-- Initialize dmMonocle. -->
-<div class="dmMonocle">
-	<!-- all necessary divs will be generated. The idea will to be able to call dmViewer like any jquery class. Ex:
-    	
-        $('#viewer').dmViewer({
-        	CISOPTR: 426,
-            CISOROOT: Hughes,
-            defaultZoom: .25,
-            defaultRotation: 0,
-            dmMaxHeight: (maximum height of the image),
-            dmMaxWidth: (maximum width of the image),
-            dmBridge: true (this value would be called for dmBridge enabled sites, which would provide additional functionality, such as shared slices).
-        });
-    	
-     -->
-</div> <!-- /viewer -->
+<!-- monocle source & support files -->
+<script src="lib/jquery/jquery-1.4.2.js" type="text/javascript" charset="utf-8"></script>
+<script src="lib/jquery/jquery.event.drag-1.5.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/monocle.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/jquery.monocle.js" type="text/javascript" charset="utf-8"></script>
 
-<!--<div class="dmMonocle { CISOROOT: '/LV_Maps',  CISOPTR: 426, dmImageHeight: 9590, dmImageWidth: 10360, dmBridge: true }">&nbsp;</div> -->
-
+<!-- Call dmMonocle -->
 <script type="text/javascript">
 	$(window).load(function() {
 		/* Panoramic View
 		
-		$('.dmMonocle').dmMonocle({ 
+		$('.dmMonocle').monocle({ 
 			CISOROOT: '/snv',  
 			CISOPTR: 1493, 
 			dmImageHeight: 1432, 
@@ -59,7 +40,7 @@
 		*/
 		
 		/* Search Text */
-		$('.dmMonocle').dmMonocle({ 
+		$('.dmMonocle').monocle({ 
 			CISOROOT: '/university',  
 			CISOPTR: 1089, 
 			dmImageHeight: 9188, 
@@ -70,7 +51,7 @@
 		}); 
 		
 		/* Maps 
-		$('.dmMonocle').dmMonocle({ 
+		$('.dmMonocle').monocle({ 
 			CISOROOT: '/LV_Maps',  
 			CISOPTR: 426, 
 			dmImageHeight: 9590, 
