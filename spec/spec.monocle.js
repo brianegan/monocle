@@ -11,7 +11,7 @@ describe("monocle", function() {
 
   // The plugin is essentially a router to call the appropriate
   // methods. See the official jQuery docs for info.
-  describe("plugin", function() {
+  describe("jquery plugin", function() {
 
     it("should define monocle jquery plugin", function() {
       expect($.fn.monocle).toBeDefined();
@@ -23,13 +23,26 @@ describe("monocle", function() {
       expect(Monocle.init).toHaveBeenCalled();
     });
 
-    it("should fire the proper method", function() {
+    it("should fire the constructor if an object is passed", function() {
+      spyOn(Monocle, 'init');
+      monocle.monocle({ zoom: 20 });
+      expect(Monocle.init).toHaveBeenCalled();
+    });
+
+    it("should fire the proper method given a method", function() {
       spyOn(Monocle, 'destroy');
       monocle.monocle('destroy');
       expect(Monocle.destroy).toHaveBeenCalled();      
     });
     
-
+    it("should throw an error if a bad method is passed", function() {
+      try { 
+        monocle.monocle('zombies');
+      } catch (e) {
+        expect(e).toEqual('Method zombies does not exist on jQuery.monocle');
+      }
+    });
+    
   });  
  
   // Init Method
