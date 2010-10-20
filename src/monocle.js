@@ -97,8 +97,8 @@
    * Calculates the dimensions of a given image at a certain rotation and zoom level
    * can be used for our main image as well as the zoomImage
    * @private
-   * @returns { width, height }
-   * @type Object
+   * @returns width or height
+   * @type Number
    */		
   function calcImageDimensions(ret, zoom, el) {
     var data = el.data('monocle');
@@ -116,10 +116,33 @@
     }
   };
 
+  /**
+  * Calculate the Thumbnail Dimensions
+  * @private
+  * @returns width or height
+  * @type Number
+  */
+  function calcThumbZoom(ret, el) {
+    var minZoomWidthRatio, 
+        minZoomHeightRatio,
+        data = el.data('monocle');
+    
+  minZoomWidthRatio = data.options.thumbMaxWidth / data.dmImage.width;
+  minZoomHeightRatio = data.options.thumbMaxHeight / data.dmImage.height;
+  
+  return minZoomWidthRatio >= minZoomHeightRatio 
+           ? minZoomHeightRatio
+           : minZoomWidthRatio;
+  };
+
   /*
    * Monocle Methods 
    */
   Monocle = {
+    
+    // Our Init Function is essentially a giant calculator. It runs quite
+    // a few calculations and stores the values to the element's data
+
     init: function(options) {
 
       return this.each(function(){
@@ -143,10 +166,11 @@
           // Cache the data object now that it exists
           data = $this.data('monocle');
 
-          data.rotation = data.options.initRotation
-                          ? data.options.initRotation
+          // Define the initial Rotation
+          data.rotation = data.options.rotation
+                          ? data.options.rotation
                           : 0;
-          
+
           // Our Main DOM Element passed to jQuery
           data.viewer =  { 
             width: calcViewerDims('width', $this),
@@ -160,20 +184,35 @@
             rotatedWidth: calcDmImageRotatedDimensions('width', $this),
             rotatedHeight: calcDmImageRotatedDimensions('height', $this)
           };
-          
-          // The Zoom Image. This is the image that will resize as the user
-          // zooms in and out with slider or controls 
-          // to give a good visual of what zoom level they are are.
-          data.zoomImage = {};
-          
+
           // The Minimum Zoom Properties -- These may be updated based on resized
-          // browser, should also be set to the zoom Images default properties
+          // browser 
           data.minZoom = calcMinZoom($this);
           data.minZoomWidth = calcImageDimensions('width', data.minZoom, $this);
           data.minZoomHeight = calcImageDimensions('height', data.minZoom, $this);
           
-          
+          // Now that we know the lowest possible zoom, 
+          // Use that for the initial zoom level if none exists!
+          data.zoom = data.options.zoom
+                    ? data.options.zoom
+                    : data.minZoom;
 
+          // The Zoom Image. This is the image that will resize as the user
+          // zooms in and out with slider or controls 
+          // to give a good visual of what zoom level they are are.
+          data.image = {
+            width: calcImageDimensions('width', data.zoom, $this),
+            height: calcImageDimensions('height', data.zoom, $this)
+          }
+
+          // The Thumbnail -- the small version used in coordination with the navigator
+          // to give the user a sense of what part of the image is being viewed 
+          // in any of the four corners (e.g. Left-Top, Left-Bottom, Right-top, right-botto
+          data.thumbnail = {
+            visible: data.options.showThumbnail
+                   ? data.options.showThumbnail
+                   : true
+          }
         }
       });
     },
