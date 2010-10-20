@@ -11,12 +11,10 @@
 
 <div id="feedback"> <!-- this div is for testing, allowing developers to dump text into it to check teh mathz --> </div>
 
-<div id="dmMonocle">
+<div id="sandbox">
 	<!-- Currently, dmMonocle is a bit unflexible. It requires there be a div called dmMonocle on the page to work. --> 
 </div>
 
-<!-- Sandbox Div -->
-<div class="dmMonocle">&nbsp;</div> <!-- /viewer -->
 
 <!-- monocle source & support files -->
 <script src="lib/jquery/jquery-1.4.2.js" type="text/javascript" charset="utf-8"></script>
@@ -38,9 +36,9 @@
 		});
 		
 		*/
-		
+
 		/* Search Text */
-		$('.dmMonocle').monocle({ 
+		$('#sandbox').monocle({ 
 			CISOROOT: '/university',  
 			CISOPTR: 1089, 
 			dmImageHeight: 9188, 

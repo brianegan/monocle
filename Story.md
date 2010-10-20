@@ -4,7 +4,7 @@ As a patron
 I want to view CONTENTdm images Google-maps style
 So that viewing images will be simple and convenient
 
-## Scenario 1: Image Construction
+## Scenario 1: Construction
 
 + Given 
 	+ CISOROOT
@@ -25,6 +25,7 @@ So that viewing images will be simple and convenient
 + When
 	+ The patron accesses a specific image
 + Then dmMonocle should
+  + initialize the plugin
 	+ calculate the size of the viewable area
 	+ and calculate the minimum zoom level
 	+ and make sure the optional zoom level isn't ridiculous

@@ -1,4 +1,5 @@
-Copyright (c) 2010 Paul Bakaus, http://jqueryui.com/
+Copyright (c) 2010 Nevada System of Higher Education on behalf 
+of the University of Nevada, Las Vegas Libraries http://library.unlv.edu/
 
 This software consists of voluntary contributions made by many
 individuals (AUTHORS.txt, http://jqueryui.com/about) For exact

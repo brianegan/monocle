@@ -5,7 +5,6 @@
  */
 
 describe("monocle", function() {
-  
   // Create a sandbox div
   beforeEach(function() {
     monocle = $('<div />', {
@@ -29,7 +28,6 @@ describe("monocle", function() {
   // The plugin is essentially a router to call the appropriate
   // methods. See the official jQuery docs for info.
   describe("jquery plugin", function() {
-
     it("should define monocle jquery plugin", function() {
       expect($.fn.monocle).toBeDefined();
     });
@@ -64,12 +62,10 @@ describe("monocle", function() {
       }
       // expect(monocle.monocle('zombies')).toThrow('Method zombies does not exist on jQuery.monocle'); 
     });
-    
   });  
  
   // Init Method
   describe("init", function() {
-
     beforeEach(function() {
       monocle.monocle({ 
         CISOROOT: '/zombies',  
@@ -77,9 +73,11 @@ describe("monocle", function() {
         dmImageHeight: 5000, 
         dmImageWidth: 10000, 
         dmBridge: false,
-        initRotation: 90,
+        rotation: 90,
+        zoom: 0.3,
         searchText: "snow",
-        urlPrefix: "/" 
+        urlPrefix: "/",
+        showThumbnail: true
       });
       data = monocle.data('monocle');
     });
@@ -96,6 +94,10 @@ describe("monocle", function() {
       expect(data.rotation).toEqual(90);
     });
 
+    it("should define the base zoom", function() {
+      expect(data.zoom).toEqual(0.3);
+    });
+
     describe("Viewer Calculations", function() {
       it("should calculate & store the width of the viewer, including padding", function() {
         expect(data.viewer.width).toEqual(1000);
@@ -106,7 +108,7 @@ describe("monocle", function() {
       });
     });  
 
-    describe("Image Calculations", function() {
+    describe("CONTENTdm Image Calculations", function() {
       it("should store the width of the image", function() {
         expect(data.dmImage.width).toEqual(10000);
       });
@@ -124,7 +126,7 @@ describe("monocle", function() {
       });
     });  
     
-    describe("minimum zoom properties", function() {
+    describe("Min Zoom Calculations", function() {
       it("should store the minimum zoom level", function() {
         expect(data.minZoom).toEqual(0.1);
       });
@@ -138,18 +140,37 @@ describe("monocle", function() {
       });
     });  
     
-        
-    describe("zoom Image", function() {
-      it("should create a zoom image", function() {
-         expect(data.zoomImage).toBeDefined();
+    describe("Image Calculations", function() {
+      it("should store image data", function() {
+         expect(data.image).toBeDefined();
       });
+  
+      it("should define the base image width", function() {
+        expect(data.image.width).toEqual(1500);        
+      });
+      
+      it("should define the base image height", function() {
+        expect(data.image.height).toEqual(3000);        
+      });
+    });
+
+    describe("Thumbnail Calculations", function() {
+      it("should store thumbnail data", function() {
+        expect(data.thumbnail).toBeDefined();
+      });
+
+      it("should set a visibility", function() {
+        expect(data.thumbnail.visible).toBeTruthy();
+      });
+
+      it("should define the ratio between thumb dimensions and dmImage dimensions", function() {
+        expect(data.thumbnail.ratio).toEqual(0.012);
+      });
+      
+      /* it("should set a width", function() {
+        expect(data.thumbnail.width).toEqual(60);
+      }); */
     });  
-    
-    
-
-    
-    
   });
-
 });  
 
