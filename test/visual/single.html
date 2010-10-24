@@ -5,68 +5,75 @@
 <html>
 <head>
 	<title>dmMonocle - View CONTENTdm images with style!</title>	
-	<link rel="stylesheet" href="themes/arristo/css/dmmonocle.css" type="text/css" media="screen" />
+	<style type="text/css" media="screen">
+		#monocle {
+			width: 1000px;
+			height: 400px;
+		}
+	</style>
 </head>
 <body>
 
-<div id="feedback"> <!-- this div is for testing, allowing developers to dump text into it to check teh mathz --> </div>
+	<div id="feedback"> 
+		<!-- this div is for testing, allowing developers to dump text into it to check teh mathz. Console isn't good for this b/c it places each value on a seperate line, making it hard to visualize deltas --> 
+	</div>
 
-<div id="sandbox">
-	<!-- Currently, dmMonocle is a bit unflexible. It requires there be a div called dmMonocle on the page to work. --> 
-</div>
+	<div id="monocle"></div>
 
+	<!-- jQuery & UI Components -->
+	<script type="text/javascript" src="../../lib/jquery/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.mouse.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.draggable.js"></script>
 
-<!-- monocle source & support files -->
-<script src="lib/jquery/jquery-1.4.2.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/jquery/jquery.event.drag-1.5.js" type="text/javascript" charset="utf-8"></script>
-<script src="src/monocle.js" type="text/javascript" charset="utf-8"></script>
-<script src="src/jquery.monocle.js" type="text/javascript" charset="utf-8"></script>
+	<!-- Monocle Source -->
+	<script src="../../src/jquery.monocle.js" type="text/javascript" charset="utf-8"></script>
 
-<!-- Call dmMonocle -->
-<script type="text/javascript">
-	$(window).load(function() {
-		/* Panoramic View
-		
-		$('.dmMonocle').monocle({ 
-			CISOROOT: '/snv',  
-			CISOPTR: 1493, 
-			dmImageHeight: 1432, 
-			dmImageWidth: 4012, 
-			dmBridge: true 
+	<script type="text/javascript">
+		$(window).load(function() {
+			/* Panoramic View
+			
+			$('.dmMonocle').monocle({ 
+				CISOROOT: '/snv',  
+				CISOPTR: 1493, 
+				dmImageHeight: 1432, 
+				dmImageWidth: 4012, 
+				dmBridge: true 
+			});
+			
+			*/
+
+			/* Search Text */
+			$('#monocle').monocle({ 
+				CISOROOT: '/university',  
+				CISOPTR: 1089, 
+				sourceImageHeight: 9188, 
+				sourceImageWidth: 6404, 
+				dmBridge: false,
+				searchText: "snow",
+				urlPrefix: "http://dlsd.sdln.net" 
+			}); 
+			
+			/* Maps 
+			$('.dmMonocle').monocle({ 
+				CISOROOT: '/LV_Maps',  
+				CISOPTR: 426, 
+				dmImageHeight: 9590, 
+				dmImageWidth: 10360, 
+				dmBridge: true 
+			});	*/
+			
+			
+			// Examples in the old format
+			//dmBridgeZoomer(10360, 9590, 426, "/LV_Maps")						   
+			//dmBridgeZoomer(5111, 3842, 9, "/snv")
+			//dmBridgeZoomer(2596, 3335, 5178, "/snv")
+			// dmBridgeZoomer(5831, 3559, 2678, "/snv")
+			//dmBridgeZoomer(4012, 1432, 1493, "/snv")
+			
 		});
-		
-		*/
-
-		/* Search Text */
-		$('#sandbox').monocle({ 
-			CISOROOT: '/university',  
-			CISOPTR: 1089, 
-			dmImageHeight: 9188, 
-			dmImageWidth: 6404, 
-			dmBridge: false,
-			searchText: "snow",
-			urlPrefix: "http://dlsd.sdln.net" 
-		}); 
-		
-		/* Maps 
-		$('.dmMonocle').monocle({ 
-			CISOROOT: '/LV_Maps',  
-			CISOPTR: 426, 
-			dmImageHeight: 9590, 
-			dmImageWidth: 10360, 
-			dmBridge: true 
-		});	*/
-		
-		
-		// Examples in the old format
-		//dmBridgeZoomer(10360, 9590, 426, "/LV_Maps")						   
-		//dmBridgeZoomer(5111, 3842, 9, "/snv")
-		//dmBridgeZoomer(2596, 3335, 5178, "/snv")
-		// dmBridgeZoomer(5831, 3559, 2678, "/snv")
-		//dmBridgeZoomer(4012, 1432, 1493, "/snv")
-		
-	});
-</script>
+	</script>
 
 </body>
 </html>

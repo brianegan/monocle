@@ -1,0 +1,48 @@
+<!-- This document is used to test and develop dmMonocle. For integration with CONTENTdm, please review 
+	 item_viewer.php and pan_view.php -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>Monocle Panoramic Test</title>	
+	<style type="text/css" media="screen">
+		#monocle {
+			width: 700px;
+			height: 400px;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="feedback"> 
+		<!-- this div is for testing, allowing developers to dump text into it to check teh mathz. Console isn't good for this b/c it places each value on a seperate line, making it hard to visualize deltas --> 
+	</div>
+
+	<div id="monocle"></div>
+
+	<!-- jQuery & UI Components -->
+	<script type="text/javascript" src="../../lib/jquery/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.mouse.js"></script>
+	<script type="text/javascript" src="../../lib/ui/jquery.ui.draggable.js"></script>
+
+	<!-- Monocle Source -->
+	<script src="../../src/jquery.monocle.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		$(window).load(function() {
+			// Panoramic Image
+			$('#monocle').monocle({ 
+				CISOROOT: '/snv',  
+				CISOPTR: 1493, 
+				sourceImageHeight: 1432, 
+				sourceImageWidth: 4012, 
+				dmBridge: false,
+				urlPrefix: "http://digital.library.unlv.edu" 
+			}); 
+		});
+	</script>
+
+</body>
+</html>
