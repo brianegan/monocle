@@ -4,9 +4,6 @@
  * This file contains all the core methods that work for all types of monocles
  */
 
-// Stop Annoying JavaScript Lint Warnings Messages
-/*jsl:ignoreall*/
-  
 (function($) {
 
   /*

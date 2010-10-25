@@ -73,7 +73,7 @@ $.widget("ui.monocle", {
 	 * Drag Events ====================================================================
 	 *
 	 */
-	_dragStartContent: function(e) {
+	 _dragStartContent: function(e) {
 		 // Set default values at the very beginning of the drag
 		this._offsetX = e.offsetX;
 		this._offsetY = e.offsetY;
@@ -98,7 +98,7 @@ $.widget("ui.monocle", {
 	 */
 	_appendContentDiv: function() {
 		this._contentEl = $('<div />', {
-			class: 'ui-widget-content'
+			id: 'ui-widget-content'
 		});
 		this._contentEl.appendTo(this.element);
 	},
