@@ -42,6 +42,8 @@ $.widget("ui.monocle", {
 	// Perform Initial Calculations and Launch the viewer!
 	_create: function() {
 
+		var self = this;
+
 		// Cache Viewer Dimensions for Performance
 		this._updateViewerDimensions();
 
@@ -54,9 +56,38 @@ $.widget("ui.monocle", {
 		// Current Image
 		this._updateCurrentImage();
 
-		// Base Image
+		// Append Divs and Image
+		this._appendContentDiv();
+		// this._appendThumbDiv();
 		this._appendBaseImage();
 
+		// Bind Events
+		this._contentEl.bind('dragstart.monocle', $.proxy(this._dragStartContent, this)) ; 
+		this._contentEl.bind('drag.monocle', $.proxy(this._dragContent, this)); 
+
+		// this._contentEl.bind('drag', this._dragContent);
+		
+	},
+
+	/*
+	 * Drag Events ====================================================================
+	 *
+	 */
+	_dragStartContent: function(e) {
+		 // Set default values at the very beginning of the drag
+		this._offsetX = e.offsetX;
+		this._offsetY = e.offsetY;
+		this._scrollLeft = this.element.scrollLeft();
+		this._scrollTop = this.element.scrollTop();
+	},
+	_dragContent: function(e) {
+		// Override values repeatedly
+		this._scrollLeft = this._scrollLeft - (e.offsetX - this._offsetX);
+		this._scrollTop = this._scrollTop - (e.offsetY- this._offsetY);
+		this._offsetX = e.offsetX;
+		this._offsetY = e.offsetY;
+		this.element.scrollLeft(this._scrollLeft);
+		this.element.scrollTop(this._scrollTop);
 	},
 
 	/*
@@ -65,7 +96,13 @@ $.widget("ui.monocle", {
 	 * We need to inject DOM elements onto the page in a consistent manner
 	 * from a variety of functions
 	 */
-	 _appendBaseImage: function() {
+	_appendContentDiv: function() {
+		this._contentEl = $('<div />', {
+			class: 'ui-widget-content'
+		});
+		this._contentEl.appendTo(this.element);
+	},
+	_appendBaseImage: function() {
 		var self = this, 
 				baseImage = '<img class="ui-monocle-baseImage" '
 									+ 'alt="Base Image: A Low-Res version for quick viewing" '
@@ -83,7 +120,7 @@ $.widget("ui.monocle", {
 										})
 									+ '" />';
 		
-		this.element.append(baseImage);
+		$(baseImage).appendTo(this._contentEl);
 	},
 
 	/*
