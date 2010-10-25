@@ -54,12 +54,14 @@ var el;
 		equals(opts('currentImageWidth'), 1500, "It should set the base image width");
 		equals(opts('currentImageHeight'), 3000, "It should set the base image height");
 
-		// Base Image
+		// Attach the Elements to the page
+		ok($('.ui-widget-content').length > 0, "It should attach a content div to the elements' div");
+		ok($('.ui-monocle-baseImage').length > 0, "It should append a base image to the page");
+	
+		// Bind Drag Events
 		
-		// Attach the Base Image to the page
-		ok(el.children('.ui-monocle-baseImage').length > 0, "It should append a base image to the page");
-		
-			
+
+
 	});
 
 })(jQuery);
